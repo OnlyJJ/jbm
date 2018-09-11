@@ -16,8 +16,8 @@ import com.lm.jbm.thread.ThreadManager;
 public class SocketClient {
 
 	public static Socket client = null;
-	
-	private static final String URL = "testimcore.9shows.com";
+	// testimcore.9shows.com
+	private static final String URL = "imcore.9shows.com";
 	private static final int PORT = 9999;
 	
 	public synchronized static void init() {

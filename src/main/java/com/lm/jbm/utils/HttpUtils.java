@@ -90,7 +90,7 @@ public class HttpUtils {
 	        try {
 	            // 创建Http Post请求
 	            HttpPost post = new HttpPost(url);
-	            HttpHost proxy = new HttpHost("123.103.15.174",8165);
+	            HttpHost proxy = new HttpHost("123.103.15.11",8165);
 	            RequestConfig requestConfig = RequestConfig.custom()
 	                    .setProxy(proxy)
 	                    .setConnectTimeout(10000)

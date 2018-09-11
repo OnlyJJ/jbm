@@ -114,7 +114,7 @@ public class SocketUtil {
 			String msg = getDataBody(is); 
 			return msg;
 		} catch(Exception e) {
-			System.err.println("recieve exception...");
+			System.err.println("recieve exception..." + e.getMessage());
 			throw e;
 		}
 	}
@@ -190,7 +190,7 @@ public class SocketUtil {
 		inRoomSbf.append("").append("{\"funID\":11006,\"length\":102,\"data\":{\"token\":\""+token+"\",\"roomId\":\""+roomId+"\"}}");
 		String inRoomReqStr = inRoomSbf.toString();
 		sendToIm(inRoomReqStr);
-		System.err.println("进入房间开始监听。。。");
+		System.err.println(userId + "进入房间:" + roomId + ",开始监听。。。");
 	}
 	
 	

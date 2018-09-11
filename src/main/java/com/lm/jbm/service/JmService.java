@@ -13,9 +13,13 @@ import com.lm.jbm.utils.RandomUtil;
 
 public class JmService {
 
-	public static final String U1 = "http://testservice.9shows.com/U1/0/";
-	public static final String U16 = "http://testservice.9shows.com/U16/0/";
-	public static final String U53 = "http://testservice.9shows.com/U53/0/";
+//	public static final String U1 = "http://testservice.9shows.com/U1/0/";
+//	public static final String U16 = "http://testservice.9shows.com/U16/0/";
+//	public static final String U53 = "http://testservice.9shows.com/U53/0/";
+	
+	public static final String U1 = "http://service.9shows.com/U1/0/";
+	public static final String U16 = "http://service.9shows.com/U16/0/";
+	public static final String U53 = "http://service.9shows.com/U53/0/";
 
 	public static String login(String userId, String pwd, String ip) {
 		try {
