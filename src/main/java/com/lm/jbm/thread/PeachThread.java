@@ -25,11 +25,11 @@ public class PeachThread implements Runnable {
 
 	public void run() {
 		try {
-			String ip = RandomUtil.getIp();
+			String ip = RandomUtil.getUserIp(userId);
 			String session = LoginThread.serssionMap.get(userId);
-			Thread.sleep(RandomUtil.getRandom(500, 1000));
+			Thread.sleep(RandomUtil.getRandom(200, 1000));
 			Socket socket = SocketUtil.inRoom(roomId, userId);
-			Thread.sleep(RandomUtil.getRandom(500, 1000));
+			Thread.sleep(RandomUtil.getRandom(100, 500));
 			JmService.pluck(roomId, userId, session, ip);
 			if(socket != null) {
 				socket.close();

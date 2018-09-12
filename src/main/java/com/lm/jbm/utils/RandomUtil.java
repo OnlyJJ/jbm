@@ -5,6 +5,8 @@ import java.util.Random;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.lm.jbm.thread.LoginThread;
+
 public class RandomUtil {
 	protected static Properties pro;
 	static {
@@ -342,6 +344,12 @@ public class RandomUtil {
 		"223.99.57.166"
 	};
 	
+	public static String getUserIp(String userId) {
+		if(LoginThread.ipMap.containsKey(userId)) {
+			return LoginThread.ipMap.get(userId);
+		}
+		return getIp();
+	}
 	
 	public static String getIp() {
 		int index = new Random().nextInt(ips.length);

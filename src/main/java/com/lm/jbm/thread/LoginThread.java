@@ -38,7 +38,7 @@ public class LoginThread implements Runnable {
 						Thread.sleep(2000);
 					}
 				}
-				Thread.sleep(1000*60*6);
+				Thread.sleep(1000*60*10);
 			} catch (Exception e) {
 				break;
 			}
