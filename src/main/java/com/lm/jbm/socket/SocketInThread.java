@@ -1,6 +1,7 @@
 package com.lm.jbm.socket;
 
 
+import java.io.IOException;
 import java.net.Socket;
 
 import org.apache.commons.lang.StringUtils;
@@ -31,6 +32,15 @@ public class SocketInThread implements Runnable {
 			}
 		} catch(Exception e) {
 			System.err.println(e.getMessage());
+			if(SocketClient.client != null) {
+				try {
+					SocketClient.client.close();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				SocketClient.client = null;
+			}
+			SocketClient.init();
 		}
 	}
 
@@ -62,8 +72,17 @@ public class SocketInThread implements Runnable {
 						JSONObject content = JsonUtil.strToJsonObject(data.get("content").toString());
 						if(content != null && content.containsKey("roomId")) {
 							String roomId = content.getString("roomId");
-							System.out.println("收到成熟通知，开启抢桃，房间：" + roomId);
-							JmService.peach(roomId);
+							boolean flag = true;
+							if(content.containsKey("peachRipeLevel")) {
+								int level = content.getIntValue("peachRipeLevel");
+								if(level == 6) {
+									flag = false;
+								}
+							}
+							if(flag) {
+								System.out.println("收到成熟通知，开启抢桃，房间：" + roomId);
+								JmService.peach(roomId);
+							}
 						}
 						break;
 					}

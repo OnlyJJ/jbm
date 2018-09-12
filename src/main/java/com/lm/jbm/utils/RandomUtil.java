@@ -397,4 +397,12 @@ public class RandomUtil {
 		int total = Integer.parseInt(pro.getProperty("total"));
 		return total;
 	}
+	
+	public static int getRandom(int minValue,int maxValue)
+	{
+		int returnValue=minValue;
+		new java.util.Random();
+		returnValue=(int)((maxValue-minValue)*Math.random()+minValue);
+		return returnValue;
+	}
 }

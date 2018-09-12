@@ -1,6 +1,11 @@
 package com.lm.jbm.service;
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
@@ -104,12 +109,14 @@ public class JmService {
 	public static void peach(String roomId) {
 		try {
 			String[] userIds = RandomUtil.getUserIds();
+			List<String> list = Arrays.asList(userIds);
+			Collections.shuffle(list);
 			int index = 1;
 			for(int i=0; i<userIds.length; i++) {
 				if(index > RandomUtil.getTotal()) {
 					return;
 				}
-				String userId = userIds[i];
+				String userId = list.get(i);
 				PeachThread peach = new PeachThread(roomId, userId);
 				ThreadManager.getInstance().execute(peach);
 				index++;

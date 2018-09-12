@@ -13,6 +13,8 @@ import com.lm.jbm.utils.RandomUtil;
 public class LoginThread implements Runnable {
 	
 	public static ConcurrentHashMap<String, String> serssionMap = new ConcurrentHashMap<String, String>(512);
+	
+	public static ConcurrentHashMap<String, String> ipMap = new ConcurrentHashMap<String, String>(512);
 
 	public LoginThread() {}
 
@@ -22,7 +24,14 @@ public class LoginThread implements Runnable {
 				String[] userIds = RandomUtil.getUserIds();
 				if(userIds != null) {
 					for(String userId : userIds) {
-						String ret = JmService.login(userId, RandomUtil.getPwd(), RandomUtil.getIp());
+						String ip = "";
+						if(ipMap.contains(userId)) {
+							ip = ipMap.get(userId);
+						} else {
+							ip = RandomUtil.getIp();
+							ipMap.put(userId, ip);
+						}
+						String ret = JmService.login(userId, RandomUtil.getPwd(), ip);
 						if(StringUtils.isNotEmpty(ret)) {
 							serssionMap.put(userId, ret);
 						}
