@@ -67,9 +67,15 @@ public class SocketInThread implements Runnable {
 				}
 				if(data.containsKey("type")) {
 					int type = Integer.parseInt(data.get("type").toString());
+					JSONObject content = JsonUtil.strToJsonObject(data.get("content").toString());
 					switch(type) {
+					case 8:
+						if(content != null && content.containsKey("id")) {
+							String id = content.getString("id");
+							
+						}
+						break;
 					case 17: 
-						JSONObject content = JsonUtil.strToJsonObject(data.get("content").toString());
 						if(content != null && content.containsKey("roomId")) {
 							String roomId = content.getString("roomId");
 							boolean flag = true;

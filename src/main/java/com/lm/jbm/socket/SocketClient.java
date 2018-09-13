@@ -23,21 +23,19 @@ public class SocketClient {
 	public synchronized static void init() {
 		System.err.println("初始化...");
 		try {
-			if(client != null) {
-				client.close();
-				client = null;
+			if(client == null) {
+				Thread.sleep(10000);
+				client = new Socket(URL, PORT);
+				
+				LoginThread task = new LoginThread();
+				ThreadManager.getInstance().execute(task);
+				
+				SocketInThread in = new SocketInThread();
+				ThreadManager.getInstance().execute(in);
+				Thread.sleep(2000);
+				SocketHertThread hert = new SocketHertThread();
+				ThreadManager.getInstance().execute(hert);
 			}
-			Thread.sleep(10000);
-			client = new Socket(URL, PORT);
-			
-			LoginThread task = new LoginThread();
-			ThreadManager.getInstance().execute(task);
-			
-			SocketInThread in = new SocketInThread();
-			ThreadManager.getInstance().execute(in);
-			Thread.sleep(2000);
-			SocketHertThread hert = new SocketHertThread();
-			ThreadManager.getInstance().execute(hert);
 		} catch (Exception e) {
 		} 
 	}

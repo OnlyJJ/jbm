@@ -115,6 +115,11 @@ public class SocketUtil {
 			return msg;
 		} catch(Exception e) {
 			System.err.println("recieve exception..." + e.getMessage());
+			synchronized(SocketUtil.class) {
+				SocketRestartThread task = new SocketRestartThread();
+				ThreadManager.getInstance().execute(task);
+				Thread.sleep(20000);
+			}
 			throw e;
 		}
 	}

@@ -9,6 +9,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
+import com.lm.jbm.thread.GrapRebThread;
 import com.lm.jbm.thread.PeachThread;
 import com.lm.jbm.thread.ThreadManager;
 import com.lm.jbm.utils.HttpUtils;
@@ -24,6 +25,7 @@ public class JmService {
 	
 	public static final String U1 = "http://service.9shows.com/U1/0/";
 	public static final String U16 = "http://service.9shows.com/U16/0/";
+	public static final String U32 = "http://service.9shows.com/U32/0/";
 	public static final String U53 = "http://service.9shows.com/U53/0/";
 
 	public static String login(String userId, String pwd, String ip) {
@@ -118,6 +120,60 @@ public class JmService {
 				}
 				String userId = list.get(i);
 				PeachThread peach = new PeachThread(roomId, userId);
+				ThreadManager.getInstance().execute(peach);
+				index++;
+			}
+		} catch(Exception e) {
+			System.err.println(e.getMessage());
+		}
+	}
+	
+	public static void grapReb(String userId, String sessionId, String rebId, String ip) {
+		try {
+			JSONObject json = new JSONObject();
+			JSONObject session = new JSONObject();
+			session.put("b", sessionId);
+			
+			JSONObject userbaseinfo = new JSONObject();
+			userbaseinfo.put("a", userId);
+			userbaseinfo.put("j", ip);
+			
+			JSONObject redpacketsendvo = new JSONObject();
+			redpacketsendvo.put("a", rebId);
+			
+			json.put("session", session);
+			json.put("userbaseinfo", userbaseinfo);
+			json.put("redpacketsendvo", redpacketsendvo);
+			
+			String str = json.toString();
+			String res = HttpUtils.post3(U32, str, ip);
+			if(StringUtils.isNotEmpty(res)) {
+				JSONObject data = JsonUtil.strToJsonObject(res);
+				if(data != null && data.containsKey("redpacketreceivevo")) {
+					JSONObject peachvoJson = JsonUtil.strToJsonObject(data.getString("redpacketreceivevo"));
+					int gold = peachvoJson.getIntValue("d");
+					StringBuilder msg = new StringBuilder();
+					msg.append(userId).append("抢红包，抢到：").append("X").append(gold).append("个金币");
+					System.err.println(msg.toString());
+				}
+			}
+		} catch(Exception e) {
+			System.err.println("抢红包异常！");
+		}
+	}
+	
+	public static void grapReb(String rebId) {
+		try {
+			String[] userIds = RandomUtil.getUserIds();
+			List<String> list = Arrays.asList(userIds);
+			Collections.shuffle(list);
+			int index = 1;
+			for(int i=0; i<userIds.length; i++) {
+				if(index > 2) {
+					return;
+				}
+				String userId = list.get(i);
+				GrapRebThread peach = new GrapRebThread(rebId, userId);
 				ThreadManager.getInstance().execute(peach);
 				index++;
 			}
