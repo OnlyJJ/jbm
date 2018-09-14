@@ -8,14 +8,6 @@ import org.apache.commons.lang.StringUtils;
 import com.lm.jbm.thread.LoginThread;
 
 public class RandomUtil {
-	protected static Properties pro;
-	static {
-		try {
-			pro = new Properties();
-			pro.load(RandomUtil.class.getClassLoader().getResourceAsStream("config.properties"));
-		} catch (Exception e) {
-		}
-	}
 	
 	public static final String[] ips = {
 		"120.15.129.116",
@@ -357,7 +349,7 @@ public class RandomUtil {
 	}
 	
 	public static String[] getUserIds() {
-		String userId = pro.getProperty("userId");
+		String userId = PropertiesUtil.getValue("userId");
 		if(StringUtils.isNotEmpty(userId)) {
 			String[] userIds = userId.split(",");
 			return userIds;
@@ -366,7 +358,7 @@ public class RandomUtil {
 	}
 
 	public static String getUserId() {
-		String userId = pro.getProperty("userId");
+		String userId = PropertiesUtil.getValue("userId");
 		if(StringUtils.isNotEmpty(userId)) {
 			String[] userIds = userId.split(",");
 			int index = new Random().nextInt(userIds.length);
@@ -376,7 +368,7 @@ public class RandomUtil {
 	}
 	
 	public static String getListener() {
-		String listener = pro.getProperty("listener");
+		String listener = PropertiesUtil.getValue("listener");
 		if(StringUtils.isNotEmpty(listener)) {
 			return listener;
 		}
@@ -384,7 +376,7 @@ public class RandomUtil {
 	}
 	
 	public static String getRoomId() {
-		String roomId = pro.getProperty("roomId");
+		String roomId = PropertiesUtil.getValue("roomId");
 		if(StringUtils.isNotEmpty(roomId)) {
 			String[] roomIds = roomId.split(",");
 			int index = new Random().nextInt(roomIds.length);
@@ -394,7 +386,7 @@ public class RandomUtil {
 	}
 	
 	public static String getPwd() {
-		String pwd = pro.getProperty("pwd");
+		String pwd = PropertiesUtil.getValue("pwd");
 		if(StringUtils.isNotEmpty(pwd)) {
 			return pwd;
 		}
@@ -402,7 +394,7 @@ public class RandomUtil {
 	}
 	
 	public static int getTotal() {
-		int total = Integer.parseInt(pro.getProperty("total"));
+		int total = Integer.parseInt(PropertiesUtil.getValue("total"));
 		return total;
 	}
 	

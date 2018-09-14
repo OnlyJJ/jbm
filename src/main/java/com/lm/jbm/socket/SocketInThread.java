@@ -27,7 +27,7 @@ public class SocketInThread implements Runnable {
 					String msg = SocketUtil.recieve();
 					handleMsg(msg);
 				} catch (Exception e) {
-					break;
+					throw e;
 				}
 			}
 		} catch(Exception e) {
@@ -91,7 +91,20 @@ public class SocketInThread implements Runnable {
 							}
 						}
 						break;
+					case 50: 
+						if(content != null && content.containsKey("roomId")) {
+							String roomId = content.getString("roomId");
+							if(content.containsKey("uriMsg")) {
+								String uriMsg = content.getString("uriMsg");
+								if(uriMsg.indexOf("宝箱") > -1) {
+									System.out.println("收到宝箱通知，开启抢宝箱，房间：" + roomId);
+									JmService.grapBox(roomId);
+								}
+							}
+						}
+						break;
 					}
+					
 				}
 			}
 		} catch(Exception e) {

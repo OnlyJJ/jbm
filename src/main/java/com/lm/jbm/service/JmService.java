@@ -9,24 +9,23 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
+import com.lm.jbm.thread.GrapBoxThread;
 import com.lm.jbm.thread.GrapRebThread;
 import com.lm.jbm.thread.PeachThread;
 import com.lm.jbm.thread.ThreadManager;
 import com.lm.jbm.utils.HttpUtils;
 import com.lm.jbm.utils.JsonUtil;
+import com.lm.jbm.utils.PropertiesUtil;
 import com.lm.jbm.utils.RandomUtil;
 
 
 public class JmService {
-
-//	public static final String U1 = "http://testservice.9shows.com/U1/0/";
-//	public static final String U16 = "http://testservice.9shows.com/U16/0/";
-//	public static final String U53 = "http://testservice.9shows.com/U53/0/";
 	
-	public static final String U1 = "http://service.9shows.com/U1/0/";
-	public static final String U16 = "http://service.9shows.com/U16/0/";
-	public static final String U32 = "http://service.9shows.com/U32/0/";
-	public static final String U53 = "http://service.9shows.com/U53/0/";
+	public static final String U1 = PropertiesUtil.getValue("U1");
+	public static final String U16 = PropertiesUtil.getValue("U16");
+	public static final String U32 = PropertiesUtil.getValue("U32");
+	public static final String G48 = PropertiesUtil.getValue("G48");
+	public static final String U53 = PropertiesUtil.getValue("U53");
 
 	public static String login(String userId, String pwd, String ip) {
 		try {
@@ -179,6 +178,67 @@ public class JmService {
 			}
 		} catch(Exception e) {
 			System.err.println(e.getMessage());
+		}
+	}
+	
+	public static void grapBox(String roomId) {
+		try {
+			String[] userIds = RandomUtil.getUserIds();
+			List<String> list = Arrays.asList(userIds);
+			Collections.shuffle(list);
+			int index = 1;
+			for(int i=0; i<userIds.length; i++) {
+				if(index > 20) {
+					return;
+				}
+				String userId = list.get(i);
+				GrapBoxThread box = new GrapBoxThread(roomId, userId);
+				ThreadManager.getInstance().execute(box);
+				index++;
+			}
+		} catch(Exception e) {
+			System.err.println(e.getMessage());
+		}
+	}
+	
+	public static void grapBox(String roomId, String sessionId, String userId, String ip) {
+		try {
+			if(StringUtils.isEmpty(sessionId)) {
+				sessionId = login(userId, "123456", ip);
+			}
+			JSONObject json = new JSONObject();
+			JSONObject session = new JSONObject();
+			session.put("b", sessionId);
+			
+			JSONObject userbaseinfo = new JSONObject();
+			userbaseinfo.put("a", userId);
+			userbaseinfo.put("j", ip);
+			
+			JSONObject anchorinfo = new JSONObject();
+			anchorinfo.put("b", roomId);
+			
+			json.put("session", session);
+			json.put("userbaseinfo", userbaseinfo);
+			json.put("anchorinfo", anchorinfo);
+			
+			JSONObject grabboxvo = new JSONObject();
+			grabboxvo.put("b", sessionId);
+			json.put("grabboxvo", grabboxvo);
+			String str = json.toString();
+			String res = HttpUtils.post3(G48, str, ip);
+			if(StringUtils.isNotEmpty(res)) {
+				JSONObject data = JsonUtil.strToJsonObject(res);
+				if(data != null && data.containsKey("grabboxvo")) {
+					JSONObject ret = JsonUtil.strToJsonObject(data.getString("grabboxvo"));
+					int num = ret.getIntValue("h");
+					String name = ret.getString("f");
+					StringBuilder msg = new StringBuilder();
+					msg.append(userId).append("抢宝箱，抢到：").append(name).append("X").append(num).append("个");
+					System.err.println(msg.toString());
+				}
+			}
+		} catch(Exception e) {
+			System.err.println("抢宝箱异常！");
 		}
 	}
 }

@@ -9,6 +9,7 @@ import javax.annotation.PreDestroy;
 
 import com.lm.jbm.thread.LoginThread;
 import com.lm.jbm.thread.ThreadManager;
+import com.lm.jbm.utils.PropertiesUtil;
 
 
 
@@ -16,9 +17,8 @@ import com.lm.jbm.thread.ThreadManager;
 public class SocketClient {
 
 	public static Socket client = null;
-	// testimcore.9shows.com
-	private static final String URL = "imcore.9shows.com";
-	private static final int PORT = 9999;
+	private static final String URL = PropertiesUtil.getValue("SOCKET_URL");
+	private static final int PORT = Integer.parseInt(PropertiesUtil.getValue("SOKCET_PORT"));
 	
 	public synchronized static void init() {
 		System.err.println("初始化...");

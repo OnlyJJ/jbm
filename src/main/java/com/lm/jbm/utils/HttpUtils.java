@@ -45,42 +45,8 @@ public class HttpUtils {
 	public static  int androidClienttypeInt = 2;
 	public static  int iosClienttypeInt = 3;
 	
-	 public static String post4(String url, String json, String ip) {
-	        // 创建Httpclient对象
-		 	HttpHost proxy = new HttpHost("123.103.15.174", 8165, "http");
-		 	HttpResponse response = null;
-	        //把代理设置到请求配置
-	        RequestConfig config = RequestConfig.custom()
-	                .setProxy(proxy)
-	                .build();
-	        HttpClient httpClient =  HttpClients.createDefault();
-	        String resultString = "";
-	        try {
-	            // 创建Http Post请求
-	            HttpPost post = new HttpPost(url);
-	            // 创建请求内容
-	            StringEntity entity = new StringEntity(json, ContentType.APPLICATION_JSON);
-	            post.setEntity(entity);
-	            post.addHeader(HTTP.CONTENT_TYPE, "application/json");
-	            post.addHeader("X-Real-IP", ip);
-	            post.addHeader("X-Forwarded-For", ip);
-	            post.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36");
-	            // 执行http请求
-	            post.setConfig(RequestConfig.DEFAULT);
-	            response = httpClient.execute(post);
-	            resultString = EntityUtils.toString(response.getEntity(), "utf-8");
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        } finally {
-//	            try {
-//	            	
-//	            } catch (IOException e) {
-//	                e.printStackTrace();
-//	            }
-	        }
-
-	        return resultString;
-	    }
+	public static String HOST = PropertiesUtil.getValue("HOST");
+	public static int PORT = Integer.parseInt(PropertiesUtil.getValue("HOST_PORT"));
 	
 	 public static String post3(String url, String json, String ip) {
 	        // 创建Httpclient对象
@@ -90,7 +56,7 @@ public class HttpUtils {
 	        try {
 	            // 创建Http Post请求
 	            HttpPost post = new HttpPost(url);
-	            HttpHost proxy = new HttpHost("123.103.15.11",8165);
+	            HttpHost proxy = new HttpHost(HOST,PORT);
 	            RequestConfig requestConfig = RequestConfig.custom()
 	                    .setProxy(proxy)
 	                    .setConnectTimeout(10000)
