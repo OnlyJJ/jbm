@@ -190,7 +190,7 @@ public class HttpUtils {
 			conn.setConnectTimeout(connectTimeOutMillionSeconds);
 			conn.setReadTimeout(readTimeOutMillionSeconds);
 			conn.setRequestMethod("POST");
-			conn.getOutputStream().write(GZipUtil.compressToByte(par,"utf-8"));
+			conn.getOutputStream().write(GZipUtil.compressToByte(par));
 			conn.getOutputStream().write(par.getBytes("utf-8"));
 			conn.connect();
 			InputStream in = conn.getInputStream();
