@@ -3,9 +3,12 @@ package com.lm.jbm.utils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipException;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * GZIP压缩解压�?
@@ -64,6 +67,22 @@ public class GZipUtil {
 		}
 		return out.toByteArray();
 	}
+	
+	public static String compressToString(String str) throws IOException {
+		if (str == null || str.length() == 0) {
+			return null;
+		}
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		GZIPOutputStream gzip;
+		try {
+			gzip = new GZIPOutputStream(out);
+			gzip.write(str.getBytes(encode));
+			gzip.close();
+		} catch (Exception e) {
+		}
+		return out.toString(encode);
+	}
+	
 
 	/**
 	 * 字节数组解压缩后返回字符�?
@@ -110,5 +129,21 @@ public class GZipUtil {
 			throw e;
 		}
 		return out.toString(encoding);
+	}
+	
+	public static String uncompress(String str) throws IOException {
+		if (str == null || str.length() == 0) {
+			return str;
+		}
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ByteArrayInputStream in = new ByteArrayInputStream(
+				str.getBytes("UTF-8"));
+		byte[] b = new byte[512];
+		int n = 0;
+		while((n = in.read(b, 0 , 512)) >0) {
+			out.write(b, 0 , n);
+		}
+		byte[] bt = out.toByteArray();
+		return uncompressToString(bt);
 	}
 }
