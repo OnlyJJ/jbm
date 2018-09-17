@@ -93,16 +93,6 @@ public class SocketUtil {
 			if(os != null) {
 				os.close();
 			}
-			// 启动一个线程去重连
-			RECOUNT++;
-			if(RECOUNT > 3) {
-				return;
-			}
-			synchronized(SocketUtil.class) {
-				SocketRestartThread task = new SocketRestartThread();
-				ThreadManager.getInstance().execute(task);
-				Thread.sleep(20000);
-			}
 			throw e;
 		}
 	}
@@ -114,11 +104,9 @@ public class SocketUtil {
 			String msg = getDataBody(is); 
 			return msg;
 		} catch(Exception e) {
-			System.err.println("recieve exception..." + e.getMessage());
-			synchronized(SocketUtil.class) {
-				SocketRestartThread task = new SocketRestartThread();
-				ThreadManager.getInstance().execute(task);
-				Thread.sleep(20000);
+			Thread.sleep(100);
+			if(SocketClient.getInstance() != null) {
+				SocketClient.getInstance().close();
 			}
 			throw e;
 		}

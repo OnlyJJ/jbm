@@ -32,7 +32,7 @@ public class SocketHertThread implements Runnable {
 						Thread.sleep(10000);
 						SocketUtil.sendToImForHeartbeat(data.toString());
 					} catch (Exception e) {
-						System.out.println(e.getMessage());
+						System.out.println("发送心跳异常：" + e.getMessage());
 						break;
 					}
 				}

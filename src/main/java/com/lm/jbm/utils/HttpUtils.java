@@ -1,6 +1,8 @@
 package com.lm.jbm.utils;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -10,12 +12,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -65,7 +69,8 @@ public class HttpUtils {
 	                    .build();
 	            post.setConfig(requestConfig);
 	            // 创建请求内容
-	            StringEntity entity = new StringEntity(json, ContentType.APPLICATION_JSON);
+	            ByteArrayEntity entity = new ByteArrayEntity(GZipUtil.compressToByte(json));
+//	            StringEntity entity = new StringEntity(GZipUtil.compressToString(json), ContentType.APPLICATION_JSON);
 	            post.setEntity(entity);
 	            post.addHeader(HTTP.CONTENT_TYPE, "application/json");
 	            post.addHeader("X-Real-IP", ip);
@@ -73,7 +78,8 @@ public class HttpUtils {
 	            post.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36");
 	            // 执行http请求
 	            response = httpClient.execute(post);
-	            resultString = EntityUtils.toString(response.getEntity(), "utf-8");
+	            HttpEntity entitys = response.getEntity();
+	            resultString = EntityUtils.toString(entitys, "utf-8");
 	        } catch (Exception e) {
 	            e.printStackTrace();
 	        } finally {
@@ -173,6 +179,7 @@ public class HttpUtils {
 		HttpURLConnection conn = null;
 		StringBuffer result = new StringBuffer();
 		BufferedReader bufr = null;
+		String ret = "";
 		try {
 			URL u = new URL(url);
             conn = (HttpURLConnection) u.openConnection();
@@ -183,15 +190,23 @@ public class HttpUtils {
 			conn.setConnectTimeout(connectTimeOutMillionSeconds);
 			conn.setReadTimeout(readTimeOutMillionSeconds);
 			conn.setRequestMethod("POST");
-//			conn.getOutputStream().write(GZipUtil.compressToByte(par,"utf-8"));
+			conn.getOutputStream().write(GZipUtil.compressToByte(par,"utf-8"));
 			conn.getOutputStream().write(par.getBytes("utf-8"));
 			conn.connect();
 			InputStream in = conn.getInputStream();
-			bufr = new BufferedReader(new InputStreamReader(in, "utf-8"));
-			String line = null;
-			while ((line = bufr.readLine()) != null) {
-				result.append(line);
+//			bufr = new BufferedReader(new InputStreamReader(in, "utf-8"));
+//			String line = null;
+//			while ((line = bufr.readLine()) != null) {
+//				result.append(line);
+//			}
+			ByteArrayOutputStream bat = new ByteArrayOutputStream();
+			byte[] b = new byte[512];
+			int n = 0;
+			while((n = in.read(b, 0 , 512)) >0) {
+				bat.write(b, 0 , n);
 			}
+			byte[] out = bat.toByteArray();
+			ret = GZipUtil.uncompressToString(out);
 		}catch (Exception e) {
 			throw e;
 		} finally {
@@ -205,10 +220,10 @@ public class HttpUtils {
 				conn.disconnect();
 			}
 			long endTimeMillis = System.currentTimeMillis();
-			logResponseMsg(url, result.toString(),beginTimeMillis,endTimeMillis);
+			logResponseMsg(url, ret,beginTimeMillis,endTimeMillis);
 		}
 		
-		return result.toString();
+		return ret;
 	}
 	
 	

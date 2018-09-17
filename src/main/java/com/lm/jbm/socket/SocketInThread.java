@@ -31,7 +31,7 @@ public class SocketInThread implements Runnable {
 				}
 			}
 		} catch(Exception e) {
-			System.err.println(e.getMessage());
+			System.err.println("监听消息异常：" + e.getMessage());
 			if(SocketClient.client != null) {
 				try {
 					SocketClient.client.close();
@@ -44,7 +44,7 @@ public class SocketInThread implements Runnable {
 		}
 	}
 
-	private void handleMsg(String msg) {
+	private void handleMsg(String msg) throws Exception {
 		try {
 			if(StringUtils.isEmpty(msg)) {
 				return;
