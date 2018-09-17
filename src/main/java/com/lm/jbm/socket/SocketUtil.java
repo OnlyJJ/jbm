@@ -129,7 +129,7 @@ public class SocketUtil {
 		byte[] head = getData(is, 4);
 		int dataLength = ByteUtil.toInt(head);
 		byte[] data = getData(is, dataLength);
-		dataBody = GZipUtil.uncompressToString(data);
+		dataBody = GZipUtil.uncompressToString(data, "utf-8");
 		return dataBody;
 	}
 	
