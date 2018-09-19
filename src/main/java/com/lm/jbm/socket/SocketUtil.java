@@ -197,7 +197,7 @@ public class SocketUtil {
 		String imAuthenticationReqStr = authenticationSbf.toString();
 		Socket socket = SocketClient.creat();
 		inroomIm(imAuthenticationReqStr, socket);
-		Thread.sleep(1000);
+		Thread.sleep(RandomUtil.getRandom(100, 500));
 		String imAuthenticationResponseStr = recieve(socket);
 		JSONObject json = JsonUtil.strToJsonObject(imAuthenticationResponseStr);
 		JSONObject data = json.getJSONObject("data");

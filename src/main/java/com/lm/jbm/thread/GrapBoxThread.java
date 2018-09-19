@@ -18,19 +18,30 @@ public class GrapBoxThread implements Runnable {
 	
 	private String userId;
 	
-	public GrapBoxThread(String roomId, String userId) {
+	private int way;
+	
+	public GrapBoxThread(String roomId, String userId, int way) {
 		this.roomId = roomId;
 		this.userId = userId;
+		this.way = way;
 	}
 
 	public void run() {
 		try {
+			Socket socket = null;
 			String ip = RandomUtil.getUserIp(userId);
 			String session = LoginThread.serssionMap.get(userId);
-			Thread.sleep(RandomUtil.getRandom(20, 100));
-			Socket socket = SocketUtil.inRoom(roomId, userId);
-			Thread.sleep(RandomUtil.getRandom(10, 100));
-			JmService.grapBox(roomId, session, userId, ip);
+			if(way == 0) { // 人少时
+				Thread.sleep(RandomUtil.getRandom(1000, 3000));
+				socket = SocketUtil.inRoom(roomId, userId);
+				Thread.sleep(RandomUtil.getRandom(100, 500));
+				JmService.grapBox(roomId, session, userId, ip);
+			} else { // 人多时
+				Thread.sleep(RandomUtil.getRandom(100, 500));
+				socket = SocketUtil.inRoom(roomId, userId);
+				Thread.sleep(RandomUtil.getRandom(100, 500));
+				JmService.grapBox(roomId, session, userId, ip);
+			}
 			if(socket != null) {
 				socket.close();
 			}
@@ -52,6 +63,14 @@ public class GrapBoxThread implements Runnable {
 
 	public void setUserId(String userId) {
 		this.userId = userId;
+	}
+
+	public int getWay() {
+		return way;
+	}
+
+	public void setWay(int way) {
+		this.way = way;
 	}
 
 }

@@ -35,10 +35,10 @@ import org.apache.http.util.EntityUtils;
 public class HttpUtils {
 	
 	/**  设置http链接超时时间,单位:毫秒 */
-	private static int connectTimeOutMillionSeconds = 10000;
+	private static int connectTimeOutMillionSeconds = 30000;
 	
 	/**  设置http读超时时�?单位:毫秒 */
-	private static final int readTimeOutMillionSeconds = 10000;
+	private static final int readTimeOutMillionSeconds = 30000;
 	
 	
 	public static  final String webClient = "web"; 
@@ -63,8 +63,8 @@ public class HttpUtils {
 	            HttpHost proxy = new HttpHost(HOST,PORT);
 	            RequestConfig requestConfig = RequestConfig.custom()
 	                    .setProxy(proxy)
-	                    .setConnectTimeout(10000)
-	                    .setSocketTimeout(10000)
+	                    .setConnectTimeout(45000)
+	                    .setSocketTimeout(45000)
 	                    .setConnectionRequestTimeout(3000)
 	                    .build();
 	            post.setConfig(requestConfig);
