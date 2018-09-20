@@ -1,19 +1,20 @@
 package com.lm.jbm.service;
 
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.lm.jbm.thread.GrapBoxThread;
 import com.lm.jbm.thread.GrapRebThread;
+import com.lm.jbm.thread.LoginThread;
 import com.lm.jbm.thread.PeachThread;
 import com.lm.jbm.thread.ThreadManager;
 import com.lm.jbm.utils.DateUtil;
@@ -292,7 +293,7 @@ public class JmService {
 	public static void grapBox(String roomId, String sessionId, String userId, String ip) {
 		try {
 			if(StringUtils.isEmpty(sessionId)) {
-				sessionId = login(userId, "123456", ip);
+				sessionId = login(userId, RandomUtil.getPwd(), ip);
 			}
 			JSONObject json = new JSONObject();
 			JSONObject session = new JSONObject();
