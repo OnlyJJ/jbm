@@ -184,19 +184,22 @@ public class JmService {
 			Collections.shuffle(list);
 			int index = 1;
 			int real = findOnline(roomId);
-			int conf = Integer.parseInt(PropertiesUtil.getValue("real_count"));
-			int way = 1;
-			if(real < conf) {
-				Thread.sleep(1000);
-				way = 0;
-			}
+//			int conf = Integer.parseInt(PropertiesUtil.getValue("real_count"));
+//			if(real < conf) {
+//				Thread.sleep(1000);
+//			}
 			for(int i=0; i<userIds.length; i++) {
-				if(index > RandomUtil.getTotal()) {
-					return;
+				if(real >= 50) {
+					if(index > 6) {
+						return;
+					}
+				} else {
+					if(index > RandomUtil.getTotal()) {
+						return;
+					}
 				}
-				Thread.sleep(RandomUtil.getRandom(50, 100));
 				String userId = list.get(i);
-				PeachThread peach = new PeachThread(roomId, userId, way);
+				PeachThread peach = new PeachThread(roomId, userId, real);
 				ThreadManager.getInstance().execute(peach);
 				index++;
 			}
@@ -327,7 +330,7 @@ public class JmService {
 		}
 	}
 	
-	public static boolean checkTime() {
+	public static boolean checkFreeTime() {
 		try {
 			Date now = new Date();
 			String str1 = DateUtil.format2Str(now, "yyyy-MM-dd") + " 01:00:00";
@@ -335,10 +338,10 @@ public class JmService {
 			Date d = DateUtil.parse(str1, "yyyy-MM-dd HH:mm:ss");
 			Date d2 = DateUtil.parse(str2, "yyyy-MM-dd HH:mm:ss");
 			if(now.after(d) && now.before(d2)) {
-				return false;
+				return true;
 			}
 		} catch (Exception e) {
 		}
-		return true;
+		return false;
 	}
 }
