@@ -4,16 +4,13 @@ package com.lm.jbm.service;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.lm.jbm.thread.GrapBoxThread;
-import com.lm.jbm.thread.GrapRebThread;
 import com.lm.jbm.thread.LoginThread;
 import com.lm.jbm.thread.PeachThread;
 import com.lm.jbm.thread.ThreadManager;
@@ -30,8 +27,20 @@ public class JmService {
 	public static final String U15 = PropertiesUtil.getValue("U15");
 	public static final String U16 = PropertiesUtil.getValue("U16");
 	public static final String U32 = PropertiesUtil.getValue("U32");
+	public static final String U48 = PropertiesUtil.getValue("U48");
 	public static final String G48 = PropertiesUtil.getValue("G48");
 	public static final String U53 = PropertiesUtil.getValue("U53");
+	
+	public static String getSessionId(String userId) {
+		String sessionId = LoginThread.serssionMap.get(userId);
+		if(StringUtils.isEmpty(sessionId)) {
+			sessionId = JmService.login(userId, RandomUtil.getPwd(), RandomUtil.getIp());
+			if(sessionId != null && !StringUtils.isEmpty(sessionId)) {
+				LoginThread.serssionMap.put(userId, sessionId);
+			}
+		}
+		return sessionId;
+	}
 
 	public static String login(String userId, String pwd, String ip) {
 		try {
@@ -243,25 +252,6 @@ public class JmService {
 		}
 	}
 	
-	public static void grapReb(String rebId) {
-		try {
-			String[] userIds = RandomUtil.getUserIds();
-			List<String> list = Arrays.asList(userIds);
-			Collections.shuffle(list);
-			int index = 1;
-			for(int i=0; i<userIds.length; i++) {
-				if(index > 2) {
-					return;
-				}
-				String userId = list.get(i);
-				GrapRebThread peach = new GrapRebThread(rebId, userId);
-				ThreadManager.getInstance().execute(peach);
-				index++;
-			}
-		} catch(Exception e) {
-			System.err.println(e.getMessage());
-		}
-	}
 	
 	public static void grapBox(String roomId) {
 		try {
@@ -344,5 +334,19 @@ public class JmService {
 		} catch (Exception e) {
 		}
 		return false;
+	}
+	
+	public static void sign(String userId, String sessionId, String ip) {
+		JSONObject json = new JSONObject();
+		JSONObject session = new JSONObject();
+		session.put("b", sessionId);
+		
+		JSONObject userbaseinfo = new JSONObject();
+		userbaseinfo.put("a", userId);
+		userbaseinfo.put("j", ip);
+		
+		json.put("session", session);
+		json.put("userbaseinfo", userbaseinfo);
+		String ret = HttpUtils.post3(U48, json.toString(), ip);
 	}
 }

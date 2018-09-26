@@ -15,6 +15,8 @@ public class LoginThread implements Runnable {
 	public static ConcurrentHashMap<String, String> serssionMap = new ConcurrentHashMap<String, String>(512);
 	
 	public static ConcurrentHashMap<String, String> ipMap = new ConcurrentHashMap<String, String>(512);
+	
+	public static ConcurrentHashMap<String, String> signMap = new ConcurrentHashMap<String, String>(512);
 
 	public LoginThread() {}
 
@@ -34,6 +36,11 @@ public class LoginThread implements Runnable {
 						String ret = JmService.login(userId, RandomUtil.getPwd(), ip);
 						if(StringUtils.isNotEmpty(ret)) {
 							serssionMap.put(userId, ret);
+							if(!signMap.contains(userId)) {
+								signMap.put(userId, "1");
+								JmService.sign(userId, ret, ip);
+								Thread.sleep(1000);
+							}
 						}
 						Thread.sleep(2000);
 					}

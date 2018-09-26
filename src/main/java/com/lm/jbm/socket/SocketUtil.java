@@ -188,10 +188,7 @@ public class SocketUtil {
 	
 	
 	public static Socket inRoom(String roomId, String userId) throws Exception {
-		String sessionId = LoginThread.serssionMap.get(userId);
-		if(StringUtils.isEmpty(sessionId)) {
-			sessionId = JmService.login(userId, RandomUtil.getPwd(), RandomUtil.getIp());
-		}
+		String sessionId = JmService.getSessionId(userId);
 		StringBuffer authenticationSbf = new StringBuffer();
 		authenticationSbf.append("").append("{\"funID\":11000,\"length\":100,\"data\":{\"sessionid\":\"").append(sessionId).append("\",\"uid\":\"").append(userId).append("\"}}");
 		String imAuthenticationReqStr = authenticationSbf.toString();

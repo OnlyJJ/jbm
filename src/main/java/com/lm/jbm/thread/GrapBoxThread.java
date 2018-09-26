@@ -30,7 +30,7 @@ public class GrapBoxThread implements Runnable {
 		try {
 			Socket socket = null;
 			String ip = RandomUtil.getUserIp(userId);
-			String session = LoginThread.serssionMap.get(userId);
+			String session = JmService.getSessionId(userId);
 			if(way == 0) { // 人少时
 				Thread.sleep(RandomUtil.getRandom(1000, 3000));
 				socket = SocketUtil.inRoom(roomId, userId);

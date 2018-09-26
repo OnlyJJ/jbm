@@ -4,6 +4,8 @@ package com.lm.jbm.thread;
 import java.net.Socket;
 import java.util.Random;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.lm.jbm.service.JmService;
 import com.lm.jbm.socket.SocketUtil;
 import com.lm.jbm.utils.RandomUtil;
@@ -30,7 +32,7 @@ public class PeachThread implements Runnable {
 		try {
 			Socket socket = null;
 			String ip = RandomUtil.getUserIp(userId);
-			String session = LoginThread.serssionMap.get(userId);
+			String session = JmService.getSessionId(userId);
 			int sleepTime1 = 1000; // 延迟进入房间时间
 			int sleepTime2 = 1000; // 进入房间后延迟摘桃时间
 			boolean flag = JmService.checkFreeTime(); // 是否是 01:00 ~ 10:30
