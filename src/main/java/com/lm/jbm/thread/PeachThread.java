@@ -42,7 +42,7 @@ public class PeachThread implements Runnable {
 					sleepTime1 = RandomUtil.getRandom(3000, 6000);
 					sleepTime2 = RandomUtil.getRandom(3000, 6000);
 				} else { // 其他时间段， 间隔4~8秒
-					sleepTime1 = RandomUtil.getRandom(2000, 5000);
+					sleepTime1 = RandomUtil.getRandom(2000, 4000);
 					sleepTime2 = RandomUtil.getRandom(2000, 3000);
 				}
 			} else if(way > 10 && way <= 20) { // 人少
@@ -58,8 +58,8 @@ public class PeachThread implements Runnable {
 					sleepTime1 = RandomUtil.getRandom(2000, 5000);
 					sleepTime2 = RandomUtil.getRandom(2000, 3000);
 				} else { // 其他时间段，间隔3~6秒
-					sleepTime1 = RandomUtil.getRandom(1000, 3000);
-					sleepTime2 = RandomUtil.getRandom(2000, 3000);
+					sleepTime1 = RandomUtil.getRandom(1000, 2500);
+					sleepTime2 = RandomUtil.getRandom(2000, 2500);
 				}
 			} else if(way > 30 && way <= 40) { // 人多，
 				if(flag) {  // 01:00 ~ 10:30，间隔3~5秒

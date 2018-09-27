@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -22,7 +23,7 @@ import com.lm.jbm.utils.RandomUtil;
 
 
 public class JmService {
-	
+	public static ConcurrentHashMap<String, String> peachMap = new ConcurrentHashMap<String, String>(512);
 	public static final String U1 = PropertiesUtil.getValue("U1");
 	public static final String U15 = PropertiesUtil.getValue("U15");
 	public static final String U16 = PropertiesUtil.getValue("U16");
@@ -169,6 +170,7 @@ public class JmService {
 			
 			String str = json.toString();
 			String res = HttpUtils.post3(U53, str, ip);
+			remove(userId);
 			if(StringUtils.isNotEmpty(res)) {
 				JSONObject data = JsonUtil.strToJsonObject(res);
 				if(data != null && data.containsKey("peachvo")) {
@@ -194,21 +196,37 @@ public class JmService {
 			Collections.shuffle(list);
 			int index = 1;
 			int real = findOnline(roomId);
-//			int conf = Integer.parseInt(PropertiesUtil.getValue("real_count"));
-//			if(real < conf) {
-//				Thread.sleep(1000);
-//			}
+			if(real < 10) {
+				Thread.sleep(1000);
+			}
 			for(int i=0; i<userIds.length; i++) {
 				if(real >= 50) {
 					if(index > 6) {
 						return;
 					}
-				} else {
-					if(index > RandomUtil.getTotal()) {
+				} else if(real >= 30 && real < 50) {
+					if(index > 12) {
 						return;
 					}
+				} else if(real >= 20 && real < 30) {
+					if(index > 14) {
+						return;
+					}
+				} else if(real >= 10 && real < 20) {
+					if(index > 16) {
+						return;
+					}
+				} else {
+					if(index > 18) {
+						return;
+					}
+					
 				}
 				String userId = list.get(i);
+				if(peachMap.contains(userId)) {
+					continue;
+				}
+				peachMap.put(userId, roomId);
 				PeachThread peach = new PeachThread(roomId, userId, real);
 				ThreadManager.getInstance().execute(peach);
 				index++;
@@ -216,6 +234,10 @@ public class JmService {
 		} catch(Exception e) {
 			System.err.println(e.getMessage());
 		}
+	}
+	
+	public static void remove(String userId) {
+		peachMap.remove(userId);
 	}
 	
 	public static void grapReb(String userId, String sessionId, String rebId, String ip) {
