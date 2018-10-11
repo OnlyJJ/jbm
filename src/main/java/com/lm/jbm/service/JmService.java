@@ -29,6 +29,7 @@ public class JmService {
 	public static final String U16 = PropertiesUtil.getValue("U16");
 	public static final String U32 = PropertiesUtil.getValue("U32");
 	public static final String U48 = PropertiesUtil.getValue("U48");
+	public static final String U50 = PropertiesUtil.getValue("U50");
 	public static final String G48 = PropertiesUtil.getValue("G48");
 	public static final String U53 = PropertiesUtil.getValue("U53");
 	
@@ -369,6 +370,23 @@ public class JmService {
 		
 		json.put("session", session);
 		json.put("userbaseinfo", userbaseinfo);
-		String ret = HttpUtils.post3(U48, json.toString(), ip);
+		
+		// 是否签到
+		boolean flag = false;
+		String res = HttpUtils.post3(U50, json.toString(), ip);
+		if(StringUtils.isNotEmpty(res)) {
+			JSONObject data = JsonUtil.strToJsonObject(res);
+			if(data != null && data.containsKey("signinfovo")) {
+				JSONObject ret = JsonUtil.strToJsonObject(data.getString("signinfovo"));
+				String signFlag = ret.getString("e");
+				if(signFlag.equalsIgnoreCase("n")) {
+					flag = true;
+				}
+			}
+		}
+		if(flag) {
+			System.err.println("签到：" + userId);
+			HttpUtils.post3(U48, json.toString(), ip);
+		}
 	}
 }
