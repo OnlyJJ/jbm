@@ -23,7 +23,7 @@ public class LoginThread implements Runnable {
 	public void run() {
 		while(true) {
 			try {
-				String[] userIds = RandomUtil.getUserIds();
+				String[] userIds = RandomUtil.getUserIds("userId");
 				if(userIds != null) {
 					for(String userId : userIds) {
 						String ip = "";

@@ -352,8 +352,8 @@ public class RandomUtil {
 		return ips[index];
 	}
 	
-	public static String[] getUserIds() {
-		String userId = PropertiesUtil.getValue("userId");
+	public static String[] getUserIds(String key) {
+		String userId = PropertiesUtil.getValue(key);
 		if(StringUtils.isNotEmpty(userId)) {
 			String[] userIds = userId.split(",");
 			return userIds;
@@ -361,15 +361,6 @@ public class RandomUtil {
 		return null;
 	}
 
-	public static String getUserId() {
-		String userId = PropertiesUtil.getValue("userId");
-		if(StringUtils.isNotEmpty(userId)) {
-			String[] userIds = userId.split(",");
-			int index = new Random().nextInt(userIds.length);
-			return userIds[index];
-		}
-		return "";
-	}
 	
 	public static String getListener() {
 		String listener = PropertiesUtil.getValue("listener");

@@ -192,7 +192,7 @@ public class JmService {
 	
 	public static void peach(String roomId) {
 		try {
-			String[] userIds = RandomUtil.getUserIds();
+			String[] userIds = RandomUtil.getUserIds("userId");
 			List<String> list = Arrays.asList(userIds);
 			Collections.shuffle(list);
 			int index = 1;
@@ -278,7 +278,7 @@ public class JmService {
 	
 	public static void grapBox(String roomId) {
 		try {
-			String[] userIds = RandomUtil.getUserIds();
+			String[] userIds = RandomUtil.getUserIds("boxUser");
 			List<String> list = Arrays.asList(userIds);
 			Collections.shuffle(list);
 			int index = 1;
