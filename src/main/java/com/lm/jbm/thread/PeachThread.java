@@ -75,8 +75,8 @@ public class PeachThread implements Runnable {
 					sleepTime2 = RandomUtil.getRandom(1000, 2000);
 				} else {  // 其他时间段，间隔1.3~3秒
 					isInroom = false;
-					sleepTime1 = RandomUtil.getRandom(800, 2000);
-					sleepTime2 = RandomUtil.getRandom(300, 1000);
+					sleepTime1 = RandomUtil.getRandom(800, 1500);
+					sleepTime2 = RandomUtil.getRandom(300, 600);
 				}
 			}
 			if(isInroom) {

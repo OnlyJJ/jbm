@@ -25,6 +25,7 @@ import com.lm.jbm.utils.RandomUtil;
 public class JmService {
 	public static ConcurrentHashMap<String, String> peachMap = new ConcurrentHashMap<String, String>(512);
 	public static final String U1 = PropertiesUtil.getValue("U1");
+	public static final String U11 = PropertiesUtil.getValue("U11");
 	public static final String U15 = PropertiesUtil.getValue("U15");
 	public static final String U16 = PropertiesUtil.getValue("U16");
 	public static final String U32 = PropertiesUtil.getValue("U32");
@@ -156,6 +157,7 @@ public class JmService {
 	public static String pluck(String roomId, String userId, String sessionId, String ip) {
 		try {
 			JSONObject json = new JSONObject();
+			JSONObject info = new JSONObject();
 			JSONObject session = new JSONObject();
 			session.put("b", sessionId);
 			
@@ -181,6 +183,22 @@ public class JmService {
 					StringBuilder msg = new StringBuilder();
 					msg.append(userId).append("摘到：").append(name).append("X").append(num).append("个");
 					System.err.println(msg.toString());
+					
+					// 摘成功后，修改昵称
+					info.put("session", session);
+					JSONObject userbaseinfo1 = new JSONObject();
+					userbaseinfo.put("a", userId);
+					info.put("userbaseinfo", userbaseinfo1);
+					JSONObject anchorinfo = new JSONObject();
+					anchorinfo.put("d", RandomUtil.getNickname());
+					anchorinfo.put("h", "暂无");
+					anchorinfo.put("y", "");
+					anchorinfo.put("x", "");
+					anchorinfo.put("z", "");
+					anchorinfo.put("m", "1997-10-01");
+					anchorinfo.put("l", "男");
+					info.put("anchorinfo", anchorinfo);
+					HttpUtils.post3(U11, info.toString(), ip);
 					return msg.toString();
 				}
 			}
@@ -192,37 +210,50 @@ public class JmService {
 	
 	public static void peach(String roomId) {
 		try {
-			String[] userIds = RandomUtil.getUserIds("userId");
-			List<String> list = Arrays.asList(userIds);
-			Collections.shuffle(list);
-			int index = 1;
+//			String[] userIds = RandomUtil.getUserIds("userId");
+			List<String> list = null;
+			int level1 = 0;
+			int level2 = 0;
+			int level3 = 0;
+			int level4 = 0;
+			int level5 = 0;
 			int real = findOnline(roomId);
+			if(real >= 50) {
+				list = RandomUtil.getNoInroomUserIds(7);
+			} else if(real >= 30) {
+				level1 = 2;
+				level2 = 4;
+				level3 = 3;
+				level4 = 3;
+				level5 = 2;
+			} else if(real >= 20) {
+				level1 = 3;
+				level2 = 4;
+				level3 = 4;
+				level4 = 3;
+				level5 = 2;
+			} else if(real >= 10) {
+				level1 = 3;
+				level2 = 4;
+				level3 = 4;
+				level4 = 4;
+				level5 = 3;
+			} else {
+				level1 = 4;
+				level2 = 5;
+				level3 = 4;
+				level4 = 5;
+				level5 = 2;
+			}
+			list = RandomUtil.getGroupUserIds(level1, level2, level3, level4, level5);
+			if(list == null || list.size() <= 0) {
+				return;
+			}
+			int size = list.size();
 			if(real < 10) {
 				Thread.sleep(1000);
 			}
-			for(int i=0; i<userIds.length; i++) {
-				if(real >= 50) {
-					if(index > 6) {
-						return;
-					}
-				} else if(real >= 30 && real < 50) {
-					if(index > 12) {
-						return;
-					}
-				} else if(real >= 20 && real < 30) {
-					if(index > 14) {
-						return;
-					}
-				} else if(real >= 10 && real < 20) {
-					if(index > 16) {
-						return;
-					}
-				} else {
-					if(index > 18) {
-						return;
-					}
-					
-				}
+			for(int i=0; i<size; i++) {
 				String userId = list.get(i);
 				if(peachMap.contains(userId)) {
 					continue;
@@ -230,7 +261,6 @@ public class JmService {
 				peachMap.put(userId, roomId);
 				PeachThread peach = new PeachThread(roomId, userId, real);
 				ThreadManager.getInstance().execute(peach);
-				index++;
 			}
 		} catch(Exception e) {
 			System.err.println(e.getMessage());
@@ -348,7 +378,7 @@ public class JmService {
 		try {
 			Date now = new Date();
 			String str1 = DateUtil.format2Str(now, "yyyy-MM-dd") + " 01:00:00";
-			String str2 = DateUtil.format2Str(now, "yyyy-MM-dd") + " 10:30:00";
+			String str2 = DateUtil.format2Str(now, "yyyy-MM-dd") + " 09:00:00";
 			Date d = DateUtil.parse(str1, "yyyy-MM-dd HH:mm:ss");
 			Date d2 = DateUtil.parse(str2, "yyyy-MM-dd HH:mm:ss");
 			if(now.after(d) && now.before(d2)) {

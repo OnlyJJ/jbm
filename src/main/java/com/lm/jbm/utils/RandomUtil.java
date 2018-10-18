@@ -1,14 +1,19 @@
 package com.lm.jbm.utils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.lm.jbm.service.JmService;
 import com.lm.jbm.thread.LoginThread;
 
 public class RandomUtil {
-	
+	public static ConcurrentHashMap<String, String> nameMap = new ConcurrentHashMap<String, String>(512);
 	public static final String[] ips = {
 		"120.15.129.117",
 		"120.15.129.118",
@@ -340,6 +345,13 @@ public class RandomUtil {
 		"223.99.57.162"
 	};
 	
+	public static String[] one = {"恩","黑","毒","傲","浪","秽","妍","沅","瞳","谁","柒","歖","譆","枯","安","瞒","等","黏","殇.","渗","憐","嗯","囍","放","沉","瘾","叚","槿","怂","吟","碍","寂","呸","敷","绝","嘘","奢","逗","凉","昔","遇","素","饿","亡","噬","單","暮","瞳","岛","窿","嚎","傲","高","欢","乐","野","骚","蔍","曦","朤","私","艺","美","酥","离","烈","腻","癮","废","青","醉","孽","憩","槿","悸","独","走","沸","毁","帅","朝","统","怹","狂","装","宥","止","茜","盲","稚","毒","黎","亂","肆","精","柠","噩","陌","殘","伪","噤","丧","嘘","癮","废","傀","惜","孽","槿","悸","隐","碎","疚","怼","藥","咒","浪","怂","朕","哑","闹","辜","劫","俗","傲","魂","戏","慕","白","堕","墓","忌","烬","隅","慦 ","怣","忐","忑","蜕","哄","倦","爬","久"};
+	public static String[] two = {"孤者","柠凉","卷鬓","热吻","笑脸","初柚*","散落","良辰","厌世","贪世","放生","世俗","倒带","叛逆","脆弱","孤身","孤刺","禁锢","深碍","遣心","丑态","游魂","情丝","依赖","泪眼","莺语","清悦","空城","浪潮","转角","独瘾","皱眉","温婉","挽发","诱惑","囚鸟","烫嘴","断点","衬心","妄念","夏末","猫弦","情伤","情愫","情满","浊泪","浅笑","救赎","失意","流苏","配角","热水","迎夏","梦魇","懦弱","爱惜","湉晨","北觅","东寻","戒躁","消逝","过客","无畏","长安","征途","心抑","现实","拒丧","魇九","另类","旧故","难处","深腻","寒潮","听孤","薄荷","幼稚","清晓","风尘","诉说","舌味","自赎","亵渎","辞取","纵行","凉墨","绅士","善变","哑巴","贪生","砒霜","寡言","忘羡","偏执","败类","任性","大牌","识趣","无憾","取悦","沉醉","普通","妩媚","涟漪","旖旎","南笙","皆叹","夏倦","冬眠","奶包","巴卫","锦鲤","玉女","放鹤","得云","玉兔","昏君","幼虎","芝士","尤人","欲仙","浮生","缠绵","炽热","清明","河图","春野","棠绾","南音","良辰","君赋","抬举","闲云","念旧","单杀","孽徒","过客","君顾","殊荣","知返","鹤绝","传韵","洒脱","逆战","情言","误叹","木白","夏目","折枝′","楹曦","雾月","疚爱","颤吻","单野","眼杂","玄鸟","苏烟","零帝","择终","心奴","杼惘","初弋i","衣冢i","恋土","庸俗","山丘","戏江","院长","猎场","莫离","文少","点点","永平","微笑","暗恋","旧情","多余","情殇","救赎","腾龙","良生","霸道","回头","莫逆","颜熙","寻欢","河北","毒药","十七","无趣","温情","縌亂","北念","寻找","听风","嘿嘿","人渣","沐北","管我","錆酒","情仙","北梦","妄为","仄言","寒塘","哈喽","王宁","尐希","清君","十一","也许","陈晨","韬哥","山鬼","怪咖","义哥","俏皮","残冬","林熙","猫性","狂飙","爱你","屍魂","殊荣","参商","冷漠","酒渣","劫难","鬼圣","痞笑","小猪欲望","张杰","渡恶","倾城","空痕","柚子","情兽","野病","泪奔","无心","杰杰","月华","呵呵","共勉","换心","污啊","不合","冷暖","小生","城府","啊呀","焱焱","小喜","断情","厌倦","单飞","小痴"};
+	public static String[] thr = {"半符堙","蔺玄觞","九天雪","萧墨尘","凤净松","慕笛安","龙宇昊","十里寂","蔺玄觞","九天雪","萧墨尘","凤净松","慕笛安","十里寂","慕凝枫","骨哀引","云熙然","南承曜","龙吟凤","断秋风","凝残月","暮成雪","易眸落","凌风啸","安卿尘","逆风昊","枫无痕","玄墨染","秦楚殇","三千寒","狄云义","宁陌夙","半符堙","难治愈","到不了","挽青丝","念花祭","别爱她","倒计时","丑八怪","小满足","茉莉花","久夏青","风如歌","别凑活","新鲜感","他不懂","旧情人","战痘族","大儿童","病怏怏","凉透心","算了吧","别强撑","心太闹","空自许","独命唱","无辜者","已别去","局外人","心太野","空口言","哎哟喂","顾及我","不然呢","孤独症","旧面容","假洒脱","旧照片","千里寻","难忘怀","别殷勤","枕头人","无所谓","海未深"};
+	public static String[] nogroup = {"惦 念 ╰","゛微笑↘","沧颜▃","—━╋う夜声╰☆╮","゛若久","凝眸う","花 逝╮","強荵▃","爱笑じ","放手 گق","邂逅♛","玩家L-","狂☆神","ゝ九夜°","′芈妖。"," ◤血煞◢ヽ","﹏颜汐ぐ","_____浅沫°","、玩 具","ザ琉璃","偷心者※","君莫邪","愁千缕","情花开◎","离人醉","水无忧","小*顽*固","黒禮菔℡","ミ﹏泡小糖","翠花哥＠","君子傲つ","祂丶佷羙"," 朕很萌′","爱___再生。","愿君惜","南风瑾、","欧美范i","寻爱人╮","冷月魄","南笙离","丶格子夏°","煙花碎·","で毛毛熊","酒、麻醉","墨瞳殇"," 必須丶浪","血屠手","梦、旧了","℡离城梦","﹀梦里花","离心控°","想、未来","冰琉璃◕‿◕","清风渡","别猜心","执风挽","戏︶￣蓜角","蔸蔸゛猫⿺"};
+	public static String[] fuhao = {"※","(⊙﹏⊙)b",":-D","❤","☜","☝","★","☺","☀","☚","☟","☛","♦","☆","♈","♉","♊","♋","♌","♎","♏","♐","♑","♓","♒","♍","❃","❀","✿","❉","❈","✲","＊","*","☸","❤","☠","ㄲ","ㅎ","ㅍ","ㄲㅃ","ㅆ","ㅂ","ㅁ","ㄹ","ㄷ","ㄴㄱ","ㅇ","ㅈ","ㅊ","ㅋ","ㅌ","ㅒ","ㅐ","ㅟㅠ","ㅛㅗ","ㅓ","ㅖ","ㅖ","㉵","㉴","㈁","㈀","㈀","㈆","㈊","つ","てこ","㊣","☯","✈","*","＊"};
+	
+	
 	public static String getUserIp(String userId) {
 		if(LoginThread.ipMap.containsKey(userId)) {
 			return LoginThread.ipMap.get(userId);
@@ -399,5 +411,166 @@ public class RandomUtil {
 		new java.util.Random();
 		returnValue=(int)((maxValue-minValue)*Math.random()+minValue);
 		return returnValue;
+	}
+	
+	/**
+	 * 
+	 * @author Shao.x
+	 * @date 2018年10月18日
+	 * @param level1 1类用户数
+	 * @param level2 2类用户数
+	 * @param level3 。。。
+	 * @param level4。。。
+	 * @param level5。。。
+	 * @return
+	 */
+	public static List<String> getGroupUserIds(int level1, int level2,int level3, int level4, int level5) {
+		List<String> ret = new ArrayList<String>();
+		if(level1 >0) {
+			String group1 = PropertiesUtil.getValue("user_level_1");
+			if(StringUtils.isNotEmpty(group1)) {
+				String[] userIds = group1.split(",");
+				List<String> list = Arrays.asList(userIds);
+				int index = 1;
+				for(int i=0; i<list.size(); i++) {
+					if(index > level1) {
+						break;
+					}
+					String userId = list.get(i);
+					if(JmService.peachMap.containsKey(userId)) {
+						continue;
+					}
+					ret.add(userId);
+					JmService.peachMap.put(userId, String.valueOf(level1));
+					index++;
+				}
+			}
+		} 
+		if(level2 >0) {
+			String group2 = PropertiesUtil.getValue("user_level_2");	
+			if(StringUtils.isNotEmpty(group2)) {
+				String[] userIds = group2.split(",");
+				List<String> list = Arrays.asList(userIds);
+				int index = 1;
+				for(int i=0; i<list.size(); i++) {
+					if(index > level2) {
+						break;
+					}
+					String userId = list.get(i);
+					if(JmService.peachMap.containsKey(userId)) {
+						continue;
+					}
+					ret.add(userId);
+					JmService.peachMap.put(userId, String.valueOf(level2));
+					index++;
+				}
+			}
+		}
+		if(level3 >0) {
+			String group3 = PropertiesUtil.getValue("user_level_3");
+			if(StringUtils.isNotEmpty(group3)) {
+				String[] userIds = group3.split(",");
+				List<String> list = Arrays.asList(userIds);
+				int index = 1;
+				for(int i=0; i<list.size(); i++) {
+					if(index > level3) {
+						break;
+					}
+					String userId = list.get(i);
+					if(JmService.peachMap.containsKey(userId)) {
+						continue;
+					}
+					ret.add(userId);
+					JmService.peachMap.put(userId, String.valueOf(level3));
+					index++;
+				}
+			}
+		} 
+		if(level4 >0) {
+			String group4 = PropertiesUtil.getValue("user_level_4");
+			if(StringUtils.isNotEmpty(group4)) {
+				String[] userIds = group4.split(",");
+				List<String> list = Arrays.asList(userIds);
+				int index = 1;
+				for(int i=0; i<list.size(); i++) {
+					if(index > level4) {
+						break;
+					}
+					String userId = list.get(i);
+					if(JmService.peachMap.containsKey(userId)) {
+						continue;
+					}
+					ret.add(userId);
+					JmService.peachMap.put(userId, String.valueOf(level4));
+					index++;
+				}
+			}
+		}
+		if(level5 >0) {
+			String group5 = PropertiesUtil.getValue("user_level_5");
+			if(StringUtils.isNotEmpty(group5)) {
+				String[] userIds = group5.split(",");
+				List<String> list = Arrays.asList(userIds);
+				int index = 1;
+				for(int i=0; i<list.size(); i++) {
+					if(index > level5) {
+						break;
+					}
+					String userId = list.get(i);
+					if(JmService.peachMap.containsKey(userId)) {
+						continue;
+					}
+					ret.add(userId);
+					JmService.peachMap.put(userId, String.valueOf(level5));
+					index++;
+				}
+			}
+		} 
+		return ret;
+	}
+	
+	
+	public static List<String> getNoInroomUserIds(int num) {
+		List<String> ret = new ArrayList<String>();
+		if(num >0) {
+			String group1 = PropertiesUtil.getValue("user_no_inroom");
+			if(StringUtils.isNotEmpty(group1)) {
+				String[] userIds = group1.split(",");
+				List<String> list = Arrays.asList(userIds);
+				int index = 1;
+				for(int i=0; i<list.size(); i++) {
+					if(index > num) {
+						break;
+					}
+					String userId = list.get(i);
+					if(JmService.peachMap.containsKey(userId)) {
+						continue;
+					}
+					ret.add(userId);
+					JmService.peachMap.put(userId, "no_inroom");
+					index++;
+				}
+			}
+		}
+		return ret;
+	}
+	
+	public static String getNickname() {
+		String name = one[getRandom(1, one.length)] + fuhao[getRandom(1, fuhao.length)];
+		long time = System.currentTimeMillis();
+		if(time % 2 == 0) {
+			while(true) {
+				name = nogroup[getRandom(1, nogroup.length)];
+				if(StringUtils.isNotEmpty(name)) {
+					if(!nameMap.containsKey(name.hashCode())) {
+						nameMap.put(String.valueOf(name.hashCode()), name);
+						break;
+					}
+				}
+			}
+		} else {
+			
+		}
+		return name;
 	}
 }
