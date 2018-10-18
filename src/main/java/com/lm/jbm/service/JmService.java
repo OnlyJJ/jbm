@@ -190,7 +190,8 @@ public class JmService {
 					userbaseinfo.put("a", userId);
 					info.put("userbaseinfo", userbaseinfo1);
 					JSONObject anchorinfo = new JSONObject();
-					anchorinfo.put("d", RandomUtil.getNickname());
+					String nickname = RandomUtil.getNickname(userId);
+					anchorinfo.put("d", nickname);
 					anchorinfo.put("h", "暂无");
 					anchorinfo.put("y", "");
 					anchorinfo.put("x", "");
@@ -198,7 +199,8 @@ public class JmService {
 					anchorinfo.put("m", "1997-10-01");
 					anchorinfo.put("l", "男");
 					info.put("anchorinfo", anchorinfo);
-					HttpUtils.post3(U11, info.toString(), ip);
+					String resp = HttpUtils.post3(U11, info.toString(), ip);
+					System.err.println("摘桃后，修改昵称：" + userId + "，修改的昵称：" + nickname + "，修改结果："+ resp);
 					return msg.toString();
 				}
 			}
