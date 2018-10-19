@@ -13,6 +13,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.lm.jbm.thread.GrapBoxThread;
 import com.lm.jbm.thread.LoginThread;
+import com.lm.jbm.thread.PeachNoInRoomThread;
 import com.lm.jbm.thread.PeachThread;
 import com.lm.jbm.thread.ThreadManager;
 import com.lm.jbm.utils.DateUtil;
@@ -173,7 +174,6 @@ public class JmService {
 			
 			String str = json.toString();
 			String res = HttpUtils.post3(U53, str, ip);
-			remove(userId);
 			if(StringUtils.isNotEmpty(res)) {
 				JSONObject data = JsonUtil.strToJsonObject(res);
 				if(data != null && data.containsKey("peachvo")) {
@@ -183,25 +183,43 @@ public class JmService {
 					StringBuilder msg = new StringBuilder();
 					msg.append(userId).append("摘到：").append(name).append("X").append(num).append("个");
 					System.err.println(msg.toString());
-					
-					// 摘成功后，修改昵称
-					info.put("session", session);
-					JSONObject userbaseinfo1 = new JSONObject();
-					userbaseinfo.put("a", userId);
-					info.put("userbaseinfo", userbaseinfo1);
-					JSONObject anchorinfo = new JSONObject();
-					String nickname = RandomUtil.getNickname(userId);
-					anchorinfo.put("d", nickname);
-					anchorinfo.put("h", "暂无");
-					anchorinfo.put("y", "");
-					anchorinfo.put("x", "");
-					anchorinfo.put("z", "");
-					anchorinfo.put("m", "1997-10-01");
-					anchorinfo.put("l", "男");
-					info.put("anchorinfo", anchorinfo);
-					String resp = HttpUtils.post3(U11, info.toString(), ip);
-					System.err.println("摘桃后，修改昵称：" + userId + "，修改的昵称：" + nickname + "，修改结果："+ resp);
-					return msg.toString();
+				}
+			}
+			// 每次摘桃后，都触发修改昵称
+			info.put("session", session);
+			JSONObject userbaseinfo1 = new JSONObject();
+			userbaseinfo1.put("a", userId);
+			info.put("userbaseinfo", userbaseinfo1);
+			JSONObject anchorinfo = new JSONObject();
+			String nickname = RandomUtil.getNickname(userId);
+			anchorinfo.put("d", nickname);
+			String remark = RandomUtil.getRemark(userId);
+			if(StringUtils.isNotEmpty(remark)) {
+				anchorinfo.put("h", remark);
+			} else {
+				anchorinfo.put("h", "暂无");
+			}
+			anchorinfo.put("y", "");
+			anchorinfo.put("x", "");
+			anchorinfo.put("z", "");
+			String brith = RandomUtil.getBrithday(userId);
+			if(StringUtils.isNotEmpty(brith)) {
+				anchorinfo.put("m", brith);
+			}
+			anchorinfo.put("l", "男");
+			info.put("anchorinfo", anchorinfo);
+			String resp = HttpUtils.post3(U11, info.toString(), ip);
+			if(StringUtils.isNotEmpty(resp)) {
+				JSONObject data = JsonUtil.strToJsonObject(resp);
+				if(data != null && data.containsKey("result")) {
+					JSONObject result = data.getJSONObject("result");
+					int a = result.getIntValue("a");
+					if(a == 2020) { // 昵称被占用
+						nickname = RandomUtil.reSetNickname(nickname);
+						anchorinfo.put("d", nickname);
+						info.put("anchorinfo", anchorinfo);
+						HttpUtils.post3(U11, info.toString(), ip);
+					}
 				}
 			}
 		} catch(Exception e) {
@@ -212,57 +230,86 @@ public class JmService {
 	
 	public static void peach(String roomId) {
 		try {
-//			String[] userIds = RandomUtil.getUserIds("userId");
 			List<String> list = null;
+			List<String> fast = null;
 			int level1 = 0;
 			int level2 = 0;
 			int level3 = 0;
 			int level4 = 0;
 			int level5 = 0;
 			int real = findOnline(roomId);
-			if(real >= 50) {
+			boolean isGroup = true;
+			boolean isFast = true;
+			int fastNum = 5;
+			if(real >= 45) {
+				isGroup = false;
+				isFast = false;
 				list = RandomUtil.getNoInroomUserIds(7);
+			} else if(real >= 40) {
+				level1 = 2;
+				level2 = 2;
+				level3 = 3;
+				level4 = 1;
+				level5 = 1;
 			} else if(real >= 30) {
 				level1 = 2;
-				level2 = 4;
-				level3 = 3;
-				level4 = 3;
-				level5 = 2;
+				level2 = 3;
+				level3 = 2;
+				level4 = 2;
+				level5 = 1;
 			} else if(real >= 20) {
 				level1 = 3;
-				level2 = 4;
-				level3 = 4;
-				level4 = 3;
-				level5 = 2;
+				level2 = 3;
+				level3 = 2;
+				level4 = 2;
+				level5 = 1;
 			} else if(real >= 10) {
+				level1 = 3;
+				level2 = 3;
+				level3 = 3;
+				level4 = 2;
+				level5 = 2;
+			} else {
 				level1 = 3;
 				level2 = 4;
 				level3 = 4;
-				level4 = 4;
-				level5 = 3;
-			} else {
-				level1 = 4;
-				level2 = 5;
-				level3 = 4;
-				level4 = 5;
+				level4 = 2;
 				level5 = 2;
 			}
-			list = RandomUtil.getGroupUserIds(level1, level2, level3, level4, level5);
-			if(list == null || list.size() <= 0) {
-				return;
+			if(isGroup) {
+				list = RandomUtil.getGroupUserIds(level1, level2, level3, level4, level5);
 			}
-			int size = list.size();
-			if(real < 10) {
-				Thread.sleep(1000);
+			if(isFast) {
+				fast = RandomUtil.getFastPeachUserIds(fastNum);
 			}
-			for(int i=0; i<size; i++) {
-				String userId = list.get(i);
-				if(peachMap.contains(userId)) {
-					continue;
+			
+			Thread.sleep(1000);
+			
+			if(list != null && list.size() >0) {
+				System.err.println("加入房间抢桃用户组：" + list.toString());
+				int size = list.size();
+				for(int i=0; i<size; i++) {
+					String userId = list.get(i);
+					if(peachMap.contains(userId)) {
+						continue;
+					}
+					peachMap.put(userId, roomId);
+					PeachThread peach = new PeachThread(roomId, userId, real);
+					ThreadManager.getInstance().execute(peach);
 				}
-				peachMap.put(userId, roomId);
-				PeachThread peach = new PeachThread(roomId, userId, real);
-				ThreadManager.getInstance().execute(peach);
+			}
+			if(fast != null && fast.size() >0) {
+				int size = fast.size();
+				System.err.println("直接抢桃用户组：" + fast.toString());
+				for(int i=0; i<size; i++) {
+					String userId = fast.get(i);
+					if(peachMap.contains(userId)) {
+						continue;
+					}
+					peachMap.put(userId, roomId);
+					PeachNoInRoomThread peach = new PeachNoInRoomThread(roomId, userId);
+					ThreadManager.getInstance().execute(peach);
+				}
 			}
 		} catch(Exception e) {
 			System.err.println(e.getMessage());

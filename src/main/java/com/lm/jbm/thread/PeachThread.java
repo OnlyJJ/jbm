@@ -42,10 +42,10 @@ public class PeachThread implements Runnable {
 					sleepTime1 = RandomUtil.getRandom(3000, 6000);
 					sleepTime2 = RandomUtil.getRandom(3000, 6000);
 				} else { // 其他时间段， 间隔4~8秒
-					sleepTime1 = RandomUtil.getRandom(2000, 4000);
-					sleepTime2 = RandomUtil.getRandom(2000, 3000);
+					sleepTime1 = RandomUtil.getRandom(2000, 5000);
+					sleepTime2 = RandomUtil.getRandom(1500, 2000);
 				}
-			} else if(way > 10 && way <= 20) { // 人少
+			} else if(way <= 20) { // 人少
 				if(flag) {  // 01:00 ~ 10:30，间隔5~10秒
 					sleepTime1 = RandomUtil.getRandom(3000, 5000);
 					sleepTime2 = RandomUtil.getRandom(2000, 5000);
@@ -53,7 +53,7 @@ public class PeachThread implements Runnable {
 					sleepTime1 = RandomUtil.getRandom(2000, 5000);
 					sleepTime2 = RandomUtil.getRandom(1000, 3000);
 				}
-			} else if(way > 20 && way <= 30) { // 一般，
+			} else if(way <= 30) { // 一般，
 				if(flag) {  // 01:00 ~ 10:30，间隔4~8秒
 					sleepTime1 = RandomUtil.getRandom(2000, 5000);
 					sleepTime2 = RandomUtil.getRandom(2000, 3000);
@@ -61,13 +61,13 @@ public class PeachThread implements Runnable {
 					sleepTime1 = RandomUtil.getRandom(1000, 2500);
 					sleepTime2 = RandomUtil.getRandom(2000, 2500);
 				}
-			} else if(way > 30 && way <= 40) { // 人多，
+			} else if(way <= 45) { // 人多，
 				if(flag) {  // 01:00 ~ 10:30，间隔3~5秒
 					sleepTime1 = RandomUtil.getRandom(2000, 3000);
 					sleepTime2 = RandomUtil.getRandom(1000, 2000);
 				} else { // 其他时间段，间隔2~4秒
-					sleepTime1 = RandomUtil.getRandom(1000, 2000);
-					sleepTime2 = RandomUtil.getRandom(1000, 2000);
+					sleepTime1 = RandomUtil.getRandom(1200, 3000);
+					sleepTime2 = RandomUtil.getRandom(800, 1500);
 				}
 			} else { // 人很多，
 				if(flag) { // 01:00 ~ 10:30，间隔2.5~5秒
@@ -88,11 +88,14 @@ public class PeachThread implements Runnable {
 			Thread.sleep(sleepTime2);
 			JmService.pluck(roomId, userId, session, ip);
 			if(socket != null) {
+				Thread.sleep(15000);
 				socket.close();
 			}
 			if(!isInroom) {
+				Thread.sleep(15000);
 				JmService.outRoom(roomId, userId);
 			}
+			JmService.remove(userId);
 		} catch (Exception e) {
 		}
 	}
