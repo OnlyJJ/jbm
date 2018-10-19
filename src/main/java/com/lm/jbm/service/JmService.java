@@ -240,6 +240,7 @@ public class JmService {
 			int real = findOnline(roomId);
 			boolean isGroup = true;
 			boolean isFast = true;
+			boolean isWait = false;
 			int fastNum = 5;
 			if(real >= 45) {
 				isGroup = false;
@@ -258,18 +259,21 @@ public class JmService {
 				level4 = 2;
 				level5 = 1;
 			} else if(real >= 20) {
+				isWait = true;
 				level1 = 3;
 				level2 = 3;
 				level3 = 2;
 				level4 = 2;
 				level5 = 1;
 			} else if(real >= 10) {
+				isWait = true;
 				level1 = 3;
 				level2 = 3;
 				level3 = 3;
 				level4 = 2;
 				level5 = 2;
 			} else {
+				isWait = true;
 				level1 = 3;
 				level2 = 4;
 				level3 = 4;
@@ -299,6 +303,9 @@ public class JmService {
 				}
 			}
 			if(fast != null && fast.size() >0) {
+				if(isWait) {
+					Thread.sleep(2000);
+				}
 				int size = fast.size();
 				System.err.println("直接抢桃用户组：" + fast.toString());
 				for(int i=0; i<size; i++) {
