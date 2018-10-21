@@ -242,14 +242,14 @@ public class JmService {
 			boolean isFast = true;
 			boolean isWait = false;
 			int fastNum = 5;
-			if(real >= 45) {
+			if(real >= 50) {
 				isGroup = false;
 				isFast = false;
 				list = RandomUtil.getNoInroomUserIds(7);
 			} else if(real >= 40) {
 				level1 = 2;
 				level2 = 2;
-				level3 = 3;
+				level3 = 2;
 				level4 = 1;
 				level5 = 1;
 			} else if(real >= 30) {
@@ -287,9 +287,10 @@ public class JmService {
 				fast = RandomUtil.getFastPeachUserIds(fastNum);
 			}
 			
-			Thread.sleep(1000);
-			
 			if(list != null && list.size() >0) {
+				if(real <= 20) {
+					Thread.sleep(1000);
+				}
 				System.err.println("加入房间抢桃用户组：" + list.toString());
 				int size = list.size();
 				for(int i=0; i<size; i++) {
@@ -316,6 +317,7 @@ public class JmService {
 					peachMap.put(userId, roomId);
 					PeachNoInRoomThread peach = new PeachNoInRoomThread(roomId, userId);
 					ThreadManager.getInstance().execute(peach);
+					Thread.sleep(100);
 				}
 			}
 		} catch(Exception e) {
