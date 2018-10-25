@@ -11,6 +11,7 @@ import com.lm.jbm.service.JmService;
 import com.lm.jbm.thread.PeachThread;
 import com.lm.jbm.thread.ThreadManager;
 import com.lm.jbm.utils.JsonUtil;
+import com.lm.jbm.utils.LogUtil;
 
 
 public class SocketInThread implements Runnable {
@@ -32,6 +33,7 @@ public class SocketInThread implements Runnable {
 			}
 		} catch(Exception e) {
 			System.err.println("监听消息异常：" + e.getMessage());
+			LogUtil.log.error(e.getMessage(), e);
 			if(SocketClient.client != null) {
 				try {
 					SocketClient.client.close();

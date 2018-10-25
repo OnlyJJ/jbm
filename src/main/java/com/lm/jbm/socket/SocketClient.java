@@ -9,6 +9,7 @@ import javax.annotation.PreDestroy;
 
 import com.lm.jbm.thread.LoginThread;
 import com.lm.jbm.thread.ThreadManager;
+import com.lm.jbm.utils.LogUtil;
 import com.lm.jbm.utils.PropertiesUtil;
 
 
@@ -37,6 +38,7 @@ public class SocketClient {
 				ThreadManager.getInstance().execute(hert);
 			}
 		} catch (Exception e) {
+			LogUtil.log.error(e.getMessage(), e);
 		} 
 	}
 	

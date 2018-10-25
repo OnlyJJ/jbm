@@ -2,12 +2,15 @@ package com.lm.jbm.thread;
 
 
 import java.net.Socket;
+import java.util.Date;
 import java.util.Random;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.lm.jbm.service.JmService;
 import com.lm.jbm.socket.SocketUtil;
+import com.lm.jbm.utils.DateUtil;
+import com.lm.jbm.utils.LogUtil;
 import com.lm.jbm.utils.RandomUtil;
 
 
@@ -58,16 +61,16 @@ public class PeachThread implements Runnable {
 					sleepTime1 = RandomUtil.getRandom(2000, 5000);
 					sleepTime2 = RandomUtil.getRandom(2000, 3000);
 				} else { // 其他时间段，间隔3~6秒
-					sleepTime1 = RandomUtil.getRandom(1000, 2500);
-					sleepTime2 = RandomUtil.getRandom(2000, 2500);
+					sleepTime1 = RandomUtil.getRandom(2000, 5000);
+					sleepTime2 = RandomUtil.getRandom(1000, 2000);
 				}
-			} else if(way <= 45) { // 人多，
+			} else if(way <= 40) { // 人多，
 				if(flag) {  // 01:00 ~ 10:30，间隔3~5秒
-					sleepTime1 = RandomUtil.getRandom(2000, 3000);
+					sleepTime1 = RandomUtil.getRandom(2000, 4000);
 					sleepTime2 = RandomUtil.getRandom(1000, 2000);
 				} else { // 其他时间段，间隔2~4秒
-					sleepTime1 = RandomUtil.getRandom(1200, 3000);
-					sleepTime2 = RandomUtil.getRandom(800, 1500);
+					sleepTime1 = RandomUtil.getRandom(2000, 3000);
+					sleepTime2 = RandomUtil.getRandom(1000, 1500);
 				}
 			} else { // 人很多，
 				if(flag) { // 01:00 ~ 10:30，间隔2.5~5秒
@@ -86,6 +89,12 @@ public class PeachThread implements Runnable {
 				JmService.inRoom(roomId, userId);
 			}
 			Thread.sleep(sleepTime2);
+			LogUtil.log.info("peachThread：房间：" + roomId + "，摘桃账号："+userId 
+					+ "，在线成员：" + way 
+					+ "，摘桃时间：" +DateUtil.format2Str(new Date(), "yyyy-MM-dd HH:mm:ss")
+					+ "，是否进入房间（IM）："+isInroom
+					+ "，(进入房间前，睡眠时间：" + sleepTime1 + ")"
+					+ "，摘桃前，睡眠时间：" + sleepTime2);
 			JmService.pluck(roomId, userId, session, ip);
 			if(socket != null) {
 				Thread.sleep(15000);

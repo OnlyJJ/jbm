@@ -6,6 +6,7 @@ import java.util.Random;
 
 import com.lm.jbm.service.JmService;
 import com.lm.jbm.socket.SocketUtil;
+import com.lm.jbm.utils.LogUtil;
 import com.lm.jbm.utils.RandomUtil;
 
 
@@ -46,6 +47,7 @@ public class GrapBoxThread implements Runnable {
 				socket.close();
 			}
 		} catch (Exception e) {
+			LogUtil.log.error(e.getMessage(), e);
 		}
 	}
 

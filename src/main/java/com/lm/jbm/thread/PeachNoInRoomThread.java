@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.lm.jbm.service.JmService;
 import com.lm.jbm.socket.SocketUtil;
+import com.lm.jbm.utils.LogUtil;
 import com.lm.jbm.utils.RandomUtil;
 
 
@@ -39,6 +40,7 @@ public class PeachNoInRoomThread implements Runnable {
 			JmService.outRoom(roomId, userId);
 			JmService.remove(userId);
 		} catch (Exception e) {
+			LogUtil.log.error(e.getMessage(), e);
 		}
 	}
 

@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang.StringUtils;
 
 import com.lm.jbm.service.JmService;
+import com.lm.jbm.utils.LogUtil;
 import com.lm.jbm.utils.PropertiesUtil;
 import com.lm.jbm.utils.RandomUtil;
 
@@ -63,13 +64,14 @@ public class LoginThread implements Runnable {
 						if(!signMap.contains(userId)) {
 							signMap.put(userId, "1");
 							JmService.sign(userId, ret, ip);
-							Thread.sleep(3000);
+							Thread.sleep(5000);
 						}
 					}
-					Thread.sleep(5000);
+					Thread.sleep(15000);
 				}
-				Thread.sleep(1000*60*10);
+				Thread.sleep(1000*60*20);
 			} catch (Exception e) {
+				LogUtil.log.error(e.getMessage(), e);
 				break;
 			}
 		}

@@ -20,6 +20,7 @@ import com.lm.jbm.utils.DateUntil;
 import com.lm.jbm.utils.DateUtil;
 import com.lm.jbm.utils.HttpUtils;
 import com.lm.jbm.utils.JsonUtil;
+import com.lm.jbm.utils.LogUtil;
 import com.lm.jbm.utils.PropertiesUtil;
 import com.lm.jbm.utils.RandomUtil;
 
@@ -27,6 +28,8 @@ import com.lm.jbm.utils.RandomUtil;
 public class JmService {
 	public static ConcurrentHashMap<String, String> peachMap = new ConcurrentHashMap<String, String>(512);
 	public static ConcurrentHashMap<String, Integer> recordMap = new ConcurrentHashMap<String, Integer>(512);
+	public static ConcurrentHashMap<String, Integer> pluckMap = new ConcurrentHashMap<String, Integer>(512);
+	public static ConcurrentHashMap<String, Integer> pluckCountMap = new ConcurrentHashMap<String, Integer>(512);
 	public static final String U1 = PropertiesUtil.getValue("U1");
 	public static final String U11 = PropertiesUtil.getValue("U11");
 	public static final String U15 = PropertiesUtil.getValue("U15");
@@ -70,6 +73,7 @@ public class JmService {
 			return sessionId;
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
+			LogUtil.log.error(e.getMessage(), e);
 		}
 		return null;
 	}
@@ -117,6 +121,7 @@ public class JmService {
 			return real;
 		} catch(Exception e) {
 			System.err.println(e.getMessage());
+			LogUtil.log.error(e.getMessage(), e);
 		}
 		return 0;
 	}
@@ -135,6 +140,7 @@ public class JmService {
 			return HttpUtils.post(U16, str);
 		} catch(Exception e) {
 			System.err.println(e.getMessage());
+			LogUtil.log.error(e.getMessage(), e);
 		}
 		return null;
 	}
@@ -153,6 +159,7 @@ public class JmService {
 			return HttpUtils.post(U16, str);
 		} catch(Exception e) {
 			System.err.println(e.getMessage());
+			LogUtil.log.error(e.getMessage(), e);
 		}
 		return null;
 	}
@@ -176,6 +183,7 @@ public class JmService {
 			
 			String str = json.toString();
 			String res = HttpUtils.post3(U53, str, ip);
+			boolean isPluck = false;
 			if(StringUtils.isNotEmpty(res)) {
 				JSONObject data = JsonUtil.strToJsonObject(res);
 				if(data != null && data.containsKey("peachvo")) {
@@ -185,7 +193,17 @@ public class JmService {
 					StringBuilder msg = new StringBuilder();
 					msg.append(userId).append("摘到：").append(name).append("X").append(num).append("个");
 					System.err.println(msg.toString());
-					
+					int total = num;
+					int successCount = 1;
+					if(pluckMap.containsKey(roomId)) {
+						total += pluckMap.get(roomId); // 总数量
+					}
+					pluckCountMap.put(roomId, total);
+					if(pluckCountMap.containsKey(roomId)) {
+						successCount = pluckCountMap.get(roomId) + 1; // 每次摘成功次数
+					}
+					pluckCountMap.put(roomId, successCount);
+					isPluck = true;
 					// 抢成功后，记录次数
 					if(DateUntil.checkSpecialTime()) {
 						int count = 1;
@@ -197,45 +215,48 @@ public class JmService {
 					}
 				}
 			}
-			// 每次摘桃后，都触发修改昵称
-			info.put("session", session);
-			JSONObject userbaseinfo1 = new JSONObject();
-			userbaseinfo1.put("a", userId);
-			info.put("userbaseinfo", userbaseinfo1);
-			JSONObject anchorinfo = new JSONObject();
-			String nickname = RandomUtil.getNickname(userId);
-			anchorinfo.put("d", nickname);
-			String remark = RandomUtil.getRemark(userId);
-			if(StringUtils.isNotEmpty(remark)) {
-				anchorinfo.put("h", remark);
-			} else {
-				anchorinfo.put("h", "暂无");
-			}
-			anchorinfo.put("y", "");
-			anchorinfo.put("x", "");
-			anchorinfo.put("z", "");
-			String brith = RandomUtil.getBrithday(userId);
-			if(StringUtils.isNotEmpty(brith)) {
-				anchorinfo.put("m", brith);
-			}
-			anchorinfo.put("l", "男");
-			info.put("anchorinfo", anchorinfo);
-			String resp = HttpUtils.post3(U11, info.toString(), ip);
-			if(StringUtils.isNotEmpty(resp)) {
-				JSONObject data = JsonUtil.strToJsonObject(resp);
-				if(data != null && data.containsKey("result")) {
-					JSONObject result = data.getJSONObject("result");
-					int a = result.getIntValue("a");
-					if(a == 2020) { // 昵称被占用
-						nickname = RandomUtil.reSetNickname(nickname);
-						anchorinfo.put("d", nickname);
-						info.put("anchorinfo", anchorinfo);
-						HttpUtils.post3(U11, info.toString(), ip);
+			// 摘桃成功后，触发修改昵称
+			if(isPluck) {
+				info.put("session", session);
+				JSONObject userbaseinfo1 = new JSONObject();
+				userbaseinfo1.put("a", userId);
+				info.put("userbaseinfo", userbaseinfo1);
+				JSONObject anchorinfo = new JSONObject();
+				String nickname = RandomUtil.getNickname(userId);
+				anchorinfo.put("d", nickname);
+				String remark = RandomUtil.getRemark(userId);
+				if(StringUtils.isNotEmpty(remark)) {
+					anchorinfo.put("h", remark);
+				} else {
+					anchorinfo.put("h", "暂无");
+				}
+				anchorinfo.put("y", "");
+				anchorinfo.put("x", "");
+				anchorinfo.put("z", "");
+				String brith = RandomUtil.getBrithday(userId);
+				if(StringUtils.isNotEmpty(brith)) {
+					anchorinfo.put("m", brith);
+				}
+				anchorinfo.put("l", "男");
+				info.put("anchorinfo", anchorinfo);
+				String resp = HttpUtils.post3(U11, info.toString(), ip);
+				if(StringUtils.isNotEmpty(resp)) {
+					JSONObject data = JsonUtil.strToJsonObject(resp);
+					if(data != null && data.containsKey("result")) {
+						JSONObject result = data.getJSONObject("result");
+						int a = result.getIntValue("a");
+						if(a == 2020) { // 昵称被占用
+							nickname = RandomUtil.reSetNickname(nickname);
+							anchorinfo.put("d", nickname);
+							info.put("anchorinfo", anchorinfo);
+							HttpUtils.post3(U11, info.toString(), ip);
+						}
 					}
 				}
 			}
 		} catch(Exception e) {
 			System.err.println(e.getMessage());
+			LogUtil.log.error(e.getMessage(), e);
 		}
 		return "";
 	}
@@ -253,12 +274,13 @@ public class JmService {
 			boolean isGroup = true;
 			boolean isFast = true;
 			boolean isWait = false;
+			boolean isWaitLong = false;
 			int fastNum = 5;
-			if(real >= 50) {
+			if(real >= 40) {
 				isGroup = false;
 				isFast = false;
 				list = RandomUtil.getNoInroomUserIds(7);
-			} else if(real >= 40) {
+			} else if(real >= 35) {
 				level1 = 2;
 				level2 = 2;
 				level3 = 1;
@@ -266,9 +288,16 @@ public class JmService {
 				level5 = 1;
 			} else if(real >= 30) {
 				level1 = 2;
-				level2 = 3;
+				level2 = 2;
 				level3 = 2;
-				level4 = 2;
+				level4 = 1;
+				level5 = 1;
+			} else if(real >= 25) {
+				isWait = true;
+				level1 = 3;
+				level2 = 2;
+				level3 = 2;
+				level4 = 1;
 				level5 = 1;
 			} else if(real >= 20) {
 				isWait = true;
@@ -277,20 +306,38 @@ public class JmService {
 				level3 = 2;
 				level4 = 2;
 				level5 = 1;
-			} else if(real >= 10) {
+			} else if(real >= 15) {
+				isWaitLong = true;
 				isWait = true;
 				level1 = 3;
 				level2 = 3;
-				level3 = 3;
+				level3 = 2;
 				level4 = 2;
-				level5 = 2;
-			} else {
+				level5 = 1;
+			} else if(real >= 10) {
+				isWaitLong = true;
 				isWait = true;
 				level1 = 3;
-				level2 = 4;
-				level3 = 4;
+				level2 = 3;
+				level3 = 2;
 				level4 = 2;
 				level5 = 2;
+			} else if(real >= 5) {
+				isWaitLong = true;
+				isWait = true;
+				level1 = 4;
+				level2 = 3;
+				level3 = 4;
+				level4 = 3;
+				level5 = 2;
+			} else {
+				isWaitLong = true;
+				isWait = true;
+				level1 = 5;
+				level2 = 5;
+				level3 = 4;
+				level4 = 3;
+				level5 = 3;
 			}
 			if(isGroup) {
 				list = RandomUtil.getGroupUserIds(level1, level2, level3, level4, level5);
@@ -298,13 +345,16 @@ public class JmService {
 			if(isFast) {
 				fast = RandomUtil.getFastPeachUserIds(fastNum);
 			}
-			
+			int total = 0;
 			if(list != null && list.size() >0) {
-				if(real <= 20) {
+				if(real <= 15) {
+					Thread.sleep(2000);
+				} else if(real <= 25) {
 					Thread.sleep(1000);
 				}
 				System.err.println("加入房间抢桃用户组：" + list.toString());
 				int size = list.size();
+				total = size;
 				for(int i=0; i<size; i++) {
 					String userId = list.get(i);
 					PeachThread peach = new PeachThread(roomId, userId, real);
@@ -312,10 +362,15 @@ public class JmService {
 				}
 			}
 			if(fast != null && fast.size() >0) {
-				if(isWait) {
-					Thread.sleep(2000);
+				if(isWaitLong) {
+					Thread.sleep(3000);
+				} else {
+					if(isWait) {
+						Thread.sleep(2000);
+					}
 				}
 				int size = fast.size();
+				total += size;
 				System.err.println("直接抢桃用户组：" + fast.toString());
 				for(int i=0; i<size; i++) {
 					String userId = fast.get(i);
@@ -324,8 +379,13 @@ public class JmService {
 					Thread.sleep(100);
 				}
 			}
+			Thread.sleep(10000);
+			LogUtil.log.info("### 摘桃，当前房间：" + roomId + "，在线人数：" + real 
+					+ "，参与抢桃人数：" + total
+					+ "，抢成功人数：" + pluckCountMap.get(roomId)
+					+ "，总共抢到：" + pluckMap.get(roomId));
 		} catch(Exception e) {
-			System.err.println(e.getMessage());
+			LogUtil.log.error(e.getMessage(), e);
 		}
 	}
 	
@@ -364,6 +424,7 @@ public class JmService {
 			}
 		} catch(Exception e) {
 			System.err.println("抢红包异常！");
+			LogUtil.log.error(e.getMessage(), e);
 		}
 	}
 	
@@ -392,6 +453,7 @@ public class JmService {
 			}
 		} catch(Exception e) {
 			System.err.println(e.getMessage());
+			LogUtil.log.error(e.getMessage(), e);
 		}
 	}
 	
@@ -433,6 +495,7 @@ public class JmService {
 			}
 		} catch(Exception e) {
 			System.err.println("抢宝箱异常！");
+			LogUtil.log.error(e.getMessage(), e);
 		}
 	}
 	
@@ -447,6 +510,7 @@ public class JmService {
 				return true;
 			}
 		} catch (Exception e) {
+			LogUtil.log.error(e.getMessage(), e);
 		}
 		return false;
 	}

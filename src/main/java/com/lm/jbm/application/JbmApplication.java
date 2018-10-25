@@ -8,6 +8,7 @@ import java.util.Random;
 
 import com.lm.jbm.service.JmService;
 import com.lm.jbm.socket.SocketClient;
+import com.lm.jbm.utils.LogUtil;
 import com.lm.jbm.utils.PropertiesUtil;
 import com.lm.jbm.utils.RandomUtil;
 

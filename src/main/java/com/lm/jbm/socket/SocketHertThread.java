@@ -8,6 +8,7 @@ import com.lm.jbm.service.JmService;
 import com.lm.jbm.thread.PeachThread;
 import com.lm.jbm.thread.ThreadManager;
 import com.lm.jbm.utils.JsonUtil;
+import com.lm.jbm.utils.LogUtil;
 
 
 public class SocketHertThread implements Runnable {
@@ -33,12 +34,14 @@ public class SocketHertThread implements Runnable {
 						SocketUtil.sendToImForHeartbeat(data.toString());
 					} catch (Exception e) {
 						System.out.println("发送心跳异常：" + e.getMessage());
+						LogUtil.log.error(e.getMessage(), e);
 						break;
 					}
 				}
 			}
 		} catch(Exception e) {
 			System.err.println(e.getMessage());
+			LogUtil.log.error(e.getMessage(), e);
 		}
 	}
 
