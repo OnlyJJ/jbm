@@ -30,6 +30,7 @@ public class JmService {
 	public static ConcurrentHashMap<String, Integer> recordMap = new ConcurrentHashMap<String, Integer>(512);
 	public static ConcurrentHashMap<String, Integer> pluckMap = new ConcurrentHashMap<String, Integer>(512);
 	public static ConcurrentHashMap<String, Integer> pluckCountMap = new ConcurrentHashMap<String, Integer>(512);
+	public static int PLUCK_TOTAL = 0;
 	public static final String U1 = PropertiesUtil.getValue("U1");
 	public static final String U11 = PropertiesUtil.getValue("U11");
 	public static final String U15 = PropertiesUtil.getValue("U15");
@@ -196,9 +197,10 @@ public class JmService {
 					int total = num;
 					int successCount = 1;
 					if(pluckMap.containsKey(roomId)) {
-						total += pluckMap.get(roomId); // 总数量
+						total += pluckMap.get(roomId); // 房间摘取量
 					}
-					pluckCountMap.put(roomId, total);
+					PLUCK_TOTAL += num; // 全站一天总摘取量
+					pluckMap.put(roomId, total);
 					if(pluckCountMap.containsKey(roomId)) {
 						successCount = pluckCountMap.get(roomId) + 1; // 每次摘成功次数
 					}
@@ -383,7 +385,8 @@ public class JmService {
 			LogUtil.log.info("### 摘桃，当前房间：" + roomId + "，在线人数：" + real 
 					+ "，参与抢桃人数：" + total
 					+ "，抢成功人数：" + pluckCountMap.get(roomId)
-					+ "，总共抢到：" + pluckMap.get(roomId));
+					+ "，房间内总共抢到：" + pluckMap.get(roomId)
+					+ "，当天全站总共摘桃：" + PLUCK_TOTAL);
 		} catch(Exception e) {
 			LogUtil.log.error(e.getMessage(), e);
 		}
