@@ -31,4 +31,25 @@ public class DateUntil {
 		day = calendar.get(Calendar.DAY_OF_MONTH);
 		return day;
 	}
+	
+	/**
+	 * 高峰时段
+	 * @author Shao.x
+	 * @date 2018年10月22日
+	 * @return
+	 */
+	public static boolean checkSpecialTime() {
+		try {
+			Date now = new Date();
+			String str1 = DateUtil.format2Str(now, "yyyy-MM-dd") + " 19:00:00";
+			String str2 = DateUtil.format2Str(now, "yyyy-MM-dd") + " 23:59:59";
+			Date d = DateUtil.parse(str1, "yyyy-MM-dd HH:mm:ss");
+			Date d2 = DateUtil.parse(str2, "yyyy-MM-dd HH:mm:ss");
+			if(now.after(d) && now.before(d2)) {
+				return true;
+			}
+		} catch (Exception e) {
+		}
+		return false;
+	}
 }

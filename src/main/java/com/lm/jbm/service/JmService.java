@@ -16,6 +16,7 @@ import com.lm.jbm.thread.LoginThread;
 import com.lm.jbm.thread.PeachNoInRoomThread;
 import com.lm.jbm.thread.PeachThread;
 import com.lm.jbm.thread.ThreadManager;
+import com.lm.jbm.utils.DateUntil;
 import com.lm.jbm.utils.DateUtil;
 import com.lm.jbm.utils.HttpUtils;
 import com.lm.jbm.utils.JsonUtil;
@@ -25,6 +26,7 @@ import com.lm.jbm.utils.RandomUtil;
 
 public class JmService {
 	public static ConcurrentHashMap<String, String> peachMap = new ConcurrentHashMap<String, String>(512);
+	public static ConcurrentHashMap<String, Integer> recordMap = new ConcurrentHashMap<String, Integer>(512);
 	public static final String U1 = PropertiesUtil.getValue("U1");
 	public static final String U11 = PropertiesUtil.getValue("U11");
 	public static final String U15 = PropertiesUtil.getValue("U15");
@@ -183,6 +185,16 @@ public class JmService {
 					StringBuilder msg = new StringBuilder();
 					msg.append(userId).append("摘到：").append(name).append("X").append(num).append("个");
 					System.err.println(msg.toString());
+					
+					// 抢成功后，记录次数
+					if(DateUntil.checkSpecialTime()) {
+						int count = 1;
+						if(recordMap.containsKey(userId)) {
+							count = recordMap.get(userId) + 1;
+						}
+						recordMap.put(userId, count);
+						System.err.println("高峰时段抢桃次数控制：userId：" + userId + "，已抢次数：" + count);
+					}
 				}
 			}
 			// 每次摘桃后，都触发修改昵称
@@ -249,7 +261,7 @@ public class JmService {
 			} else if(real >= 40) {
 				level1 = 2;
 				level2 = 2;
-				level3 = 2;
+				level3 = 1;
 				level4 = 1;
 				level5 = 1;
 			} else if(real >= 30) {
@@ -295,10 +307,6 @@ public class JmService {
 				int size = list.size();
 				for(int i=0; i<size; i++) {
 					String userId = list.get(i);
-					if(peachMap.contains(userId)) {
-						continue;
-					}
-					peachMap.put(userId, roomId);
 					PeachThread peach = new PeachThread(roomId, userId, real);
 					ThreadManager.getInstance().execute(peach);
 				}
@@ -311,10 +319,6 @@ public class JmService {
 				System.err.println("直接抢桃用户组：" + fast.toString());
 				for(int i=0; i<size; i++) {
 					String userId = fast.get(i);
-					if(peachMap.contains(userId)) {
-						continue;
-					}
-					peachMap.put(userId, roomId);
 					PeachNoInRoomThread peach = new PeachNoInRoomThread(roomId, userId);
 					ThreadManager.getInstance().execute(peach);
 					Thread.sleep(100);
@@ -476,5 +480,22 @@ public class JmService {
 			System.err.println("签到：" + userId);
 			HttpUtils.post3(U48, json.toString(), ip);
 		}
+	}
+	
+	/**
+	 * 是否参与抢桃，高峰时段，单个用户控制抢不超过30次
+	 * @author Shao.x
+	 * @date 2018年10月22日
+	 * @param userId
+	 * @return
+	 */
+	public static boolean isPluck(String userId) {
+		if(recordMap.containsKey(userId)) {
+			int count = recordMap.get(userId);
+			if(count >= 26) {
+				return false;
+			}
+		}
+		return true;
 	}
 }
