@@ -213,7 +213,7 @@ public class JmService {
 							count = recordMap.get(userId) + 1;
 						}
 						recordMap.put(userId, count);
-						System.err.println("高峰时段抢桃次数控制：userId：" + userId + "，已抢次数：" + count);
+						LogUtil.log.info("高峰时段抢桃次数控制：userId：" + userId + "，已抢次数：" + count);
 					}
 				}
 			}
@@ -275,8 +275,7 @@ public class JmService {
 			int real = findOnline(roomId);
 			boolean isGroup = true;
 			boolean isFast = true;
-			boolean isWait = false;
-			boolean isWaitLong = false;
+			int waitTime = 5000;
 			int fastNum = 5;
 			if(real >= 40) {
 				isGroup = false;
@@ -295,49 +294,39 @@ public class JmService {
 				level4 = 1;
 				level5 = 1;
 			} else if(real >= 25) {
-				isWait = true;
 				level1 = 3;
 				level2 = 2;
 				level3 = 2;
 				level4 = 1;
 				level5 = 1;
 			} else if(real >= 20) {
-				isWait = true;
 				level1 = 3;
 				level2 = 3;
 				level3 = 2;
 				level4 = 2;
 				level5 = 1;
 			} else if(real >= 15) {
-				isWaitLong = true;
-				isWait = true;
-				level1 = 3;
-				level2 = 3;
-				level3 = 2;
-				level4 = 2;
-				level5 = 1;
-			} else if(real >= 10) {
-				isWaitLong = true;
-				isWait = true;
 				level1 = 3;
 				level2 = 3;
 				level3 = 2;
 				level4 = 2;
 				level5 = 2;
-			} else if(real >= 5) {
-				isWaitLong = true;
-				isWait = true;
+			} else if(real >= 10) {
 				level1 = 4;
-				level2 = 3;
+				level2 = 4;
+				level3 = 3;
+				level4 = 2;
+				level5 = 2;
+			} else if(real >= 5) {
+				level1 = 4;
+				level2 = 5;
 				level3 = 4;
 				level4 = 3;
 				level5 = 2;
 			} else {
-				isWaitLong = true;
-				isWait = true;
 				level1 = 5;
-				level2 = 5;
-				level3 = 4;
+				level2 = 6;
+				level3 = 5;
 				level4 = 3;
 				level5 = 3;
 			}
@@ -349,11 +338,6 @@ public class JmService {
 			}
 			int total = 0;
 			if(list != null && list.size() >0) {
-				if(real <= 15) {
-					Thread.sleep(2000);
-				} else if(real <= 25) {
-					Thread.sleep(1000);
-				}
 				System.err.println("加入房间抢桃用户组：" + list.toString());
 				int size = list.size();
 				total = size;
@@ -364,13 +348,7 @@ public class JmService {
 				}
 			}
 			if(fast != null && fast.size() >0) {
-				if(isWaitLong) {
-					Thread.sleep(3000);
-				} else {
-					if(isWait) {
-						Thread.sleep(2000);
-					}
-				}
+				Thread.sleep(waitTime);
 				int size = fast.size();
 				total += size;
 				System.err.println("直接抢桃用户组：" + fast.toString());
@@ -381,7 +359,7 @@ public class JmService {
 					Thread.sleep(100);
 				}
 			}
-			Thread.sleep(10000);
+			Thread.sleep(12000);
 			LogUtil.log.info("### 摘桃，当前房间：" + roomId + "，在线人数：" + real 
 					+ "，参与抢桃人数：" + total
 					+ "，抢成功人数：" + pluckCountMap.get(roomId)
