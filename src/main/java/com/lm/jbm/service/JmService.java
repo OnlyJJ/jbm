@@ -529,8 +529,6 @@ public class JmService {
 	
 	/**
 	 * 是否参与抢桃，高峰时段，单个用户控制抢不超过30次
-	 * @author Shao.x
-	 * @date 2018年10月22日
 	 * @param userId
 	 * @return
 	 */
