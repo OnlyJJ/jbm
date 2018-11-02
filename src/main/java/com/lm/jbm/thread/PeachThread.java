@@ -111,10 +111,8 @@ public class PeachThread implements Runnable {
 				Thread.sleep(15000);
 				socket.close();
 			}
-			if(!isInroom) {
-				Thread.sleep(15000);
-				JmService.outRoom(roomId, userId);
-			}
+			Thread.sleep(5000);
+			JmService.outRoom(roomId, userId);
 			JmService.remove(userId);
 		} catch (Exception e) {
 		}
