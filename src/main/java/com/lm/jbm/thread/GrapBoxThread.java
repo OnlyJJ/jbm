@@ -44,10 +44,18 @@ public class GrapBoxThread implements Runnable {
 				JmService.grapBox(roomId, session, userId, ip);
 			}
 			if(socket != null) {
+				Thread.sleep(5000);
 				socket.close();
 			}
 		} catch (Exception e) {
 			LogUtil.log.error(e.getMessage(), e);
+		} finally {
+			try {
+				Thread.sleep(3000);
+				JmService.outRoom(roomId, userId);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
