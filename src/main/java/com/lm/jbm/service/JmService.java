@@ -30,6 +30,7 @@ public class JmService {
 	public static ConcurrentHashMap<String, Integer> recordMap = new ConcurrentHashMap<String, Integer>(512);
 	public static ConcurrentHashMap<String, Integer> pluckMap = new ConcurrentHashMap<String, Integer>(512);
 	public static ConcurrentHashMap<String, Integer> pluckCountMap = new ConcurrentHashMap<String, Integer>(512);
+	public static ConcurrentHashMap<String, String> nameMap = new ConcurrentHashMap<String, String>(512);
 	public static int PLUCK_TOTAL = 0;
 	public static final String U1 = PropertiesUtil.getValue("U1");
 	public static final String U11 = PropertiesUtil.getValue("U11");
@@ -219,7 +220,7 @@ public class JmService {
 				}
 			}
 			// 摘桃成功后，触发修改昵称
-			if(isPluck) {
+			if(isPluck && !nameMap.contains(userId)) {
 				info.put("session", session);
 				JSONObject userbaseinfo1 = new JSONObject();
 				userbaseinfo1.put("a", userId);
@@ -256,6 +257,7 @@ public class JmService {
 						}
 					}
 				}
+				nameMap.put(userId, nickname);
 			}
 		} catch(Exception e) {
 			System.err.println(e.getMessage());
