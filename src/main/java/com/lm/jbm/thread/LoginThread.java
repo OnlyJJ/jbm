@@ -50,6 +50,10 @@ public class LoginThread implements Runnable {
 				if(PropertiesUtil.getLevelUserIds(7) != null) {
 					list.addAll(PropertiesUtil.getLevelUserIds(7));
 				}
+				String[] boxUser = RandomUtil.getUserIds("boxUser");
+				if(boxUser != null) {
+					list.addAll(Arrays.asList(boxUser));
+				}
 				for(String userId : list) {
 					String ip = "";
 					if(ipMap.contains(userId)) {
