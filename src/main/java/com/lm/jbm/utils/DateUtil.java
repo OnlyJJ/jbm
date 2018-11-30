@@ -1,6 +1,7 @@
 package com.lm.jbm.utils;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class DateUtil {
@@ -15,4 +16,10 @@ public class DateUtil {
 		return sdf.parse(dateStr);
 	}
 	
+	public static Date addMinute(Date date,int n){
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.add(Calendar.MINUTE, n);
+		return cal.getTime();
+	}
 }

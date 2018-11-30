@@ -26,6 +26,7 @@ import com.lm.jbm.utils.RandomUtil;
 
 
 public class JmService {
+	public static ConcurrentHashMap<String, String> pluckRecordMap = new ConcurrentHashMap<String, String>(512);
 	public static ConcurrentHashMap<String, String> peachMap = new ConcurrentHashMap<String, String>(512);
 	public static ConcurrentHashMap<String, Integer> recordMap = new ConcurrentHashMap<String, Integer>(512);
 	public static ConcurrentHashMap<String, Integer> pluckMap = new ConcurrentHashMap<String, Integer>(512);
@@ -217,6 +218,7 @@ public class JmService {
 						recordMap.put(userId, count);
 						LogUtil.log.info("高峰时段抢桃次数控制：userId：" + userId + "，已抢次数：" + count);
 					}
+					pluckRecordMap.put(userId, DateUtil.format2Str(DateUtil.addMinute(new Date(), 5), "yyyy-MM-dd HH:mm:ss"));
 				}
 			}
 			// 摘桃成功后，触发修改昵称
@@ -270,11 +272,14 @@ public class JmService {
 		try {
 			List<String> list = null;
 			List<String> fast = null;
+			int level0 = 0;
 			int level1 = 0;
-			int level2 = 0;
-			int level3 = 0;
 			int level4 = 0;
 			int level5 = 0;
+			int level6 = 0;
+			int level7 = 0;
+			int level8 = 0;
+			int level9 = 0;
 			int real = findOnline(roomId);
 			boolean isGroup = true;
 			boolean isFast = true;
@@ -285,56 +290,65 @@ public class JmService {
 				isFast = false;
 				list = RandomUtil.getNoInroomUserIds(7);
 			} else if(real >= 35) {
-				level1 = 2;
-				level2 = 2;
-				level3 = 1;
-				level4 = 1;
+				level7 = 2;
+				level6 = 2;
 				level5 = 1;
+				level4 = 1;
+				level1 = 1;
 			} else if(real >= 30) {
-				level1 = 2;
-				level2 = 2;
-				level3 = 2;
+				level7 = 2;
+				level6 = 2;
+				level5 = 2;
 				level4 = 1;
-				level5 = 1;
+				level1 = 1;
 			} else if(real >= 25) {
-				level1 = 3;
-				level2 = 2;
-				level3 = 2;
+				level7 = 3;
+				level6 = 2;
+				level5 = 2;
 				level4 = 1;
-				level5 = 1;
+				level1 = 1;
 			} else if(real >= 20) {
-				level1 = 3;
-				level2 = 3;
-				level3 = 2;
+				level7 = 3;
+				level6 = 2;
+				level5 = 2;
 				level4 = 2;
-				level5 = 1;
+				level1 = 1;
+				level0 = 1;
 			} else if(real >= 15) {
-				level1 = 3;
-				level2 = 3;
-				level3 = 2;
-				level4 = 2;
+				level7 = 2;
+				level6 = 2;
 				level5 = 2;
+				level4 = 2;
+				level1 = 2;
+				level0 = 2;
 			} else if(real >= 10) {
-				level1 = 4;
-				level2 = 4;
-				level3 = 3;
-				level4 = 2;
-				level5 = 2;
-			} else if(real >= 5) {
-				level1 = 4;
-				level2 = 5;
-				level3 = 4;
-				level4 = 3;
-				level5 = 2;
-			} else {
-				level1 = 5;
-				level2 = 6;
-				level3 = 5;
-				level4 = 3;
+				fastNum = 6;
+				level7 = 4;
+				level6 = 3;
 				level5 = 3;
+				level4 = 3;
+				level1 = 2;
+				level0 = 2;
+			} else if(real >= 5) {
+				fastNum = 7;
+				level7 = 3;
+				level6 = 4;
+				level5 = 3;
+				level4 = 3;
+				level1 = 2;
+				level0 = 2;
+			} else {
+				fastNum = 8;
+				level8 = 1;
+				level7 = 4;
+				level6 = 4;
+				level5 = 3;
+				level4 = 3;
+				level1 = 3;
+				level0 = 2;
 			}
 			if(isGroup) {
-				list = RandomUtil.getGroupUserIds(level1, level2, level3, level4, level5);
+				list = RandomUtil.getGroupUserIds(level0, level1, level4, level5, level6,level7, level8,level9);
 			}
 			if(isFast) {
 				fast = RandomUtil.getFastPeachUserIds(fastNum);

@@ -3,6 +3,7 @@ package com.lm.jbm.utils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
@@ -354,18 +355,27 @@ public class RandomUtil {
 			"大白牙生快","伯人心贤","南同学","清决","弹指丶红颜老","天与橙","网黑","好演技","浪人叔","黑市","念念不忘","元气鹿","呻吟启蒙师",
 			"逢场作戏","永远的过客","服软","征骨岁月","高冷怪","榆西","有味叔","掏空左右","青袂宛约","后会无期","释怀","若即若離","花落成雨",
 			"小情绪，难控制","终年不遇","鹿屿","枪手","撒哇嘀咔","滴·好人卡","你是个好人","一婊人才","抚菊圣手","借我一百块","摸胸算命","学弟°",
-			"职业捐精户","浪荡先森","大龄男青年","一屁崩死你","本皇只要你"};
+			"职业捐精户","浪荡先森","大龄男青年","一屁崩死你","本皇只要你"
+			,"十分.喜欢","火星机器猫","骞骞","诸葛不亮","一梦庄周","北雅图","缘@起","如烟?勿忘我","十秒多重性格","撸啦撸啦咧ミ","你侧漏了！","此号已作废!~",
+			"-騎士精神°","拒絕愛妹@","愛情、不過如此。","好了不見面。","寂寞是空虛的","淺淺の遺忘","孤獨病°","念挂V°","收皂角豆一光宇","?欢迎小情人?",
+			"我为你偷桃","小游客。一个","微儿余生都是你","思“情”","宠韵儿之哔哔","??朵儿??小单","白色恋人〖耳朵〗","?宠夏上天","雅丽232",
+			"、如烟苞米地","来生的一次回眸","只爱、嘉兴","一米阳??光","别玩、哥带你回家","薇薇、你是我的爱","抱歉、打扰","、缘分天空","尘哥^",
+			
+			};
 	public static String[] two = {"未来不会来","心还没死透","何必执着","再见如陌","归无期","一别便不再见","趴趴树","初衷","心在流浪","错觉","好久不见°","奶凶"
 			,"天屎","怪我了","大酋长","鲁汉","小明","韩少","凉凉","哎坡","男芳","青尤","瓜皮","杰哥","今非昔比","怂爷","柠萌","白日萌","锅盖头","晓A",
 			"今晚毛毛雨","爱过·放手了","别问我来过","老大叔","碰个瓷","捡漏","疏通下水道","飞过","穷鸟","袍哥","果二","仞刃","大刀肩上扛","5米大砍刀","社会我瓜哥",
 			"tian瓜","毒瘤","二杆子","高山炊烟","望·无痕","呜呜。。。","噗噗。。。","柯基","社会哈","名臣","洞察","管中窥豹·纹","大炸蟹","客官别走",
-			"掌柜","咯名","清明·上·河图","日·久生情","可爱多","7仔","猛如虎","大力丸","20厘米","无名一☞"
+			"掌柜","咯名","清明·上·河图","日·久生情","可爱多","7仔","猛如虎","大力丸","20厘米","无名一☞","思念168","你的心只属于我","㊣企鹅㊣",
+			"㊣人生若如初见㊣","大叔看戏的",
+			"妞ヽ给爷来一个","乡、巴佬进城","鱼&七秒记忆","Xer儿的郭大伟","傻、成神?","MG來看看","?D?南?","?白云成神?","淡.定86","烧烤??舞",
+			"情?小xin","℡走.雷、","吾爱雷爱吾","雷、微??天下","佛说、不归客??","L雷语馨愿","舞?浪迹天下"
 	};
 	public static String[] thr = {"大黑仔","我是谁","我在哪","好厉害","啊~疼疼","啊~爽爽","啊~不要",
 			"啊~哎哟","啊~来吧","·啊~不来","啊·管你呢","嘿嘿·不黑","小·果粉","大·啊哥","随便·啦","你好呀·","我不好~·","哇塞·大","哇塞·深","哇塞·白","哇塞·。。",
 			"厉害·哥","好随便·","欢迎你·","啊·欢迎我","嗯·不欢迎你","啊·到底欢不欢迎","不黑不黑","天天吃豆子","不要吧·","可以的啊·","蜜桃小忠粉",
 			"阿四哥","55哥","十三哥","大基哥","看热闹·","那啥啊·","没啥货·","da敞亮","扯·犊子","干·哈咧","拉倒·吧","闹哪样@","忆念-Chen.","我不稀罕i",
-			"大表姐·","咋整·","·嗯哪","墨·姬","毛·楞","磕`碜","咯`应","打`狼","得`巴","埋·汰","二牛子"};
+			"大表姐·","咋整·","·嗯哪","墨·姬","毛·楞","磕`碜","咯`应","打`狼","得`巴","埋·汰","二牛子","☆安静?∫看戏的","☆安静?∫的思念","心跳的节奏","好艰难啊","Smileヾ独醉","蜜桃第一色独醉","敷衍、怎么演",};
 	public static String[] fuhao = {"❤","☜","☝","★","☺","☀","☚","☟","☛","♦","☆","♈","♉",
 			"❀","✿","ㅎ","ㅍ","ㅃ","ㅆ","㉵",
 			"㉴","㈁","㈀","㈀","㈆","㈊","㊣","☯","✈"};
@@ -480,8 +490,34 @@ public class RandomUtil {
 	 * @param level5。。。
 	 * @return
 	 */
-	public static List<String> getGroupUserIds(int level1, int level2,int level3, int level4, int level5) {
+	public static List<String> getGroupUserIds(int level0, int level1, int level4,int level5, int level6, int level7,int level8, int level9) {
 		List<String> ret = new ArrayList<String>();
+		if(level0 >0) {
+			List<String> list = PropertiesUtil.getLevelUserIds(0);
+			if(list != null && list.size() >0) {
+				int index = 1;
+				int size = list.size();
+				Collections.shuffle(list);
+				for(int i=0; i<size; i++) {
+					if(index > level0) {
+						break;
+					}
+					String userId = list.get(i);
+					if(JmService.peachMap.containsKey(userId)) {
+						continue;
+					}
+					if(!JmService.isPluck(userId)) {
+						continue;
+					}
+					if(!isTimeOut(userId)) {
+						continue;
+					}
+					ret.add(userId);
+					JmService.peachMap.put(userId, String.valueOf(level0));
+					index++;
+				}
+			}
+		} 
 		if(level1 >0) {
 			List<String> list = PropertiesUtil.getLevelUserIds(1);
 			if(list != null && list.size() >0) {
@@ -496,7 +532,7 @@ public class RandomUtil {
 					if(JmService.peachMap.containsKey(userId)) {
 						continue;
 					}
-					if(!JmService.isPluck(userId)) {
+					if(!isTimeOut(userId)) {
 						continue;
 					}
 					ret.add(userId);
@@ -504,47 +540,7 @@ public class RandomUtil {
 					index++;
 				}
 			}
-		} 
-		if(level2 >0) {
-			List<String> list = PropertiesUtil.getLevelUserIds(2);
-			if(list != null && list.size() >0) {
-				int index = 1;
-				int size = list.size();
-				Collections.shuffle(list);
-				for(int i=0; i<size; i++) {
-					if(index > level2) {
-						break;
-					}
-					String userId = list.get(i);
-					if(JmService.peachMap.containsKey(userId)) {
-						continue;
-					}
-					ret.add(userId);
-					JmService.peachMap.put(userId, String.valueOf(level2));
-					index++;
-				}
-			}
 		}
-		if(level3 >0) {
-			List<String> list = PropertiesUtil.getLevelUserIds(3);
-			if(list != null && list.size() >0) {
-				int index = 1;
-				int size = list.size();
-				Collections.shuffle(list);
-				for(int i=0; i<size; i++) {
-					if(index > level3) {
-						break;
-					}
-					String userId = list.get(i);
-					if(JmService.peachMap.containsKey(userId)) {
-						continue;
-					}
-					ret.add(userId);
-					JmService.peachMap.put(userId, String.valueOf(level3));
-					index++;
-				}
-			}
-		} 
 		if(level4 >0) {
 			List<String> list = PropertiesUtil.getLevelUserIds(4);
 			if(list != null && list.size() >0) {
@@ -559,12 +555,15 @@ public class RandomUtil {
 					if(JmService.peachMap.containsKey(userId)) {
 						continue;
 					}
+					if(!isTimeOut(userId)) {
+						continue;
+					}
 					ret.add(userId);
 					JmService.peachMap.put(userId, String.valueOf(level4));
 					index++;
 				}
 			}
-		}
+		} 
 		if(level5 >0) {
 			List<String> list = PropertiesUtil.getLevelUserIds(5);
 			if(list != null && list.size() >0) {
@@ -579,12 +578,107 @@ public class RandomUtil {
 					if(JmService.peachMap.containsKey(userId)) {
 						continue;
 					}
+					if(!isTimeOut(userId)) {
+						continue;
+					}
 					ret.add(userId);
 					JmService.peachMap.put(userId, String.valueOf(level5));
 					index++;
 				}
 			}
-		} 
+		}
+		if(level6 >0) {
+			List<String> list = PropertiesUtil.getLevelUserIds(6);
+			if(list != null && list.size() >0) {
+				int index = 1;
+				int size = list.size();
+				Collections.shuffle(list);
+				for(int i=0; i<size; i++) {
+					if(index > level6) {
+						break;
+					}
+					String userId = list.get(i);
+					if(JmService.peachMap.containsKey(userId)) {
+						continue;
+					}
+					if(!isTimeOut(userId)) {
+						continue;
+					}
+					ret.add(userId);
+					JmService.peachMap.put(userId, String.valueOf(level6));
+					index++;
+				}
+			}
+		}
+		if(level7 >0) {
+			List<String> list = PropertiesUtil.getLevelUserIds(7);
+			if(list != null && list.size() >0) {
+				int index = 1;
+				int size = list.size();
+				Collections.shuffle(list);
+				for(int i=0; i<size; i++) {
+					if(index > level7) {
+						break;
+					}
+					String userId = list.get(i);
+					if(JmService.peachMap.containsKey(userId)) {
+						continue;
+					}
+					if(!isTimeOut(userId)) {
+						continue;
+					}
+					ret.add(userId);
+					JmService.peachMap.put(userId, String.valueOf(level7));
+					index++;
+				}
+			}
+		}
+		if(level8 >0) {
+			List<String> list = PropertiesUtil.getLevelUserIds(8);
+			if(list != null && list.size() >0) {
+				int index = 1;
+				int size = list.size();
+				Collections.shuffle(list);
+				for(int i=0; i<size; i++) {
+					if(index > level8) {
+						break;
+					}
+					String userId = list.get(i);
+					if(JmService.peachMap.containsKey(userId)) {
+						continue;
+					}
+					if(!isTimeOut(userId)) {
+						continue;
+					}
+					ret.add(userId);
+					JmService.peachMap.put(userId, String.valueOf(level8));
+					index++;
+				}
+			}
+		}
+		if(level9 >0) {
+			List<String> list = PropertiesUtil.getLevelUserIds(9);
+			if(list != null && list.size() >0) {
+				int index = 1;
+				int size = list.size();
+				Collections.shuffle(list);
+				for(int i=0; i<size; i++) {
+					if(index > level9) {
+						break;
+					}
+					String userId = list.get(i);
+					if(JmService.peachMap.containsKey(userId)) {
+						continue;
+					}
+					if(!isTimeOut(userId)) {
+						continue;
+					}
+					ret.add(userId);
+					JmService.peachMap.put(userId, String.valueOf(level9));
+					index++;
+				}
+			}
+		}
 		return ret;
 	}
 	
@@ -604,6 +698,9 @@ public class RandomUtil {
 					continue;
 				}
 				if(!JmService.isPluck(userId)) {
+					continue;
+				}
+				if(!isTimeOut(userId)) {
 					continue;
 				}
 				ret.add(userId);
@@ -631,6 +728,9 @@ public class RandomUtil {
 						continue;
 					}
 					if(!JmService.isPluck(userId)) {
+						continue;
+					}
+					if(!isTimeOut(userId)) {
 						continue;
 					}
 					ret.add(userId);
@@ -729,5 +829,25 @@ public class RandomUtil {
 		String m = mounth[getRandom(0, mounth.length)];
 		String d = day[getRandom(0, day.length)];
 		return y+m+d;
+	}
+	
+	public static boolean isTimeOut(String userId) {
+		boolean flag = true;
+		if(JmService.pluckRecordMap.contains(userId)) {
+			Date now = new Date();
+			String time = JmService.pluckRecordMap.get(userId);
+			try {
+				if(StringUtils.isNotEmpty(time)) {
+					Date record = DateUtil.parse(time, "yyyy-MM-dd HH:mm:ss");
+					if(now.before(record)) {
+						LogUtil.log.info("### 获取抢桃用户，该用户还在休息时间，不参与，userId：" + userId + "，到期时间：" + time);
+						flag = false;
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return flag;
 	}
 }
