@@ -2,6 +2,7 @@ package com.lm.jbm.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
@@ -409,7 +410,11 @@ public class RandomUtil {
 		if(LoginThread.ipMap.containsKey(userId)) {
 			return LoginThread.ipMap.get(userId);
 		}
-		return getIp();
+		String ip = getIp();
+		if(ip != null) {
+			LoginThread.ipMap.put(userId, ip);
+		}
+		return ip;
 	}
 	
 	public static String getIp() {
@@ -482,6 +487,7 @@ public class RandomUtil {
 			if(list != null && list.size() >0) {
 				int index = 1;
 				int size = list.size();
+				Collections.shuffle(list);
 				for(int i=0; i<size; i++) {
 					if(index > level1) {
 						break;
@@ -504,6 +510,7 @@ public class RandomUtil {
 			if(list != null && list.size() >0) {
 				int index = 1;
 				int size = list.size();
+				Collections.shuffle(list);
 				for(int i=0; i<size; i++) {
 					if(index > level2) {
 						break;
@@ -523,6 +530,7 @@ public class RandomUtil {
 			if(list != null && list.size() >0) {
 				int index = 1;
 				int size = list.size();
+				Collections.shuffle(list);
 				for(int i=0; i<size; i++) {
 					if(index > level3) {
 						break;
@@ -542,6 +550,7 @@ public class RandomUtil {
 			if(list != null && list.size() >0) {
 				int index = 1;
 				int size = list.size();
+				Collections.shuffle(list);
 				for(int i=0; i<size; i++) {
 					if(index > level4) {
 						break;
@@ -561,6 +570,7 @@ public class RandomUtil {
 			if(list != null && list.size() >0) {
 				int index = 1;
 				int size = list.size();
+				Collections.shuffle(list);
 				for(int i=0; i<size; i++) {
 					if(index > level5) {
 						break;
@@ -584,6 +594,7 @@ public class RandomUtil {
 		if(list != null && list.size() >0) {
 			int index = 1;
 			int size = list.size();
+			Collections.shuffle(list);
 			for(int i=0; i<size; i++) {
 				if(index > num) {
 					break;
@@ -610,6 +621,7 @@ public class RandomUtil {
 			if(list != null && list.size() >0) {
 				int index = 1;
 				int size = list.size();
+				Collections.shuffle(list);
 				for(int i=0; i<size; i++) {
 					if(index > num) {
 						break;
