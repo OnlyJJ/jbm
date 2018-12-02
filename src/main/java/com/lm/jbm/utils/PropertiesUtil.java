@@ -34,7 +34,7 @@ public final class PropertiesUtil {
 			} else {
 				pro.load(RandomUtil.class.getClassLoader().getResourceAsStream("config-test.properties"));
 			}
-			for(int i=1; i <8;i++) {
+			for(int i=0; i <15;i++) {
 				getLevelUserIds(i);
 			}
 			System.err.println("当前环境：" + pro.getProperty("environment"));
@@ -62,6 +62,7 @@ public final class PropertiesUtil {
 			key = "user_level_0";
 			if(LEVELUSER_0 != null && LEVELUSER_0.size() >0) {
 				Collections.shuffle(LEVELUSER_0);
+				list = LEVELUSER_0;
 			} else {
 				list = getConfValue(key);
 				LEVELUSER_0 = list;
@@ -71,6 +72,7 @@ public final class PropertiesUtil {
 			key = "user_level_1";
 			if(LEVELUSER_1 != null && LEVELUSER_1.size() >0) {
 				Collections.shuffle(LEVELUSER_1);
+				list = LEVELUSER_1;
 			} else {
 				list = getConfValue(key);
 				LEVELUSER_1 = list;
@@ -80,6 +82,7 @@ public final class PropertiesUtil {
 			key = "user_level_4";
 			if(LEVELUSER_4 != null && LEVELUSER_4.size() >0) {
 				Collections.shuffle(LEVELUSER_4);
+				list = LEVELUSER_4;
 			} else {
 				list = getConfValue(key);
 				LEVELUSER_4 = list;
@@ -89,6 +92,7 @@ public final class PropertiesUtil {
 			key = "user_level_5";
 			if(LEVELUSER_5 != null && LEVELUSER_5.size() >0) {
 				Collections.shuffle(LEVELUSER_5);
+				list = LEVELUSER_5;
 			} else {
 				list = getConfValue(key);
 				LEVELUSER_5 = list;
@@ -98,6 +102,7 @@ public final class PropertiesUtil {
 			key = "user_level_6";
 			if(LEVELUSER_6 != null && LEVELUSER_6.size() >0) {
 				Collections.shuffle(LEVELUSER_6);
+				list = LEVELUSER_6;
 			} else {
 				list = getConfValue(key);
 				LEVELUSER_6 = list;
@@ -107,6 +112,7 @@ public final class PropertiesUtil {
 			key = "user_level_7";
 			if(LEVELUSER_7 != null && LEVELUSER_7.size() >0) {
 				Collections.shuffle(LEVELUSER_7);
+				list = LEVELUSER_7;
 			} else {
 				list = getConfValue(key);
 				LEVELUSER_7 = list;
@@ -116,6 +122,7 @@ public final class PropertiesUtil {
 			key = "user_level_8";
 			if(LEVELUSER_8 != null && LEVELUSER_8.size() >0) {
 				Collections.shuffle(LEVELUSER_8);
+				list = LEVELUSER_8;
 			} else {
 				list = getConfValue(key);
 				LEVELUSER_8 = list;
@@ -125,6 +132,7 @@ public final class PropertiesUtil {
 			key = "user_level_9";
 			if(LEVELUSER_9 != null && LEVELUSER_9.size() >0) {
 				Collections.shuffle(LEVELUSER_9);
+				list = LEVELUSER_9;
 			} else {
 				list = getConfValue(key);
 				LEVELUSER_9 = list;
@@ -134,6 +142,7 @@ public final class PropertiesUtil {
 			key = "user_level_10";
 			if(LEVELUSER_10 != null && LEVELUSER_10.size() >0) {
 				Collections.shuffle(LEVELUSER_10);
+				list = LEVELUSER_10;
 			} else {
 				list = getConfValue(key);
 				LEVELUSER_10 = list;
@@ -143,6 +152,7 @@ public final class PropertiesUtil {
 			key = "fast_peach_user";
 			if(FASEPEACHUSER_11 != null && FASEPEACHUSER_11.size() >0) {
 				Collections.shuffle(FASEPEACHUSER_11);
+				list = FASEPEACHUSER_11;
 			} else {
 				list = getConfValue(key);
 				FASEPEACHUSER_11 = list;
@@ -152,6 +162,7 @@ public final class PropertiesUtil {
 			key = "user_no_inroom";
 			if(NOT_INROOM_12 != null && NOT_INROOM_12.size() >0) {
 				Collections.shuffle(NOT_INROOM_12);
+				list = NOT_INROOM_12;
 			} else {
 				list = getConfValue(key);
 				NOT_INROOM_12 = list;

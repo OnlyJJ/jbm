@@ -22,4 +22,11 @@ public class DateUtil {
 		cal.add(Calendar.MINUTE, n);
 		return cal.getTime();
 	}
+	
+	public static Date addSecond(Date date,int n){
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.add(Calendar.MILLISECOND, n);
+		return cal.getTime();
+	}
 }

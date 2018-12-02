@@ -33,8 +33,7 @@ public class PeachNoInRoomThread implements Runnable {
 			String ip = RandomUtil.getUserIp(userId);
 			String session = JmService.getSessionId(userId);
 			JmService.inRoom(roomId, userId);
-			int sleepTime2 = 1000; // 进入房间后延迟摘桃时间
-			Thread.sleep(sleepTime2);
+			Thread.sleep(RandomUtil.getRandom(200, 1000));
 			JmService.pluck(roomId, userId, session, ip);
 			Thread.sleep(15000);
 			JmService.outRoom(roomId, userId);

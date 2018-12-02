@@ -684,7 +684,7 @@ public class RandomUtil {
 	
 	public static List<String> getFastPeachUserIds(int num) {
 		List<String> ret = new ArrayList<String>();
-		List<String> list = PropertiesUtil.getLevelUserIds(6);
+		List<String> list = PropertiesUtil.getLevelUserIds(11);
 		if(list != null && list.size() >0) {
 			int index = 1;
 			int size = list.size();
@@ -704,7 +704,7 @@ public class RandomUtil {
 					continue;
 				}
 				ret.add(userId);
-				JmService.peachMap.put(userId, String.valueOf(6));
+				JmService.peachMap.put(userId, String.valueOf(11));
 				index++;
 			}
 		}
@@ -714,7 +714,7 @@ public class RandomUtil {
 	public static List<String> getNoInroomUserIds(int num) {
 		List<String> ret = new ArrayList<String>();
 		if(num >0) {
-			List<String> list = PropertiesUtil.getLevelUserIds(7);
+			List<String> list = PropertiesUtil.getLevelUserIds(12);
 			if(list != null && list.size() >0) {
 				int index = 1;
 				int size = list.size();
@@ -734,7 +734,7 @@ public class RandomUtil {
 						continue;
 					}
 					ret.add(userId);
-					JmService.peachMap.put(userId, String.valueOf(7));
+					JmService.peachMap.put(userId, String.valueOf(12));
 					index++;
 				}
 			}
@@ -840,7 +840,7 @@ public class RandomUtil {
 				if(StringUtils.isNotEmpty(time)) {
 					Date record = DateUtil.parse(time, "yyyy-MM-dd HH:mm:ss");
 					if(now.before(record)) {
-						LogUtil.log.info("### 获取抢桃用户，该用户还在休息时间，不参与，userId：" + userId + "，到期时间：" + time);
+						LogUtil.log.info("### isTimeOut:该用户还在休息时间，不参与，userId：" + userId + "，到期时间：" + time);
 						flag = false;
 					}
 				}
