@@ -56,7 +56,7 @@ public class LoginThread implements Runnable {
 				}
 				for(String userId : list) {
 					String ip = "";
-					if(ipMap.contains(userId)) {
+					if(ipMap.containsKey(userId)) {
 						ip = ipMap.get(userId);
 					} else {
 						ip = RandomUtil.getIp();
@@ -65,7 +65,7 @@ public class LoginThread implements Runnable {
 					String ret = JmService.login(userId, RandomUtil.getPwd(), ip);
 					if(StringUtils.isNotEmpty(ret)) {
 						serssionMap.put(userId, ret);
-						if(!signMap.contains(userId)) {
+						if(!signMap.containsKey(userId)) {
 							signMap.put(userId, "1");
 							JmService.sign(userId, ret, ip);
 							Thread.sleep(5000);

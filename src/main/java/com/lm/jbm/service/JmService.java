@@ -12,9 +12,11 @@ import org.apache.commons.lang.StringUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.lm.jbm.thread.GrapBoxThread;
+import com.lm.jbm.thread.InroomNothingThread;
 import com.lm.jbm.thread.LoginThread;
 import com.lm.jbm.thread.PeachFastThread;
 import com.lm.jbm.thread.PeachNoInRoomThread;
+import com.lm.jbm.thread.PeachOtherThread;
 import com.lm.jbm.thread.PeachThread;
 import com.lm.jbm.thread.ThreadManager;
 import com.lm.jbm.utils.DateUntil;
@@ -223,7 +225,7 @@ public class JmService {
 			}
 			pluckRecordMap.put(userId, DateUtil.format2Str(DateUtil.addMinute(new Date(), 5), "yyyy-MM-dd HH:mm:ss"));
 			// 摘桃成功后，触发修改昵称
-			if(isPluck && !nameMap.contains(userId)) {
+			if(isPluck && !nameMap.containsKey(userId)) {
 				info.put("session", session);
 				JSONObject userbaseinfo1 = new JSONObject();
 				userbaseinfo1.put("a", userId);
@@ -351,6 +353,10 @@ public class JmService {
 				level1 = 3;
 				level0 = 2;
 			}
+			// 首先处理乱入的号，以扰乱视觉
+			InroomNothingThread nothing = new InroomNothingThread(roomId);
+			ThreadManager.getInstance().execute(nothing);
+			
 			if(isGroup) {
 				list = RandomUtil.getGroupUserIds(level0, level1, level4, level5, level6,level7, level8,level9);
 			}
@@ -362,7 +368,7 @@ public class JmService {
 				int size = fast.size();
 				total += size;
 				System.err.println("直接抢桃用户组：" + fast.toString());
-				LogUtil.log.info("## 直接抢桃用户组："+ fast.toString());
+				LogUtil.log.info("## 快速抢桃用户组："+ fast.toString());
 				for(int i=0; i<size; i++) {
 					String userId = fast.get(i);
 					PeachFastThread peach = new PeachFastThread(roomId, userId, real);
@@ -385,45 +391,47 @@ public class JmService {
 				System.err.println("加入房间抢桃用户组：" + list.toString());
 				int size = list.size();
 				total += size;
-				boolean flag = JmService.checkFreeTime(); // 是否是 01:00 ~ 10:30
+				boolean flag = JmService.checkWorkTime(); // 是否是 08:00 ~ 19:00
 				if(flag) {
-					Thread.sleep(4000); // 首页休眠3s
-				} else {
-					Thread.sleep(3500);
+					Thread.sleep(4000);
 				}
 				int sleepTime = 500;
 				for(int i=0; i<size; i++) {
 					String userId = list.get(i);
 //					Thread.sleep(RandomUtil.getRandom(10, 50));
-					PeachThread peach = new PeachThread(roomId, userId, real, true);
-					ThreadManager.getInstance().execute(peach);
-					if(i >= 8) {
-						if(flag) {
-							sleepTime = 300;
-						} else {
-							sleepTime = 200;
-						}
-					} else if(i >= 6) {
-						if(flag) {
-							sleepTime = 600;
-						} else {
-							sleepTime = 300;
-						}
-					} else if(i >= 4) {
-						if(flag) {
-							sleepTime = 700;
-						} else {
-							sleepTime = 400;
-						}
-					} else if(i >= 2) {
-						if(flag) {
-							sleepTime = 900;
-						} else {
-							sleepTime = 500;
-						}
+					if(flag) {
+						PeachOtherThread pluck = new PeachOtherThread(roomId, userId, real, true);
+						ThreadManager.getInstance().execute(pluck);
+						if(i >= 8) {
+							if(flag) {
+								sleepTime = 300;
+							} else {
+								sleepTime = 200;
+							}
+						} else if(i >= 6) {
+							if(flag) {
+								sleepTime = 600;
+							} else {
+								sleepTime = 300;
+							}
+						} else if(i >= 4) {
+							if(flag) {
+								sleepTime = 700;
+							} else {
+								sleepTime = 350;
+							}
+						} else if(i >= 2) {
+							if(flag) {
+								sleepTime = 900;
+							} else {
+								sleepTime = 400;
+							}
+						} 
+						Thread.sleep(sleepTime);
+					} else {
+						PeachThread peach = new PeachThread(roomId, userId, real, true);
+						ThreadManager.getInstance().execute(peach);
 					} 
-					Thread.sleep(sleepTime);
-
 				}
 			}
 			Thread.sleep(12000);
@@ -557,6 +565,27 @@ public class JmService {
 			if(now.after(d) && now.before(d2)) {
 				return true;
 			}
+		} catch (Exception e) {
+			LogUtil.log.error(e.getMessage(), e);
+		}
+		return false;
+	}
+	
+	public static boolean checkWorkTime() {
+		try {
+			Date now = new Date();
+			String str1 = DateUtil.format2Str(now, "yyyy-MM-dd") + " 10:30:00";
+			String str2 = DateUtil.format2Str(now, "yyyy-MM-dd") + " 12:30:00";
+			String str3 = DateUtil.format2Str(now, "yyyy-MM-dd") + " 13:30:00";
+			String str4 = DateUtil.format2Str(now, "yyyy-MM-dd") + " 19:00:00";
+			Date d = DateUtil.parse(str1, "yyyy-MM-dd HH:mm:ss");
+			Date d2 = DateUtil.parse(str2, "yyyy-MM-dd HH:mm:ss");
+			Date d3 = DateUtil.parse(str3, "yyyy-MM-dd HH:mm:ss");
+			Date d4 = DateUtil.parse(str4, "yyyy-MM-dd HH:mm:ss");
+			if(now.after(d) && now.before(d2) || (now.after(d3) && now.before(d4))) {
+				return true;
+			}
+			
 		} catch (Exception e) {
 			LogUtil.log.error(e.getMessage(), e);
 		}

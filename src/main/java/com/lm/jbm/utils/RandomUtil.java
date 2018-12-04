@@ -18,6 +18,9 @@ public class RandomUtil {
 	public static ConcurrentHashMap<String, Integer> nameMap = new ConcurrentHashMap<String, Integer>(512);
 	public static ConcurrentHashMap<String, String> remarkMap = new ConcurrentHashMap<String, String>(512);
 	public static ConcurrentHashMap<String, String> briMap = new ConcurrentHashMap<String, String>(512);
+	public static List<String> NOTHING_USER = new ArrayList<String>(512); 
+	public static ConcurrentHashMap<String, String> nothingMap = new ConcurrentHashMap<String, String>(512);
+	
 	public static final String[] ips = {
 		"120.15.129.117",
 		"120.15.129.118",
@@ -811,7 +814,7 @@ public class RandomUtil {
 	}
 	
 	public static String getRemark(String userId) {
-		if(remarkMap.contains(userId)) {
+		if(remarkMap.containsKey(userId)) {
 			return "";
 		}
 		String rem = remark[getRandom(0,remark.length)];
@@ -822,7 +825,7 @@ public class RandomUtil {
 	}
 	
 	public static String getBrithday(String userId) {
-		if(briMap.contains(userId)) {
+		if(briMap.containsKey(userId)) {
 			return "";
 		}
 		String y = year[getRandom(0, year.length)];
@@ -832,16 +835,17 @@ public class RandomUtil {
 	}
 	
 	public static boolean isTimeOut(String userId) {
-		boolean flag = true;
-		if(JmService.pluckRecordMap.contains(userId)) {
+		boolean flag = false;
+		if(JmService.pluckRecordMap.containsKey(userId)) {
 			Date now = new Date();
 			String time = JmService.pluckRecordMap.get(userId);
 			try {
 				if(StringUtils.isNotEmpty(time)) {
 					Date record = DateUtil.parse(time, "yyyy-MM-dd HH:mm:ss");
-					if(now.before(record)) {
+					if(now.after(record)) {
+						flag = true;
+					} else {
 						LogUtil.log.info("### isTimeOut:该用户还在休息时间，不参与，userId：" + userId + "，到期时间：" + time);
-						flag = false;
 					}
 				}
 			} catch (Exception e) {
@@ -849,5 +853,20 @@ public class RandomUtil {
 			}
 		}
 		return flag;
+	}
+	
+	public static List<String> getNothingUser() {
+		if(NOTHING_USER != null) {
+			return NOTHING_USER;
+		}
+		String userId = PropertiesUtil.getValue("nothing");
+		if(StringUtils.isNotEmpty(userId)) {
+			String[] userIds = userId.split(",");
+			List<String> list = Arrays.asList(userIds);
+			Collections.shuffle(list);
+			NOTHING_USER = list;
+			return list;
+		}
+		return null;
 	}
 }

@@ -43,61 +43,114 @@ public class PeachThread implements Runnable {
 			int sleepTime2 = 500; // 进入房间后延迟摘桃时间
 			boolean flag = JmService.checkFreeTime(); // 是否是 01:00 ~ 10:30
 //			boolean isInroom = true;
+//			if(way <= 5) { // 人太少
+//				if(flag) { // 01:00 ~ 10:30，间隔6~12秒
+//					sleepTime1 = RandomUtil.getRandom(3500, 7000);
+//					sleepTime2 = RandomUtil.getRandom(1000, 3000);
+//				} else { // 其他时间段， 间隔4~8秒
+//					sleepTime1 = RandomUtil.getRandom(3500, 6000);
+//					sleepTime2 = RandomUtil.getRandom(800, 1000);
+//				}
+//			} else if(way <= 10) { // 人太少
+//				if(flag) { // 01:00 ~ 10:30，间隔6~12秒
+//					sleepTime1 = RandomUtil.getRandom(3500, 7000);
+//					sleepTime2 = RandomUtil.getRandom(1000, 3000);
+//				} else { // 其他时间段， 间隔4~8秒
+//					sleepTime1 = RandomUtil.getRandom(3500, 6000);
+//					sleepTime2 = RandomUtil.getRandom(800, 1000);
+//				}
+//			} else if(way <= 15) { // 人少
+//				if(flag) {  // 01:00 ~ 10:30，间隔5~10秒
+//					sleepTime1 = RandomUtil.getRandom(3500, 6000);
+//					sleepTime2 = RandomUtil.getRandom(1000, 3000);
+//				} else { // 其他时间段，间隔3~8秒
+//					sleepTime1 = RandomUtil.getRandom(3500, 6000);
+//					sleepTime2 = RandomUtil.getRandom(800, 1000);
+//				}
+//			} else if(way <= 25) { // 人少
+//				if(flag) {  // 01:00 ~ 10:30，间隔5~10秒
+//					sleepTime1 = RandomUtil.getRandom(3500, 6000);
+//					sleepTime2 = RandomUtil.getRandom(1000, 3000);
+//				} else { // 其他时间段，间隔3~8秒
+//					sleepTime1 = RandomUtil.getRandom(3500, 6000);
+//					sleepTime2 = RandomUtil.getRandom(800, 1000);
+//				}
+//			} else if(way <= 35) { // 一般，
+//				if(flag) {  // 01:00 ~ 10:30，间隔4~8秒
+//					sleepTime1 = RandomUtil.getRandom(3500, 6000);
+//					sleepTime2 = RandomUtil.getRandom(2000, 3000);
+//				} else { // 其他时间段，间隔3~6秒
+//					sleepTime1 = RandomUtil.getRandom(3500, 6000);
+//					sleepTime2 = RandomUtil.getRandom(800, 1000);
+//				}
+//			} else if(way <= 40) { // 人多，
+//				if(flag) {  // 01:00 ~ 10:30，间隔3~5秒
+//					sleepTime1 = RandomUtil.getRandom(3500, 6000);
+//					sleepTime2 = RandomUtil.getRandom(1000, 2000);
+//				} else { // 其他时间段，间隔2~4秒
+//					sleepTime1 = RandomUtil.getRandom(3500, 6000);
+//					sleepTime2 = RandomUtil.getRandom(800, 1000);
+//				}
+//			} else { // 人很多，
+//				isInroom = false;
+//				sleepTime1 = RandomUtil.getRandom(800, 1500);
+//				sleepTime2 = RandomUtil.getRandom(400, 800);
+//			}
 			if(way <= 5) { // 人太少
 				if(flag) { // 01:00 ~ 10:30，间隔6~12秒
-					sleepTime1 = RandomUtil.getRandom(3500, 7000);
-					sleepTime2 = RandomUtil.getRandom(1000, 3000);
+					sleepTime1 = RandomUtil.getRandom(4000, 6000);
+					sleepTime2 = RandomUtil.getRandom(2000, 3000);
 				} else { // 其他时间段， 间隔4~8秒
-					sleepTime1 = RandomUtil.getRandom(3500, 6000);
-					sleepTime2 = RandomUtil.getRandom(800, 1000);
+					sleepTime1 = RandomUtil.getRandom(4000, 5500);
+					sleepTime2 = RandomUtil.getRandom(1000, 2000);
 				}
 			} else if(way <= 10) { // 人太少
 				if(flag) { // 01:00 ~ 10:30，间隔6~12秒
-					sleepTime1 = RandomUtil.getRandom(3500, 7000);
-					sleepTime2 = RandomUtil.getRandom(1000, 3000);
+					sleepTime1 = RandomUtil.getRandom(4000, 6000);
+					sleepTime2 = RandomUtil.getRandom(2000, 3000);
 				} else { // 其他时间段， 间隔4~8秒
-					sleepTime1 = RandomUtil.getRandom(3500, 6000);
-					sleepTime2 = RandomUtil.getRandom(800, 1000);
+					sleepTime1 = RandomUtil.getRandom(4000, 5500);
+					sleepTime2 = RandomUtil.getRandom(1000, 2000);
 				}
 			} else if(way <= 15) { // 人少
 				if(flag) {  // 01:00 ~ 10:30，间隔5~10秒
-					sleepTime1 = RandomUtil.getRandom(3500, 6000);
-					sleepTime2 = RandomUtil.getRandom(1000, 3000);
+					sleepTime1 = RandomUtil.getRandom(4000, 6000);
+					sleepTime2 = RandomUtil.getRandom(2000, 3000);
 				} else { // 其他时间段，间隔3~8秒
-					sleepTime1 = RandomUtil.getRandom(3500, 6000);
-					sleepTime2 = RandomUtil.getRandom(800, 1000);
+					sleepTime1 = RandomUtil.getRandom(4000, 5500);
+					sleepTime2 = RandomUtil.getRandom(1000, 2000);
 				}
 			} else if(way <= 25) { // 人少
 				if(flag) {  // 01:00 ~ 10:30，间隔5~10秒
-					sleepTime1 = RandomUtil.getRandom(3500, 6000);
-					sleepTime2 = RandomUtil.getRandom(1000, 3000);
+					sleepTime1 = RandomUtil.getRandom(4000, 6000);
+					sleepTime2 = RandomUtil.getRandom(2000, 3000);
 				} else { // 其他时间段，间隔3~8秒
-					sleepTime1 = RandomUtil.getRandom(3500, 6000);
-					sleepTime2 = RandomUtil.getRandom(800, 1000);
+					sleepTime1 = RandomUtil.getRandom(4000, 5500);
+					sleepTime2 = RandomUtil.getRandom(1000, 1800);
 				}
 			} else if(way <= 35) { // 一般，
 				if(flag) {  // 01:00 ~ 10:30，间隔4~8秒
-					sleepTime1 = RandomUtil.getRandom(3500, 6000);
+					sleepTime1 = RandomUtil.getRandom(4000, 6000);
 					sleepTime2 = RandomUtil.getRandom(2000, 3000);
 				} else { // 其他时间段，间隔3~6秒
-					sleepTime1 = RandomUtil.getRandom(3500, 6000);
-					sleepTime2 = RandomUtil.getRandom(800, 1000);
+					sleepTime1 = RandomUtil.getRandom(4000, 5500);
+					sleepTime2 = RandomUtil.getRandom(1000, 1800);
 				}
 			} else if(way <= 40) { // 人多，
 				if(flag) {  // 01:00 ~ 10:30，间隔3~5秒
-					sleepTime1 = RandomUtil.getRandom(3500, 6000);
+					sleepTime1 = RandomUtil.getRandom(4000, 5500);
 					sleepTime2 = RandomUtil.getRandom(1000, 2000);
 				} else { // 其他时间段，间隔2~4秒
-					sleepTime1 = RandomUtil.getRandom(3500, 6000);
-					sleepTime2 = RandomUtil.getRandom(800, 1000);
+					sleepTime1 = RandomUtil.getRandom(4000, 5500);
+					sleepTime2 = RandomUtil.getRandom(1000, 1800);
 				}
 			} else { // 人很多，
 				isInroom = false;
 				sleepTime1 = RandomUtil.getRandom(800, 1500);
-				sleepTime2 = RandomUtil.getRandom(400, 800);
+				sleepTime2 = RandomUtil.getRandom(300, 600);
 			}
 			if(isInroom) {
-//				Thread.sleep(sleepTime1);
+				Thread.sleep(sleepTime1);
 				socket = SocketUtil.inRoom(roomId, userId);
 			} else {
 				JmService.inRoom(roomId, userId);
