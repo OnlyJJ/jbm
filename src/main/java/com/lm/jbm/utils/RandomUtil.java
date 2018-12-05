@@ -847,9 +847,8 @@ public class RandomUtil {
 					Date record = DateUtil.parse(time, "yyyy-MM-dd HH:mm:ss");
 					if(now.before(record)) {
 						flag = true;
-					} else {
 						LogUtil.log.info("### isTimeOut:该用户还在休息时间，不参与，userId：" + userId + "，到期时间：" + time);
-					}
+					} 
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -864,7 +863,7 @@ public class RandomUtil {
 		List<String> list2 = null;
 		List<String> list3 = null;
 		List<String> list4 = null;
-		if(NOTHING_USER_1 != null) {
+		if(NOTHING_USER_1.size() >0) {
 			list1 = NOTHING_USER_1;
 		} else {
 			String userId = PropertiesUtil.getValue("nothing_1");
@@ -887,7 +886,7 @@ public class RandomUtil {
 			}
 		}
 		
-		if(NOTHING_USER_2 != null) {
+		if(NOTHING_USER_2.size() >0) {
 			list2 = NOTHING_USER_2;
 		} else {
 			String userId = PropertiesUtil.getValue("nothing_2");
@@ -909,7 +908,7 @@ public class RandomUtil {
 				break;
 			}
 		}
-		if(NOTHING_USER_3 != null) {
+		if(NOTHING_USER_3.size() >0) {
 			list3 = NOTHING_USER_3;
 		} else {
 			String userId = PropertiesUtil.getValue("nothing_3");
@@ -931,7 +930,7 @@ public class RandomUtil {
 				break;
 			}
 		}
-		if(NOTHING_USER_4 != null) {
+		if(NOTHING_USER_4.size() >0) {
 			list4 = NOTHING_USER_4;
 		} else {
 			String userId = PropertiesUtil.getValue("nothing_4");
@@ -966,7 +965,6 @@ public class RandomUtil {
 					Date record = DateUtil.parse(time, "yyyy-MM-dd HH:mm:ss");
 					if(now.before(record)) {
 						flag = true;
-					} else {
 						LogUtil.log.info("### 随机进入房间旁观：还在休息中，userId：" + userId + "，到期时间：" + time);
 					}
 				}

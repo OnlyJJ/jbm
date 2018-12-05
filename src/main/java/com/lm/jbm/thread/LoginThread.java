@@ -96,9 +96,9 @@ public class LoginThread implements Runnable {
 							Thread.sleep(5000);
 						}
 					}
-					Thread.sleep(15000);
+					Thread.sleep(10000);
 				}
-				Thread.sleep(1000*60*30);
+				Thread.sleep(1000*60*60);
 			} catch (Exception e) {
 				LogUtil.log.error(e.getMessage(), e);
 				break;

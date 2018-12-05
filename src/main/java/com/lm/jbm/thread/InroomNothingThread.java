@@ -46,10 +46,11 @@ public class InroomNothingThread implements Runnable {
 					}
 					if(index == 1) {
 						time = 500;
-					}
+					} 
 					socket = SocketUtil.inRoom(roomId, userId);
 					m.put(userId, socket);
-					
+					LogUtil.log.info("InroomNothingThread：房间：" + roomId + "，随机混入用户："+ userId 
+							+ "，进入房间时间：" + DateUtil.format2Str(DateUtil.addSecond(new Date(), time), "yyyy-MM-dd HH:mm:ss.SSS"));
 					if(flag) {
 						outTime = 8;
 					}

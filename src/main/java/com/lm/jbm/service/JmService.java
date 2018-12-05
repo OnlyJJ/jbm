@@ -357,12 +357,13 @@ public class JmService {
 				level1 = 3;
 				level0 = 3;
 			}
-			// 首先处理乱入的号，以扰乱视觉
-			InroomNothingThread nothing = new InroomNothingThread(roomId);
-			ThreadManager.getInstance().execute(nothing);
-			
+			long time1 = System.currentTimeMillis();
 			if(isGroup) {
+				// 首先处理乱入的号，以扰乱视觉
+				InroomNothingThread nothing = new InroomNothingThread(roomId);
+				ThreadManager.getInstance().execute(nothing);
 				list = RandomUtil.getGroupUserIds(level0, level1, level4, level5, level6,level7, level8,level9);
+				LogUtil.log.info("### 房间："+ roomId + "，获取摘桃用户集合耗时：" + (System.currentTimeMillis() - time1));
 			}
 			if(isFast) {
 				fast = RandomUtil.getFastPeachUserIds(fastNum);
@@ -371,7 +372,7 @@ public class JmService {
 			if(isFast) {
 				int size = fast.size();
 				total += size;
-				LogUtil.log.info("## 快速抢桃用户组："+ fast.toString());
+				LogUtil.log.info("## 快速抢桃：房间：" + roomId + "，用户组："+ fast.toString());
 				for(int i=0; i<size; i++) {
 					String userId = fast.get(i);
 					PeachFastThread peach = new PeachFastThread(roomId, userId, real);
@@ -381,7 +382,7 @@ public class JmService {
 			if(noInroom) {
 				int size = fast.size();
 				total += size;
-				LogUtil.log.info("## 直接抢桃用户组："+ fast.toString());
+				LogUtil.log.info("## 直接抢桃：房间：" + roomId + "，用户组："+ fast.toString());
 				for(int i=0; i<size; i++) {
 					String userId = fast.get(i);
 					PeachNoInRoomThread peach = new PeachNoInRoomThread(roomId, userId);
@@ -436,7 +437,9 @@ public class JmService {
 //					} 
 //				}
 			}
-			Thread.sleep(12000);
+			long time2 = System.currentTimeMillis();
+			LogUtil.log.info("### 处理摘桃完毕，房间：" + roomId + "，耗时：" + (time2 - time1));
+			Thread.sleep(15000);
 			LogUtil.log.info("### 摘桃，当前房间：" + roomId + "，在线人数：" + real 
 					+ "，参与抢桃人数：" + total
 					+ "，抢成功人数：" + pluckCountMap.get(roomId)
