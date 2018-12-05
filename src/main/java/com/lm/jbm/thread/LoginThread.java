@@ -29,14 +29,11 @@ public class LoginThread implements Runnable {
 		while(true) {
 			try {
 				List<String> list = new ArrayList<String>();
+				if(PropertiesUtil.getLevelUserIds(0) != null) {
+					list.addAll(PropertiesUtil.getLevelUserIds(0));
+				}
 				if(PropertiesUtil.getLevelUserIds(1) != null) {
 					list.addAll(PropertiesUtil.getLevelUserIds(1));
-				}
-				if(PropertiesUtil.getLevelUserIds(2) != null) {
-					list.addAll(PropertiesUtil.getLevelUserIds(2));
-				}
-				if(PropertiesUtil.getLevelUserIds(3) != null) {
-					list.addAll(PropertiesUtil.getLevelUserIds(3));
 				}
 				if(PropertiesUtil.getLevelUserIds(4) != null) {
 					list.addAll(PropertiesUtil.getLevelUserIds(4));
@@ -50,9 +47,37 @@ public class LoginThread implements Runnable {
 				if(PropertiesUtil.getLevelUserIds(7) != null) {
 					list.addAll(PropertiesUtil.getLevelUserIds(7));
 				}
+				if(PropertiesUtil.getLevelUserIds(8) != null) {
+					list.addAll(PropertiesUtil.getLevelUserIds(8));
+				}
+				if(PropertiesUtil.getLevelUserIds(9) != null) {
+					list.addAll(PropertiesUtil.getLevelUserIds(9));
+				}
+				if(PropertiesUtil.getLevelUserIds(11) != null) {
+					list.addAll(PropertiesUtil.getLevelUserIds(11));
+				}
+				if(PropertiesUtil.getLevelUserIds(12) != null) {
+					list.addAll(PropertiesUtil.getLevelUserIds(12));
+				}
 				String[] boxUser = RandomUtil.getUserIds("boxUser");
 				if(boxUser != null) {
 					list.addAll(Arrays.asList(boxUser));
+				}
+				String[] nothing_1 = RandomUtil.getUserIds("nothing_1");
+				if(nothing_1 != null) {
+					list.addAll(Arrays.asList(nothing_1));
+				}
+				String[] nothing_2 = RandomUtil.getUserIds("nothing_2");
+				if(nothing_2 != null) {
+					list.addAll(Arrays.asList(nothing_2));
+				}
+				String[] nothing_3 = RandomUtil.getUserIds("nothing_3");
+				if(nothing_3 != null) {
+					list.addAll(Arrays.asList(nothing_3));
+				}
+				String[] nothing_4 = RandomUtil.getUserIds("nothing_4");
+				if(nothing_4 != null) {
+					list.addAll(Arrays.asList(nothing_4));
 				}
 				for(String userId : list) {
 					String ip = "";
@@ -73,7 +98,7 @@ public class LoginThread implements Runnable {
 					}
 					Thread.sleep(15000);
 				}
-				Thread.sleep(1000*60*20);
+				Thread.sleep(1000*60*30);
 			} catch (Exception e) {
 				LogUtil.log.error(e.getMessage(), e);
 				break;

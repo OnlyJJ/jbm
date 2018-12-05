@@ -18,7 +18,10 @@ public class RandomUtil {
 	public static ConcurrentHashMap<String, Integer> nameMap = new ConcurrentHashMap<String, Integer>(512);
 	public static ConcurrentHashMap<String, String> remarkMap = new ConcurrentHashMap<String, String>(512);
 	public static ConcurrentHashMap<String, String> briMap = new ConcurrentHashMap<String, String>(512);
-	public static List<String> NOTHING_USER = new ArrayList<String>(512); 
+	public static List<String> NOTHING_USER_1 = new ArrayList<String>();
+	public static List<String> NOTHING_USER_2 = new ArrayList<String>(); 
+	public static List<String> NOTHING_USER_3 = new ArrayList<String>(); 
+	public static List<String> NOTHING_USER_4 = new ArrayList<String>(); 
 	public static ConcurrentHashMap<String, String> nothingMap = new ConcurrentHashMap<String, String>(512);
 	
 	public static final String[] ips = {
@@ -856,17 +859,121 @@ public class RandomUtil {
 	}
 	
 	public static List<String> getNothingUser() {
-		if(NOTHING_USER != null) {
-			return NOTHING_USER;
+		List<String> group = new ArrayList<String>();
+		List<String> list1 = null;
+		List<String> list2 = null;
+		List<String> list3 = null;
+		List<String> list4 = null;
+		if(NOTHING_USER_1 != null) {
+			list1 = NOTHING_USER_1;
+		} else {
+			String userId = PropertiesUtil.getValue("nothing_1");
+			if(StringUtils.isNotEmpty(userId)) {
+				String[] userIds = userId.split(",");
+				list1 = Arrays.asList(userIds);
+				NOTHING_USER_1 = list1;
+			}
 		}
-		String userId = PropertiesUtil.getValue("nothing");
-		if(StringUtils.isNotEmpty(userId)) {
-			String[] userIds = userId.split(",");
-			List<String> list = Arrays.asList(userIds);
-			Collections.shuffle(list);
-			NOTHING_USER = list;
-			return list;
+		if(list1 != null) {
+			int size = list1.size();
+			Collections.shuffle(list1);
+			for(int i=0; i<size; i++) {
+				String userId = list1.get(i);
+				if(!checkTime(userId)) {
+					continue;
+				}
+				group.add(userId);
+				break;
+			}
 		}
-		return null;
+		
+		if(NOTHING_USER_2 != null) {
+			list2 = NOTHING_USER_2;
+		} else {
+			String userId = PropertiesUtil.getValue("nothing_2");
+			if(StringUtils.isNotEmpty(userId)) {
+				String[] userIds = userId.split(",");
+				list2 = Arrays.asList(userIds);
+				NOTHING_USER_2 = list2;
+			}
+		}
+		if(list2 != null) {
+			int size = list2.size();
+			Collections.shuffle(list2);
+			for(int i=0; i<size; i++) {
+				String userId = list2.get(i);
+				if(!checkTime(userId)) {
+					continue;
+				}
+				group.add(userId);
+				break;
+			}
+		}
+		if(NOTHING_USER_3 != null) {
+			list3 = NOTHING_USER_3;
+		} else {
+			String userId = PropertiesUtil.getValue("nothing_3");
+			if(StringUtils.isNotEmpty(userId)) {
+				String[] userIds = userId.split(",");
+				list3 = Arrays.asList(userIds);
+				NOTHING_USER_3 = list3;
+			}
+		}
+		if(list3 != null) {
+			int size = list3.size();
+			Collections.shuffle(list3);
+			for(int i=0; i<size; i++) {
+				String userId = list3.get(i);
+				if(!checkTime(userId)) {
+					continue;
+				}
+				group.add(userId);
+				break;
+			}
+		}
+		if(NOTHING_USER_4 != null) {
+			list4 = NOTHING_USER_4;
+		} else {
+			String userId = PropertiesUtil.getValue("nothing_4");
+			if(StringUtils.isNotEmpty(userId)) {
+				String[] userIds = userId.split(",");
+				list4 = Arrays.asList(userIds);
+				NOTHING_USER_4 = list4;
+			}
+		}
+		if(list4 != null) {
+			int size = list4.size();
+			Collections.shuffle(list4);
+			for(int i=0; i<size; i++) {
+				String userId = list4.get(i);
+				if(!checkTime(userId)) {
+					continue;
+				}
+				group.add(userId);
+				break;
+			}
+		}
+		return group;
+	}
+	
+	private static boolean checkTime(String userId) {
+		boolean flag = false;
+		if(nothingMap.containsKey(userId)) {
+			Date now = new Date();
+			String time = nothingMap.get(userId);
+			try {
+				if(StringUtils.isNotEmpty(time)) {
+					Date record = DateUtil.parse(time, "yyyy-MM-dd HH:mm:ss");
+					if(now.after(record)) {
+						flag = true;
+					} else {
+						LogUtil.log.info("### 随机进入房间旁观：还在休息中，userId：" + userId + "，到期时间：" + time);
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return flag;
 	}
 }

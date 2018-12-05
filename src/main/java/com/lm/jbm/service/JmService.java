@@ -50,7 +50,7 @@ public class JmService {
 	public static String getSessionId(String userId) {
 		String sessionId = LoginThread.serssionMap.get(userId);
 		if(StringUtils.isEmpty(sessionId)) {
-			sessionId = JmService.login(userId, RandomUtil.getPwd(), RandomUtil.getIp());
+			sessionId = JmService.login(userId, RandomUtil.getPwd(), RandomUtil.getUserIp(userId));
 			if(sessionId != null && !StringUtils.isEmpty(sessionId)) {
 				LoginThread.serssionMap.put(userId, sessionId);
 			}
@@ -75,6 +75,7 @@ public class JmService {
 						.getString("session"));
 				if (session != null && session.containsKey("b")) {
 					sessionId = session.get("b").toString();
+					LoginThread.ipMap.put(userId, ip);
 				}
 			}
 			return sessionId;
@@ -295,63 +296,66 @@ public class JmService {
 				isFast = false;
 				noInroom = true;
 				fast = RandomUtil.getNoInroomUserIds(7);
-			} else if(real >= 35) {
-				level7 = 2;
+			} else if(real >= 35) { // 7 + 5
+				level7 = 1;
 				level6 = 2;
 				level5 = 1;
 				level4 = 1;
 				level1 = 1;
-			} else if(real >= 30) {
-				level7 = 2;
+				level0 = 1;
+			} else if(real >= 30) { // 8 + 5
+				level7 = 1;
 				level6 = 2;
 				level5 = 2;
 				level4 = 1;
-				level1 = 1;
-			} else if(real >= 25) {
-				level7 = 3;
-				level6 = 2;
-				level5 = 2;
-				level4 = 1;
-				level1 = 1;
-			} else if(real >= 20) {
-				level7 = 3;
-				level6 = 2;
-				level5 = 2;
-				level4 = 2;
 				level1 = 1;
 				level0 = 1;
-			} else if(real >= 15) {
+			} else if(real >= 25) { // 10 + 5
 				level7 = 2;
+				level6 = 2;
+				level5 = 2;
+				level4 = 1;
+				level1 = 1;
+				level0 = 2;
+			} else if(real >= 20) { // 12 + 5
+				level7 = 3;
 				level6 = 2;
 				level5 = 2;
 				level4 = 2;
 				level1 = 2;
+				level0 = 1;
+			} else if(real >= 15) { // 14 + 5
+				level7 = 3;
+				level6 = 2;
+				level5 = 3;
+				level4 = 2;
+				level1 = 2;
 				level0 = 2;
-			} else if(real >= 10) {
+			} else if(real >= 10) { // 17 + 6
 				fastNum = 6;
-				level7 = 4;
-				level6 = 3;
+				level7 = 3;
+				level6 = 4;
 				level5 = 3;
 				level4 = 3;
 				level1 = 2;
 				level0 = 2;
-			} else if(real >= 5) {
+			} else if(real >= 5) { // 19 + 7
 				fastNum = 7;
 				level7 = 3;
 				level6 = 4;
-				level5 = 3;
+				level5 = 5;
 				level4 = 3;
 				level1 = 2;
 				level0 = 2;
-			} else {
+			} else { // 20 + 8
 				fastNum = 8;
 				level8 = 1;
-				level7 = 4;
-				level6 = 4;
-				level5 = 3;
+				level7 = 3;
+				level6 = 3;
+				level5 = 4;
 				level4 = 3;
 				level1 = 3;
-				level0 = 2;
+				level0 = 3;
 			}
 			// 首先处理乱入的号，以扰乱视觉
 			InroomNothingThread nothing = new InroomNothingThread(roomId);
@@ -367,7 +371,6 @@ public class JmService {
 			if(isFast) {
 				int size = fast.size();
 				total += size;
-				System.err.println("直接抢桃用户组：" + fast.toString());
 				LogUtil.log.info("## 快速抢桃用户组："+ fast.toString());
 				for(int i=0; i<size; i++) {
 					String userId = fast.get(i);
@@ -378,7 +381,6 @@ public class JmService {
 			if(noInroom) {
 				int size = fast.size();
 				total += size;
-				System.err.println("直接抢桃用户组：" + fast.toString());
 				LogUtil.log.info("## 直接抢桃用户组："+ fast.toString());
 				for(int i=0; i<size; i++) {
 					String userId = fast.get(i);
@@ -388,51 +390,51 @@ public class JmService {
 			}
 			
 			if(list != null && list.size() >0) {
-				System.err.println("加入房间抢桃用户组：" + list.toString());
 				int size = list.size();
 				total += size;
-				boolean flag = JmService.checkWorkTime(); // 是否是 08:00 ~ 19:00
-				if(flag) {
-					Thread.sleep(4000);
-				}
-				int sleepTime = 500;
-				for(int i=0; i<size; i++) {
-					String userId = list.get(i);
-//					Thread.sleep(RandomUtil.getRandom(10, 50));
-					if(flag) {
-						PeachOtherThread pluck = new PeachOtherThread(roomId, userId, real, true);
-						ThreadManager.getInstance().execute(pluck);
-						if(i >= 8) {
-							if(flag) {
-								sleepTime = 300;
-							} else {
-								sleepTime = 200;
-							}
-						} else if(i >= 6) {
-							if(flag) {
-								sleepTime = 600;
-							} else {
-								sleepTime = 300;
-							}
-						} else if(i >= 4) {
-							if(flag) {
-								sleepTime = 700;
-							} else {
-								sleepTime = 350;
-							}
-						} else if(i >= 2) {
-							if(flag) {
-								sleepTime = 900;
-							} else {
-								sleepTime = 400;
-							}
-						} 
-						Thread.sleep(sleepTime);
-					} else {
-						PeachThread peach = new PeachThread(roomId, userId, real, true);
-						ThreadManager.getInstance().execute(peach);
-					} 
-				}
+				PeachThread peach = new PeachThread(roomId, null, real, true, list);
+				ThreadManager.getInstance().execute(peach);
+//				boolean flag = JmService.checkWorkTime(); // 是否是 08:00 ~ 19:00
+//				if(flag) {
+//					Thread.sleep(4000);
+//				}
+//				int sleepTime = 500;
+//				for(int i=0; i<size; i++) {
+//					String userId = list.get(i);
+//					if(flag) {
+//						PeachOtherThread pluck = new PeachOtherThread(roomId, userId, real, true);
+//						ThreadManager.getInstance().execute(pluck);
+//						if(i >= 8) {
+//							if(flag) {
+//								sleepTime = 300;
+//							} else {
+//								sleepTime = 200;
+//							}
+//						} else if(i >= 6) {
+//							if(flag) {
+//								sleepTime = 600;
+//							} else {
+//								sleepTime = 300;
+//							}
+//						} else if(i >= 4) {
+//							if(flag) {
+//								sleepTime = 700;
+//							} else {
+//								sleepTime = 350;
+//							}
+//						} else if(i >= 2) {
+//							if(flag) {
+//								sleepTime = 900;
+//							} else {
+//								sleepTime = 400;
+//							}
+//						} 
+//						Thread.sleep(sleepTime);
+//					} else {
+//						PeachThread peach = new PeachThread(roomId, userId, real, true);
+//						ThreadManager.getInstance().execute(peach);
+//					} 
+//				}
 			}
 			Thread.sleep(12000);
 			LogUtil.log.info("### 摘桃，当前房间：" + roomId + "，在线人数：" + real 
@@ -499,7 +501,7 @@ public class JmService {
 				way = 0;
 			}
 			for(int i=0; i<userIds.length; i++) {
-				if(index > 20) {
+				if(index > 25) {
 					return;
 				}
 				String userId = list.get(i);

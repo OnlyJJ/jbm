@@ -34,21 +34,20 @@ public class PeachFastThread implements Runnable {
 			int sleepTime = 1000;
 			int pluckTime = 1000;
 			if(way <= 5) { // 人太少
-				pluckTime = RandomUtil.getRandom(5000, 9000);
+				pluckTime = RandomUtil.getRandom(6000, 8000);
 			} else if(way <= 10) { // 人太少
-				pluckTime = RandomUtil.getRandom(4000, 8000);
+				pluckTime = RandomUtil.getRandom(5000, 8000);
 			} else if(way <= 15) { // 人少
-				pluckTime = RandomUtil.getRandom(2000, 5000);
+				pluckTime = RandomUtil.getRandom(3000, 5000);
 			} else if(way <= 25) { // 人少
-				pluckTime = RandomUtil.getRandom(2000, 4000);
+				pluckTime = RandomUtil.getRandom(2000, 3000);
 			} else if(way <= 35) { // 一般，
-				pluckTime = RandomUtil.getRandom(1000, 3000);
-			} else if(way <= 40) { // 人多，
 				pluckTime = RandomUtil.getRandom(1000, 2000);
+			} else if(way <= 40) { // 人多，
+				pluckTime = RandomUtil.getRandom(1000, 1500);
 			} else { // 人很多，
 				pluckTime = RandomUtil.getRandom(500, 700);
 			}
-//			Thread.sleep(sleepTime);
 			String ip = RandomUtil.getUserIp(userId);
 			String session = JmService.getSessionId(userId);
 			JmService.inRoom(roomId, userId);

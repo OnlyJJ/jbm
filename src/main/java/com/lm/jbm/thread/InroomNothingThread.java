@@ -34,20 +34,27 @@ public class InroomNothingThread implements Runnable {
 			Thread.sleep(5000); // 5s后，每秒进一个
 			Map<String, Socket> m = new HashMap<String, Socket>();
 			List<String> users = RandomUtil.getNothingUser();
+			boolean flag = JmService.checkWorkTime();
+			int outTime = 5;
 			if(users != null && users.size() >0) {
 				Collections.shuffle(users);
 				int index = 0;
+				int time = 1000;
 				for(String userId : users) {
-					if(!isTimeOut(userId)) {
-						continue;
-					}
 					if(index >= 4) {
 						break;
 					}
+					if(index == 1) {
+						time = 500;
+					}
 					socket = SocketUtil.inRoom(roomId, userId);
 					m.put(userId, socket);
-					RandomUtil.nothingMap.put(userId, DateUtil.format2Str(DateUtil.addMinute(new Date(), 2), "yyyy-MM-dd HH:mm:ss"));
-					Thread.sleep(1000);
+					
+					if(flag) {
+						outTime = 8;
+					}
+					RandomUtil.nothingMap.put(userId, DateUtil.format2Str(DateUtil.addMinute(new Date(), outTime), "yyyy-MM-dd HH:mm:ss"));
+					Thread.sleep(time);
 					index++;
 				}
 				Thread.sleep(30000);
@@ -71,26 +78,5 @@ public class InroomNothingThread implements Runnable {
 
 	public void setRoomId(String roomId) {
 		this.roomId = roomId;
-	}
-	
-	private static boolean isTimeOut(String userId) {
-		boolean flag = false;
-		if(RandomUtil.nothingMap.containsKey(userId)) {
-			Date now = new Date();
-			String time = JmService.pluckRecordMap.get(userId);
-			try {
-				if(StringUtils.isNotEmpty(time)) {
-					Date record = DateUtil.parse(time, "yyyy-MM-dd HH:mm:ss");
-					if(now.after(record)) {
-						flag = true;
-					} else {
-						LogUtil.log.info("### 随机进入房间旁观：还在休息中，userId：" + userId + "，到期时间：" + time);
-					}
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return flag;
 	}
 }

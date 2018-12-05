@@ -3,6 +3,9 @@ package com.lm.jbm.thread;
 
 import java.net.Socket;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.apache.commons.lang.StringUtils;
@@ -27,175 +30,641 @@ public class PeachThread implements Runnable {
 	
 	private int way;
 	
-	public PeachThread(String roomId, String userId, int way, boolean isInroom) {
+	private List<String> list;
+	
+	public PeachThread(String roomId, String userId, int way, boolean isInroom, List<String> list) {
 		this.roomId = roomId;
 		this.userId = userId;
 		this.way = way;
 		this.isInroom = isInroom;
+		this.list = list;
 	}
 
 	public void run() {
 		try {
 			Socket socket = null;
-			String ip = RandomUtil.getUserIp(userId);
-			String session = JmService.getSessionId(userId);
-			int sleepTime1 = 1000; // 延迟进入房间时间
-			int sleepTime2 = 500; // 进入房间后延迟摘桃时间
-			boolean flag = JmService.checkFreeTime(); // 是否是 01:00 ~ 10:30
-//			boolean isInroom = true;
+//			int sleepTime1 = 1000; // 延迟进入房间时间
+//			int sleepTime2 = 500; // 进入房间后延迟摘桃时间
 //			if(way <= 5) { // 人太少
 //				if(flag) { // 01:00 ~ 10:30，间隔6~12秒
-//					sleepTime1 = RandomUtil.getRandom(3500, 7000);
-//					sleepTime2 = RandomUtil.getRandom(1000, 3000);
+//					sleepTime1 = RandomUtil.getRandom(4000, 9000);
+//					sleepTime2 = RandomUtil.getRandom(1000, 5000);
 //				} else { // 其他时间段， 间隔4~8秒
-//					sleepTime1 = RandomUtil.getRandom(3500, 6000);
-//					sleepTime2 = RandomUtil.getRandom(800, 1000);
+//					sleepTime1 = RandomUtil.getRandom(4000, 5500);
+//					sleepTime2 = RandomUtil.getRandom(1000, 2000);
 //				}
 //			} else if(way <= 10) { // 人太少
 //				if(flag) { // 01:00 ~ 10:30，间隔6~12秒
-//					sleepTime1 = RandomUtil.getRandom(3500, 7000);
-//					sleepTime2 = RandomUtil.getRandom(1000, 3000);
+//					sleepTime1 = RandomUtil.getRandom(4000, 6000);
+//					sleepTime2 = RandomUtil.getRandom(2000, 3000);
 //				} else { // 其他时间段， 间隔4~8秒
-//					sleepTime1 = RandomUtil.getRandom(3500, 6000);
-//					sleepTime2 = RandomUtil.getRandom(800, 1000);
+//					sleepTime1 = RandomUtil.getRandom(4000, 5500);
+//					sleepTime2 = RandomUtil.getRandom(1000, 2000);
 //				}
 //			} else if(way <= 15) { // 人少
 //				if(flag) {  // 01:00 ~ 10:30，间隔5~10秒
-//					sleepTime1 = RandomUtil.getRandom(3500, 6000);
-//					sleepTime2 = RandomUtil.getRandom(1000, 3000);
+//					sleepTime1 = RandomUtil.getRandom(4000, 6000);
+//					sleepTime2 = RandomUtil.getRandom(2000, 3000);
 //				} else { // 其他时间段，间隔3~8秒
-//					sleepTime1 = RandomUtil.getRandom(3500, 6000);
-//					sleepTime2 = RandomUtil.getRandom(800, 1000);
+//					sleepTime1 = RandomUtil.getRandom(4000, 5500);
+//					sleepTime2 = RandomUtil.getRandom(1000, 2000);
 //				}
 //			} else if(way <= 25) { // 人少
 //				if(flag) {  // 01:00 ~ 10:30，间隔5~10秒
-//					sleepTime1 = RandomUtil.getRandom(3500, 6000);
-//					sleepTime2 = RandomUtil.getRandom(1000, 3000);
+//					sleepTime1 = RandomUtil.getRandom(4000, 6000);
+//					sleepTime2 = RandomUtil.getRandom(2000, 3000);
 //				} else { // 其他时间段，间隔3~8秒
-//					sleepTime1 = RandomUtil.getRandom(3500, 6000);
-//					sleepTime2 = RandomUtil.getRandom(800, 1000);
+//					sleepTime1 = RandomUtil.getRandom(4000, 5500);
+//					sleepTime2 = RandomUtil.getRandom(1000, 1800);
 //				}
 //			} else if(way <= 35) { // 一般，
 //				if(flag) {  // 01:00 ~ 10:30，间隔4~8秒
-//					sleepTime1 = RandomUtil.getRandom(3500, 6000);
+//					sleepTime1 = RandomUtil.getRandom(4000, 6000);
 //					sleepTime2 = RandomUtil.getRandom(2000, 3000);
 //				} else { // 其他时间段，间隔3~6秒
-//					sleepTime1 = RandomUtil.getRandom(3500, 6000);
-//					sleepTime2 = RandomUtil.getRandom(800, 1000);
+//					sleepTime1 = RandomUtil.getRandom(4000, 5500);
+//					sleepTime2 = RandomUtil.getRandom(1000, 1800);
 //				}
 //			} else if(way <= 40) { // 人多，
 //				if(flag) {  // 01:00 ~ 10:30，间隔3~5秒
-//					sleepTime1 = RandomUtil.getRandom(3500, 6000);
+//					sleepTime1 = RandomUtil.getRandom(4000, 5500);
 //					sleepTime2 = RandomUtil.getRandom(1000, 2000);
 //				} else { // 其他时间段，间隔2~4秒
-//					sleepTime1 = RandomUtil.getRandom(3500, 6000);
-//					sleepTime2 = RandomUtil.getRandom(800, 1000);
+//					sleepTime1 = RandomUtil.getRandom(4000, 5500);
+//					sleepTime2 = RandomUtil.getRandom(1000, 1800);
 //				}
 //			} else { // 人很多，
 //				isInroom = false;
 //				sleepTime1 = RandomUtil.getRandom(800, 1500);
-//				sleepTime2 = RandomUtil.getRandom(400, 800);
+//				sleepTime2 = RandomUtil.getRandom(300, 600);
 //			}
-			if(way <= 5) { // 人太少
-				if(flag) { // 01:00 ~ 10:30，间隔6~12秒
-					sleepTime1 = RandomUtil.getRandom(4000, 6000);
-					sleepTime2 = RandomUtil.getRandom(2000, 3000);
-				} else { // 其他时间段， 间隔4~8秒
-					sleepTime1 = RandomUtil.getRandom(4000, 5500);
-					sleepTime2 = RandomUtil.getRandom(1000, 2000);
+//				if(isInroom) {
+//					Thread.sleep(sleepTime1);
+//					socket = SocketUtil.inRoom(roomId, userId);
+//				} else {
+//					JmService.inRoom(roomId, userId);
+//				}
+//				
+//				LogUtil.log.info("peachThread（方式一）：房间：" + roomId + "，摘桃账号："+userId 
+//						+ "，在线成员：" + way 
+//						+ "，进入房间时间：" + DateUtil.format2Str(new Date(), "yyyy-MM-dd HH:mm:ss.SSS")
+//						+ "，摘桃前，睡眠时间：" + sleepTime2
+//						+ "，摘桃时间：" +DateUtil.format2Str(DateUtil.addSecond(new Date(), sleepTime2), "yyyy-MM-dd HH:mm:ss.SSS"));
+//				Thread.sleep(sleepTime2);
+//				JmService.pluck(roomId, userId, session, ip);
+//				if(socket != null) {
+//					Thread.sleep(15000);
+//					socket.close();
+//				}
+//				Thread.sleep(5000);
+//				JmService.outRoom(roomId, userId);
+//				JmService.remove(userId);
+			// 固定进场顺序
+			if(list != null && list.size() >0) {
+				Map<String, Socket> m = new HashMap<String, Socket>();
+				int size = list.size();
+				int sleepTime1 = 4000; // 延迟进入房间时间
+				int sleepTime2 = 1200; // 延迟摘
+				for(int i=0; i<size; i++) {
+					String user = list.get(i);
+					if(way >= 35) { 
+						switch(i) {
+						case 0:
+							sleepTime1 = 4000;
+							sleepTime2 = 1500;
+							break;
+						case 1:
+							sleepTime1 = 4500;
+							sleepTime2 = 1300;
+							break;
+						case 2:
+							sleepTime1 = 5000;
+							sleepTime2 = 1000;
+							break;
+						case 3:
+							sleepTime1 = 5500;
+							sleepTime2 = 1000;
+							break;
+						case 4:
+							sleepTime1 = 6000;
+							sleepTime2 = 800;
+							break;
+						case 5:
+							sleepTime1 = 6200;
+							sleepTime2 = 800;
+							break;
+						case 6:
+							sleepTime1 = 6500;
+							sleepTime2 = 700;
+							break;
+						case 7:
+							sleepTime1 = 6600;
+							sleepTime2 = 600;
+							break;
+						default:
+							sleepTime1 = 7000;
+							sleepTime2 = 800;
+						}
+					} else if(way >= 30) { 
+						switch(i) {
+						case 0:
+							sleepTime1 = 4000;
+							sleepTime2 = 1300;
+							break;
+						case 1:
+							sleepTime1 = 4500;
+							sleepTime2 = 1200;
+							break;
+						case 2:
+							sleepTime1 = 5000;
+							sleepTime2 = 1000;
+							break;
+						case 3:
+							sleepTime1 = 5200;
+							sleepTime2 = 1000;
+							break;
+						case 4:
+							sleepTime1 = 5300;
+							sleepTime2 = 900;
+							break;
+						case 5:
+							sleepTime1 = 5700;
+							sleepTime2 = 800;
+							break;
+						case 6:
+							sleepTime1 = 5800;
+							sleepTime2 = 800;
+							break;
+						case 7:
+							sleepTime1 = 6000;
+							sleepTime2 = 700;
+							break;
+						case 8:
+							sleepTime1 = 6100;
+							sleepTime2 = 600;
+							break;
+						default:
+							sleepTime1 = 7000;
+							sleepTime2 = 1000;
+						}
+					} else if(way >= 25) { 
+						switch(i) {
+						case 0:
+							sleepTime1 = 4000;
+							sleepTime2 = 1500;
+							break;
+						case 1:
+							sleepTime1 = 4500;
+							sleepTime2 = 1500;
+							break;
+						case 2:
+							sleepTime1 = 5000;
+							sleepTime2 = 1000;
+							break;
+						case 3:
+							sleepTime1 = 5300;
+							sleepTime2 = 1000;
+							break;
+						case 4:
+							sleepTime1 = 5500;
+							sleepTime2 = 1000;
+							break;
+						case 5:
+							sleepTime1 = 5800;
+							sleepTime2 = 900;
+							break;
+						case 6:
+							sleepTime1 = 5900;
+							sleepTime2 = 800;
+							break;
+						case 7:
+							sleepTime1 = 6000;
+							sleepTime2 = 800;
+							break;
+						case 8:
+							sleepTime1 = 6100;
+							sleepTime2 = 700;
+							break;
+						case 9:
+							sleepTime1 = 6200;
+							sleepTime2 = 700;
+							break;
+						case 10:
+							sleepTime1 = 6300;
+							sleepTime2 = 800;
+							break;
+						default:
+							sleepTime1 = 7000;
+							sleepTime2 = 1000;
+						}
+					} else if(way >= 20) { 
+						switch(i) {
+						case 0:
+							sleepTime1 = 4000;
+							sleepTime2 = 1500;
+							break;
+						case 1:
+							sleepTime1 = 4500;
+							sleepTime2 = 1400;
+							break;
+						case 2:
+							sleepTime1 = 5000;
+							sleepTime2 = 1200;
+							break;
+						case 3:
+							sleepTime1 = 5300;
+							sleepTime2 = 1200;
+							break;
+						case 4:
+							sleepTime1 = 5500;
+							sleepTime2 = 1100;
+							break;
+						case 5:
+							sleepTime1 = 5800;
+							sleepTime2 = 1000;
+							break;
+						case 6:
+							sleepTime1 = 5900;
+							sleepTime2 = 900;
+							break;
+						case 7:
+							sleepTime1 = 6000;
+							sleepTime2 = 800;
+							break;
+						case 8:
+							sleepTime1 = 6100;
+							sleepTime2 = 800;
+							break;
+						case 9:
+							sleepTime1 = 6200;
+							sleepTime2 = 800;
+							break;
+						case 10:
+							sleepTime1 = 6500;
+							sleepTime2 = 800;
+							break;
+						case 11:
+							sleepTime1 = 6600;
+							sleepTime2 = 800;
+							break;
+						case 12:
+							sleepTime1 = 6700;
+							sleepTime2 = 800;
+							break;
+						default:
+							sleepTime1 = 8000;
+							sleepTime2 = 1000;
+						}
+					} else if(way >= 15) { 
+						switch(i) {
+						case 0:
+							sleepTime1 = 4000;
+							sleepTime2 = 1500;
+							break;
+						case 1:
+							sleepTime1 = 4500;
+							sleepTime2 = 1400;
+							break;
+						case 2:
+							sleepTime1 = 5000;
+							sleepTime2 = 1300;
+							break;
+						case 3:
+							sleepTime1 = 5300;
+							sleepTime2 = 1200;
+							break;
+						case 4:
+							sleepTime1 = 5500;
+							sleepTime2 = 1200;
+							break;
+						case 5:
+							sleepTime1 = 5800;
+							sleepTime2 = 1000;
+							break;
+						case 6:
+							sleepTime1 = 5900;
+							sleepTime2 = 1000;
+							break;
+						case 7:
+							sleepTime1 = 6000;
+							sleepTime2 = 800;
+							break;
+						case 8:
+							sleepTime1 = 6100;
+							sleepTime2 = 800;
+							break;
+						case 9:
+							sleepTime1 = 6200;
+							sleepTime2 = 800;
+							break;
+						case 10:
+							sleepTime1 = 6300;
+							sleepTime2 = 800;
+							break;
+						case 11:
+							sleepTime1 = 6400;
+							sleepTime2 = 700;
+							break;
+						case 12:
+							sleepTime1 = 6500;
+							sleepTime2 = 600;
+							break;
+						case 13:
+							sleepTime1 = 6600;
+							sleepTime2 = 600;
+							break;
+						case 14:
+							sleepTime1 = 6700;
+							sleepTime2 = 600;
+							break;
+						default:
+							sleepTime1 = 8000;
+							sleepTime2 = 1000;
+						}
+					} else if(way >= 10) { // 人多，
+						switch(i) {
+						case 0:
+							sleepTime1 = 4000;
+							sleepTime2 = 1500;
+							break;
+						case 1:
+							sleepTime1 = 4500;
+							sleepTime2 = 1500;
+							break;
+						case 2:
+							sleepTime1 = 5000;
+							sleepTime2 = 1200;
+							break;
+						case 3:
+							sleepTime1 = 5300;
+							sleepTime2 = 1200;
+							break;
+						case 4:
+							sleepTime1 = 5500;
+							sleepTime2 = 1200;
+							break;
+						case 5:
+							sleepTime1 = 5800;
+							sleepTime2 = 1000;
+							break;
+						case 6:
+							sleepTime1 = 5900;
+							sleepTime2 = 1000;
+							break;
+						case 7:
+							sleepTime1 = 6000;
+							sleepTime2 = 900;
+							break;
+						case 8:
+							sleepTime1 = 6100;
+							sleepTime2 = 800;
+							break;
+						case 9:
+							sleepTime1 = 6200;
+							sleepTime2 = 800;
+							break;
+						case 10:
+							sleepTime1 = 6300;
+							sleepTime2 = 800;
+							break;
+						case 11:
+							sleepTime1 = 6700;
+							sleepTime2 = 700;
+							break;
+						case 12:
+							sleepTime1 = 6800;
+							sleepTime2 = 700;
+							break;
+						case 13:
+							sleepTime1 = 7000;
+							sleepTime2 = 600;
+							break;
+						case 14:
+							sleepTime1 = 7100;
+							sleepTime2 = 600;
+							break;
+						case 15:
+							sleepTime1 = 7150;
+							sleepTime2 = 600;
+							break;
+						case 16:
+							sleepTime1 = 7200;
+							sleepTime2 = 600;
+							break;
+						case 17:
+							sleepTime1 = 7300;
+							sleepTime2 = 600;
+							break;
+						default:
+							sleepTime1 = 8000;
+							sleepTime2 = 1000;
+						}
+					} else if(way >= 5) {
+						switch(i) {
+						case 0:
+							sleepTime1 = 4000;
+							sleepTime2 = 1500;
+							break;
+						case 1:
+							sleepTime1 = 4500;
+							sleepTime2 = 1500;
+							break;
+						case 2:
+							sleepTime1 = 5000;
+							sleepTime2 = 1300;
+							break;
+						case 3:
+							sleepTime1 = 5300;
+							sleepTime2 = 1200;
+							break;
+						case 4:
+							sleepTime1 = 5500;
+							sleepTime2 = 1200;
+							break;
+						case 5:
+							sleepTime1 = 5800;
+							sleepTime2 = 1000;
+							break;
+						case 6:
+							sleepTime1 = 5900;
+							sleepTime2 = 1000;
+							break;
+						case 7:
+							sleepTime1 = 6000;
+							sleepTime2 = 1000;
+							break;
+						case 8:
+							sleepTime1 = 6100;
+							sleepTime2 = 900;
+							break;
+						case 9:
+							sleepTime1 = 6200;
+							sleepTime2 = 800;
+							break;
+						case 10:
+							sleepTime1 = 6500;
+							sleepTime2 = 800;
+							break;
+						case 11:
+							sleepTime1 = 6700;
+							sleepTime2 = 700;
+							break;
+						case 12:
+							sleepTime1 = 6800;
+							sleepTime2 = 600;
+							break;
+						case 13:
+							sleepTime1 = 7000;
+							sleepTime2 = 600;
+							break;
+						case 14:
+							sleepTime1 = 7100;
+							sleepTime2 = 600;
+							break;
+						case 15:
+							sleepTime1 = 7150;
+							sleepTime2 = 600;
+							break;
+						case 16:
+							sleepTime1 = 7200;
+							sleepTime2 = 600;
+							break;
+						case 17:
+							sleepTime1 = 7300;
+							sleepTime2 = 600;
+							break;
+						case 18:
+							sleepTime1 = 7400;
+							sleepTime2 = 600;
+							break;
+						case 19:
+							sleepTime1 = 7500;
+							sleepTime2 = 600;
+							break;
+						default:
+							sleepTime1 = 9000;
+							sleepTime2 = 1000;
+						}
+					} else{ 
+						switch(i) {
+						case 0:
+							sleepTime1 = 4000;
+							sleepTime2 = 1500;
+							break;
+						case 1:
+							sleepTime1 = 4500;
+							sleepTime2 = 1500;
+							break;
+						case 2:
+							sleepTime1 = 5000;
+							sleepTime2 = 1300;
+							break;
+						case 3:
+							sleepTime1 = 5300;
+							sleepTime2 = 1200;
+							break;
+						case 4:
+							sleepTime1 = 5500;
+							sleepTime2 = 1200;
+							break;
+						case 5:
+							sleepTime1 = 5800;
+							sleepTime2 = 1000;
+							break;
+						case 6:
+							sleepTime1 = 5900;
+							sleepTime2 = 1000;
+							break;
+						case 7:
+							sleepTime1 = 6000;
+							sleepTime2 = 1000;
+							break;
+						case 8:
+							sleepTime1 = 6100;
+							sleepTime2 = 900;
+							break;
+						case 9:
+							sleepTime1 = 6200;
+							sleepTime2 = 800;
+							break;
+						case 10:
+							sleepTime1 = 6500;
+							sleepTime2 = 800;
+							break;
+						case 11:
+							sleepTime1 = 6700;
+							sleepTime2 = 700;
+							break;
+						case 12:
+							sleepTime1 = 6800;
+							sleepTime2 = 600;
+							break;
+						case 13:
+							sleepTime1 = 7000;
+							sleepTime2 = 600;
+							break;
+						case 14:
+							sleepTime1 = 7100;
+							sleepTime2 = 600;
+							break;
+						case 15:
+							sleepTime1 = 7150;
+							sleepTime2 = 600;
+							break;
+						case 16:
+							sleepTime1 = 7200;
+							sleepTime2 = 600;
+							break;
+						case 17:
+							sleepTime1 = 7300;
+							sleepTime2 = 600;
+							break;
+						case 18:
+							sleepTime1 = 7400;
+							sleepTime2 = 600;
+							break;
+						case 19:
+							sleepTime1 = 7500;
+							sleepTime2 = 600;
+							break;
+						case 20:
+							sleepTime1 = 7600;
+							sleepTime2 = 600;
+							break;
+						default:
+							sleepTime1 = 9000;
+							sleepTime2 = 1000;
+						}
+						LogUtil.log.info("peachThread（方式一）：房间：" + roomId + "，摘桃账号："+ user 
+								+ "，在线成员：" + way 
+								+ "，进入房间时间：" + DateUtil.format2Str(DateUtil.addSecond(new Date(), sleepTime1), "yyyy-MM-dd HH:mm:ss.SSS")
+								+ "，摘桃时间：" +DateUtil.format2Str(DateUtil.addSecond(new Date(), sleepTime2), "yyyy-MM-dd HH:mm:ss.SSS"));
+					}
+					if(isInroom) {
+						Thread.sleep(sleepTime1);
+						socket = SocketUtil.inRoom(roomId, user);
+						m.put(user, socket);
+					} else {
+						JmService.inRoom(roomId, user);
+					}
+					String ip = RandomUtil.getUserIp(user);
+					String session = JmService.getSessionId(user);
+					Thread.sleep(sleepTime2);
+					JmService.pluck(roomId, user, session, ip);
 				}
-			} else if(way <= 10) { // 人太少
-				if(flag) { // 01:00 ~ 10:30，间隔6~12秒
-					sleepTime1 = RandomUtil.getRandom(4000, 6000);
-					sleepTime2 = RandomUtil.getRandom(2000, 3000);
-				} else { // 其他时间段， 间隔4~8秒
-					sleepTime1 = RandomUtil.getRandom(4000, 5500);
-					sleepTime2 = RandomUtil.getRandom(1000, 2000);
+				Thread.sleep(30000);
+				if(m.size() >0) {
+					for(String key : m.keySet()) {
+						Socket soc = m.get(key);
+						if(soc != null) {
+							socket.close();
+						} 
+						JmService.outRoom(roomId, key);
+						JmService.remove(key);
+					}
 				}
-			} else if(way <= 15) { // 人少
-				if(flag) {  // 01:00 ~ 10:30，间隔5~10秒
-					sleepTime1 = RandomUtil.getRandom(4000, 6000);
-					sleepTime2 = RandomUtil.getRandom(2000, 3000);
-				} else { // 其他时间段，间隔3~8秒
-					sleepTime1 = RandomUtil.getRandom(4000, 5500);
-					sleepTime2 = RandomUtil.getRandom(1000, 2000);
-				}
-			} else if(way <= 25) { // 人少
-				if(flag) {  // 01:00 ~ 10:30，间隔5~10秒
-					sleepTime1 = RandomUtil.getRandom(4000, 6000);
-					sleepTime2 = RandomUtil.getRandom(2000, 3000);
-				} else { // 其他时间段，间隔3~8秒
-					sleepTime1 = RandomUtil.getRandom(4000, 5500);
-					sleepTime2 = RandomUtil.getRandom(1000, 1800);
-				}
-			} else if(way <= 35) { // 一般，
-				if(flag) {  // 01:00 ~ 10:30，间隔4~8秒
-					sleepTime1 = RandomUtil.getRandom(4000, 6000);
-					sleepTime2 = RandomUtil.getRandom(2000, 3000);
-				} else { // 其他时间段，间隔3~6秒
-					sleepTime1 = RandomUtil.getRandom(4000, 5500);
-					sleepTime2 = RandomUtil.getRandom(1000, 1800);
-				}
-			} else if(way <= 40) { // 人多，
-				if(flag) {  // 01:00 ~ 10:30，间隔3~5秒
-					sleepTime1 = RandomUtil.getRandom(4000, 5500);
-					sleepTime2 = RandomUtil.getRandom(1000, 2000);
-				} else { // 其他时间段，间隔2~4秒
-					sleepTime1 = RandomUtil.getRandom(4000, 5500);
-					sleepTime2 = RandomUtil.getRandom(1000, 1800);
-				}
-			} else { // 人很多，
-				isInroom = false;
-				sleepTime1 = RandomUtil.getRandom(800, 1500);
-				sleepTime2 = RandomUtil.getRandom(300, 600);
 			}
-			if(isInroom) {
-				Thread.sleep(sleepTime1);
-				socket = SocketUtil.inRoom(roomId, userId);
-			} else {
-				JmService.inRoom(roomId, userId);
-			}
-			
-			LogUtil.log.info("peachThread：房间：" + roomId + "，摘桃账号："+userId 
-					+ "，在线成员：" + way 
-					+ "，进入房间时间：" + DateUtil.format2Str(new Date(), "yyyy-MM-dd HH:mm:ss.SSS")
-					+ "，摘桃前，睡眠时间：" + sleepTime2
-					+ "，摘桃时间：" +DateUtil.format2Str(DateUtil.addSecond(new Date(), sleepTime2), "yyyy-MM-dd HH:mm:ss.SSS"));
-			Thread.sleep(sleepTime2);
-			JmService.pluck(roomId, userId, session, ip);
-			if(socket != null) {
-				Thread.sleep(15000);
-				socket.close();
-			}
-			Thread.sleep(5000);
-			JmService.outRoom(roomId, userId);
-			JmService.remove(userId);
 		} catch (Exception e) {
 		}
 	}
-
-	public String getRoomId() {
-		return roomId;
-	}
-
-	public void setRoomId(String roomId) {
-		this.roomId = roomId;
-	}
-
-	public String getUserId() {
-		return userId;
-	}
-
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
-
-	public boolean isInroom() {
-		return isInroom;
-	}
-
-	public void setInroom(boolean isInroom) {
-		this.isInroom = isInroom;
-	}
-
 }
