@@ -515,7 +515,7 @@ public class RandomUtil {
 					if(!JmService.isPluck(userId)) {
 						continue;
 					}
-					if(!isTimeOut(userId)) {
+					if(isTimeOut(userId)) {
 						continue;
 					}
 					ret.add(userId);
@@ -538,7 +538,7 @@ public class RandomUtil {
 					if(JmService.peachMap.containsKey(userId)) {
 						continue;
 					}
-					if(!isTimeOut(userId)) {
+					if(isTimeOut(userId)) {
 						continue;
 					}
 					ret.add(userId);
@@ -561,7 +561,7 @@ public class RandomUtil {
 					if(JmService.peachMap.containsKey(userId)) {
 						continue;
 					}
-					if(!isTimeOut(userId)) {
+					if(isTimeOut(userId)) {
 						continue;
 					}
 					ret.add(userId);
@@ -584,7 +584,7 @@ public class RandomUtil {
 					if(JmService.peachMap.containsKey(userId)) {
 						continue;
 					}
-					if(!isTimeOut(userId)) {
+					if(isTimeOut(userId)) {
 						continue;
 					}
 					ret.add(userId);
@@ -607,7 +607,7 @@ public class RandomUtil {
 					if(JmService.peachMap.containsKey(userId)) {
 						continue;
 					}
-					if(!isTimeOut(userId)) {
+					if(isTimeOut(userId)) {
 						continue;
 					}
 					ret.add(userId);
@@ -630,7 +630,7 @@ public class RandomUtil {
 					if(JmService.peachMap.containsKey(userId)) {
 						continue;
 					}
-					if(!isTimeOut(userId)) {
+					if(isTimeOut(userId)) {
 						continue;
 					}
 					ret.add(userId);
@@ -653,7 +653,7 @@ public class RandomUtil {
 					if(JmService.peachMap.containsKey(userId)) {
 						continue;
 					}
-					if(!isTimeOut(userId)) {
+					if(isTimeOut(userId)) {
 						continue;
 					}
 					ret.add(userId);
@@ -676,7 +676,7 @@ public class RandomUtil {
 					if(JmService.peachMap.containsKey(userId)) {
 						continue;
 					}
-					if(!isTimeOut(userId)) {
+					if(isTimeOut(userId)) {
 						continue;
 					}
 					ret.add(userId);
@@ -706,7 +706,7 @@ public class RandomUtil {
 				if(!JmService.isPluck(userId)) {
 					continue;
 				}
-				if(!isTimeOut(userId)) {
+				if(isTimeOut(userId)) {
 					continue;
 				}
 				ret.add(userId);
@@ -736,7 +736,7 @@ public class RandomUtil {
 					if(!JmService.isPluck(userId)) {
 						continue;
 					}
-					if(!isTimeOut(userId)) {
+					if(isTimeOut(userId)) {
 						continue;
 					}
 					ret.add(userId);
@@ -845,7 +845,7 @@ public class RandomUtil {
 			try {
 				if(StringUtils.isNotEmpty(time)) {
 					Date record = DateUtil.parse(time, "yyyy-MM-dd HH:mm:ss");
-					if(now.after(record)) {
+					if(now.before(record)) {
 						flag = true;
 					} else {
 						LogUtil.log.info("### isTimeOut:该用户还在休息时间，不参与，userId：" + userId + "，到期时间：" + time);
@@ -879,7 +879,7 @@ public class RandomUtil {
 			Collections.shuffle(list1);
 			for(int i=0; i<size; i++) {
 				String userId = list1.get(i);
-				if(!checkTime(userId)) {
+				if(checkTime(userId)) {
 					continue;
 				}
 				group.add(userId);
@@ -902,7 +902,7 @@ public class RandomUtil {
 			Collections.shuffle(list2);
 			for(int i=0; i<size; i++) {
 				String userId = list2.get(i);
-				if(!checkTime(userId)) {
+				if(checkTime(userId)) {
 					continue;
 				}
 				group.add(userId);
@@ -924,7 +924,7 @@ public class RandomUtil {
 			Collections.shuffle(list3);
 			for(int i=0; i<size; i++) {
 				String userId = list3.get(i);
-				if(!checkTime(userId)) {
+				if(checkTime(userId)) {
 					continue;
 				}
 				group.add(userId);
@@ -946,7 +946,7 @@ public class RandomUtil {
 			Collections.shuffle(list4);
 			for(int i=0; i<size; i++) {
 				String userId = list4.get(i);
-				if(!checkTime(userId)) {
+				if(checkTime(userId)) {
 					continue;
 				}
 				group.add(userId);
@@ -964,7 +964,7 @@ public class RandomUtil {
 			try {
 				if(StringUtils.isNotEmpty(time)) {
 					Date record = DateUtil.parse(time, "yyyy-MM-dd HH:mm:ss");
-					if(now.after(record)) {
+					if(now.before(record)) {
 						flag = true;
 					} else {
 						LogUtil.log.info("### 随机进入房间旁观：还在休息中，userId：" + userId + "，到期时间：" + time);
