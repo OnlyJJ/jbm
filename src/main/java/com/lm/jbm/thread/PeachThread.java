@@ -686,11 +686,10 @@ public class PeachThread implements Runnable {
 					Date begin = DateUtil.addSecond(now, sleepTime1);
 					socket = SocketUtil.inRoom(roomId, userId);
 					Thread.sleep(sleepTime2);
-					Date end = DateUtil.addSecond(now, sleepTime2);
 					JmService.pluck(roomId, userId, session, ip);
 					LogUtil.log.info("peachThread（方式一）：房间：" + roomId + "，摘桃账号："+ userId 
 							+ "，进入房间时间：" + DateUtil.format2Str(begin, "yyyy-MM-dd HH:mm:ss.SSS")
-							+ "，摘桃时间：" +DateUtil.format2Str(end, "yyyy-MM-dd HH:mm:ss.SSS"));
+							+ "，摘桃时间：" +DateUtil.format2Str(new Date(), "yyyy-MM-dd HH:mm:ss.SSS"));
 				} catch (Exception e) {
 					e.printStackTrace();
 				} finally {

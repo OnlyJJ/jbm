@@ -11,8 +11,8 @@ import java.util.concurrent.TimeUnit;
 public class ThreadManager {
 	
 	private static class ThreadPool {
-		private static final ExecutorService pools = new ThreadPoolExecutor(300, 10000,
-                60L, TimeUnit.SECONDS,
+		private static final ExecutorService pools = new ThreadPoolExecutor(1000, 10000,
+                90L, TimeUnit.SECONDS,
                 new LinkedBlockingQueue<Runnable>(500));
 	}
 	

@@ -224,7 +224,7 @@ public class JmService {
 					}
 				}
 			}
-			pluckRecordMap.put(userId, DateUtil.format2Str(DateUtil.addMinute(new Date(), 5), "yyyy-MM-dd HH:mm:ss"));
+			pluckRecordMap.put(userId, DateUtil.format2Str(DateUtil.addMinute(new Date(), 2), "yyyy-MM-dd HH:mm:ss"));
 			// 摘桃成功后，触发修改昵称
 			if(isPluck && !nameMap.containsKey(userId)) {
 				info.put("session", session);

@@ -31,31 +31,32 @@ public class InroomNothingThread implements Runnable {
 	public void run() {
 		try {
 			Socket socket = null;
-			Thread.sleep(5000); // 5s后，每秒进一个
 			Map<String, Socket> m = new HashMap<String, Socket>();
 			List<String> users = RandomUtil.getNothingUser();
 			boolean flag = JmService.checkWorkTime();
-			int outTime = 5;
+			int outTime = 3;
 			if(users != null && users.size() >0) {
 				Collections.shuffle(users);
 				int index = 0;
-				int time = 1000;
+				int time = 600;
 				for(String userId : users) {
 					if(index >= 4) {
 						break;
-					}
-					if(index == 1) {
-						time = 500;
 					} 
+					if(index == 0) {
+						time = 4000;
+					}else {
+						time = 600;
+					} 
+					Thread.sleep(time);
 					socket = SocketUtil.inRoom(roomId, userId);
 					m.put(userId, socket);
-					LogUtil.log.info("InroomNothingThread：房间：" + roomId + "，随机混入用户："+ userId 
-							+ "，进入房间时间：" + DateUtil.format2Str(DateUtil.addSecond(new Date(), time), "yyyy-MM-dd HH:mm:ss.SSS"));
 					if(flag) {
-						outTime = 8;
+						outTime = 5;
 					}
 					RandomUtil.nothingMap.put(userId, DateUtil.format2Str(DateUtil.addMinute(new Date(), outTime), "yyyy-MM-dd HH:mm:ss"));
-					Thread.sleep(time);
+					LogUtil.log.info("InroomNothingThread：房间：" + roomId + "，随机混入用户："+ userId 
+							+ "，进入房间时间：" + DateUtil.format2Str(new Date(), "yyyy-MM-dd HH:mm:ss.SSS"));
 					index++;
 				}
 				Thread.sleep(30000);
