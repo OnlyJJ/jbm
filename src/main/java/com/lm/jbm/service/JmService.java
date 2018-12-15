@@ -67,7 +67,7 @@ public class JmService {
 			userbaseinfo.put("j", ip);
 			json.put("userbaseinfo", userbaseinfo);
 			String str = json.toString();
-			String strRes = HttpUtils.post(U1, str);
+			String strRes = HttpUtils.post3(U1, str, ip);
 			JSONObject res = JsonUtil.strToJsonObject(strRes);
 			String sessionId = null;
 			if (res != null) {
