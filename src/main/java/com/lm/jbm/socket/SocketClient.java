@@ -40,6 +40,12 @@ public class SocketClient {
 			ThreadManager.getInstance().execute(hert);
 		} catch (Exception e) {
 			LogUtil.log.error(e.getMessage(), e);
+			try {
+				Thread.sleep(30000);
+				init();
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
 		} 
 	}
 	
