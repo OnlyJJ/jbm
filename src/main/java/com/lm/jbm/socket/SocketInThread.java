@@ -77,14 +77,15 @@ public class SocketInThread implements Runnable {
 							
 						}
 						break;
+						
 					case 17: 
 						if(content != null && content.containsKey("roomId")) {
 							String roomId = content.getString("roomId");
-							boolean flag = true;
+							boolean flag = false;
 							if(content.containsKey("peachRipeLevel")) {
 								int level = content.getIntValue("peachRipeLevel");
-								if(level == 6) {
-									flag = false;
+								if(level == 5) {
+									flag = true;
 								}
 							}
 							if(flag) {
