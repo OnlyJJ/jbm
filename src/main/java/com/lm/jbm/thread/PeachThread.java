@@ -43,82 +43,6 @@ public class PeachThread implements Runnable {
 	public void run() {
 		try {
 			Socket socket = null;
-//			int sleepTime1 = 1000; // 延迟进入房间时间
-//			int sleepTime2 = 500; // 进入房间后延迟摘桃时间
-//			if(way <= 5) { // 人太少
-//				if(flag) { // 01:00 ~ 10:30，间隔6~12秒
-//					sleepTime1 = RandomUtil.getRandom(4000, 9000);
-//					sleepTime2 = RandomUtil.getRandom(1000, 5000);
-//				} else { // 其他时间段， 间隔4~8秒
-//					sleepTime1 = RandomUtil.getRandom(4000, 5500);
-//					sleepTime2 = RandomUtil.getRandom(1000, 2000);
-//				}
-//			} else if(way <= 10) { // 人太少
-//				if(flag) { // 01:00 ~ 10:30，间隔6~12秒
-//					sleepTime1 = RandomUtil.getRandom(4000, 6000);
-//					sleepTime2 = RandomUtil.getRandom(2000, 3000);
-//				} else { // 其他时间段， 间隔4~8秒
-//					sleepTime1 = RandomUtil.getRandom(4000, 5500);
-//					sleepTime2 = RandomUtil.getRandom(1000, 2000);
-//				}
-//			} else if(way <= 15) { // 人少
-//				if(flag) {  // 01:00 ~ 10:30，间隔5~10秒
-//					sleepTime1 = RandomUtil.getRandom(4000, 6000);
-//					sleepTime2 = RandomUtil.getRandom(2000, 3000);
-//				} else { // 其他时间段，间隔3~8秒
-//					sleepTime1 = RandomUtil.getRandom(4000, 5500);
-//					sleepTime2 = RandomUtil.getRandom(1000, 2000);
-//				}
-//			} else if(way <= 25) { // 人少
-//				if(flag) {  // 01:00 ~ 10:30，间隔5~10秒
-//					sleepTime1 = RandomUtil.getRandom(4000, 6000);
-//					sleepTime2 = RandomUtil.getRandom(2000, 3000);
-//				} else { // 其他时间段，间隔3~8秒
-//					sleepTime1 = RandomUtil.getRandom(4000, 5500);
-//					sleepTime2 = RandomUtil.getRandom(1000, 1800);
-//				}
-//			} else if(way <= 35) { // 一般，
-//				if(flag) {  // 01:00 ~ 10:30，间隔4~8秒
-//					sleepTime1 = RandomUtil.getRandom(4000, 6000);
-//					sleepTime2 = RandomUtil.getRandom(2000, 3000);
-//				} else { // 其他时间段，间隔3~6秒
-//					sleepTime1 = RandomUtil.getRandom(4000, 5500);
-//					sleepTime2 = RandomUtil.getRandom(1000, 1800);
-//				}
-//			} else if(way <= 40) { // 人多，
-//				if(flag) {  // 01:00 ~ 10:30，间隔3~5秒
-//					sleepTime1 = RandomUtil.getRandom(4000, 5500);
-//					sleepTime2 = RandomUtil.getRandom(1000, 2000);
-//				} else { // 其他时间段，间隔2~4秒
-//					sleepTime1 = RandomUtil.getRandom(4000, 5500);
-//					sleepTime2 = RandomUtil.getRandom(1000, 1800);
-//				}
-//			} else { // 人很多，
-//				isInroom = false;
-//				sleepTime1 = RandomUtil.getRandom(800, 1500);
-//				sleepTime2 = RandomUtil.getRandom(300, 600);
-//			}
-//				if(isInroom) {
-//					Thread.sleep(sleepTime1);
-//					socket = SocketUtil.inRoom(roomId, userId);
-//				} else {
-//					JmService.inRoom(roomId, userId);
-//				}
-//				
-//				LogUtil.log.info("peachThread（方式一）：房间：" + roomId + "，摘桃账号："+userId 
-//						+ "，在线成员：" + way 
-//						+ "，进入房间时间：" + DateUtil.format2Str(new Date(), "yyyy-MM-dd HH:mm:ss.SSS")
-//						+ "，摘桃前，睡眠时间：" + sleepTime2
-//						+ "，摘桃时间：" +DateUtil.format2Str(DateUtil.addSecond(new Date(), sleepTime2), "yyyy-MM-dd HH:mm:ss.SSS"));
-//				Thread.sleep(sleepTime2);
-//				JmService.pluck(roomId, userId, session, ip);
-//				if(socket != null) {
-//					Thread.sleep(15000);
-//					socket.close();
-//				}
-//				Thread.sleep(5000);
-//				JmService.outRoom(roomId, userId);
-//				JmService.remove(userId);
 			// 固定进场顺序
 			if(list != null && list.size() >0) {
 				Map<String, Socket> m = new HashMap<String, Socket>();
@@ -383,7 +307,7 @@ public class PeachThread implements Runnable {
 							sleepTime1 = 8000;
 							sleepTime2 = 1000;
 						}
-					} else if(way >= 10) { // 人多，
+					} else if(way >= 10) { 
 						switch(i) {
 						case 0:
 							sleepTime1 = 4000;

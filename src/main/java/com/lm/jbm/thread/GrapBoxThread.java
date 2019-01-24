@@ -32,12 +32,12 @@ public class GrapBoxThread implements Runnable {
 			Socket socket = null;
 			String ip = RandomUtil.getUserIp(userId);
 			String session = JmService.getSessionId(userId);
-			if(way == 0) { // 人少时
+			if(way == 0) {  
 				Thread.sleep(RandomUtil.getRandom(1000, 3000));
 				socket = SocketUtil.inRoom(roomId, userId);
 				Thread.sleep(RandomUtil.getRandom(100, 500));
 				JmService.grapBox(roomId, session, userId, ip);
-			} else { // 人多时
+			} else {  
 				Thread.sleep(RandomUtil.getRandom(100, 500));
 				socket = SocketUtil.inRoom(roomId, userId);
 				Thread.sleep(RandomUtil.getRandom(100, 500));

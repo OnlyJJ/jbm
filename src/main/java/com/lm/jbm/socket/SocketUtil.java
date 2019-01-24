@@ -136,12 +136,12 @@ public class SocketUtil {
 	private static byte[] getData(InputStream is, int length) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		byte[] buffer = new byte[5120];
-		int nIdx = 0; //累计读取了多少位
-		int nReadLen = 0; //一次读取了多少位
-		while (nIdx < length) { //循环读取足够长度的数据
-			if(length - nIdx >= buffer.length){ //剩余数据大于缓存，则全部读取
+		int nIdx = 0;  
+		int nReadLen = 0;  
+		while (nIdx < length) {  
+			if(length - nIdx >= buffer.length){  
 				nReadLen = is.read(buffer);
-			}else{ //剩余数据小于缓存，则注意拆分其他包，只取当前包剩余数据
+			}else{  
 				nReadLen = is.read(buffer, 0, length - nIdx);
 			}
 			if (nReadLen > 0) {

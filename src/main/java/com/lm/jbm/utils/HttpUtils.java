@@ -29,8 +29,6 @@ import org.apache.http.util.EntityUtils;
 
 
 
-
-
 @SuppressWarnings("unchecked")
 public class HttpUtils {
 	

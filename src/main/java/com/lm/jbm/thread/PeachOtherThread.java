@@ -39,45 +39,45 @@ public class PeachOtherThread implements Runnable {
 			Socket socket = null;
 			String ip = RandomUtil.getUserIp(userId);
 			String session = JmService.getSessionId(userId);
-			int sleepTime2 = 500; // 进入房间后延迟摘桃时间
+			int sleepTime2 = 500;  
 			boolean flag = JmService.checkWorkTime(); 
-			if(way <= 5) { // 人太少
-				if(flag) { // 01:00 ~ 10:30，间隔6~12秒
+			if(way <= 5) {  
+				if(flag) {  
 					sleepTime2 = RandomUtil.getRandom(1000, 1500);
-				} else { // 其他时间段， 间隔4~8秒
+				} else {  
 					sleepTime2 = RandomUtil.getRandom(800, 1000);
 				}
-			} else if(way <= 10) { // 人太少
-				if(flag) { // 01:00 ~ 10:30，间隔6~12秒
+			} else if(way <= 10) {  
+				if(flag) {  
 					sleepTime2 = RandomUtil.getRandom(1000, 1500);
-				} else { // 其他时间段， 间隔4~8秒
+				} else {  
 					sleepTime2 = RandomUtil.getRandom(700, 1000);
 				}
-			} else if(way <= 15) { // 人少
-				if(flag) {  // 01:00 ~ 10:30，间隔5~10秒
+			} else if(way <= 15) {  
+				if(flag) {   
 					sleepTime2 = RandomUtil.getRandom(1000, 1500);
-				} else { // 其他时间段，间隔3~8秒
+				} else {  
 					sleepTime2 = RandomUtil.getRandom(600, 800);
 				}
-			} else if(way <= 25) { // 人少
-				if(flag) {  // 01:00 ~ 10:30，间隔5~10秒
+			} else if(way <= 25) {  
+				if(flag) {   
 					sleepTime2 = RandomUtil.getRandom(1000, 1500);
-				} else { // 其他时间段，间隔3~8秒
+				} else { 
 					sleepTime2 = RandomUtil.getRandom(500, 800);
 				}
-			} else if(way <= 35) { // 一般，
-				if(flag) {  // 01:00 ~ 10:30，间隔4~8秒
+			} else if(way <= 35) {  
+				if(flag) {   
 					sleepTime2 = RandomUtil.getRandom(1000, 1500);
-				} else { // 其他时间段，间隔3~6秒
+				} else {  
 					sleepTime2 = RandomUtil.getRandom(500, 800);
 				}
-			} else if(way <= 40) { // 人多，
-				if(flag) {  // 01:00 ~ 10:30，间隔3~5秒
+			} else if(way <= 40) {  
+				if(flag) {   
 					sleepTime2 = RandomUtil.getRandom(1000, 1500);
-				} else { // 其他时间段，间隔2~4秒
+				} else {  
 					sleepTime2 = RandomUtil.getRandom(500, 800);
 				}
-			} else { // 人很多，
+			} else {  
 				sleepTime2 = RandomUtil.getRandom(400, 600);
 			}
 			socket = SocketUtil.inRoom(roomId, userId);

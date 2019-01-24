@@ -6,9 +6,6 @@ import java.util.Date;
 public class DateUntil {
 	/**
 	 * 当前月份
-	 * @author Shao.x
-	 * @date 2018年10月19日
-	 * @return
 	 */
 	public static int getMounth() {
 		int m = 0;
@@ -20,9 +17,6 @@ public class DateUntil {
 	
 	/**
 	 * 获取当前月的第几天
-	 * @author Shao.x
-	 * @date 2018年10月19日
-	 * @return
 	 */
 	public static int getDay() {
 		int day = 0;
@@ -34,9 +28,6 @@ public class DateUntil {
 	
 	/**
 	 * 高峰时段
-	 * @author Shao.x
-	 * @date 2018年10月22日
-	 * @return
 	 */
 	public static boolean checkSpecialTime() {
 		try {

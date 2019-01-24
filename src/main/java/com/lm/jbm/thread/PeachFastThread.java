@@ -33,19 +33,19 @@ public class PeachFastThread implements Runnable {
 		try {
 			int sleepTime = 1000;
 			int pluckTime = 1000;
-			if(way <= 5) { // 人太少
+			if(way <= 5) {  
 				pluckTime = RandomUtil.getRandom(6000, 8000);
-			} else if(way <= 10) { // 人太少
+			} else if(way <= 10) {  
 				pluckTime = RandomUtil.getRandom(5000, 8000);
-			} else if(way <= 15) { // 人少
+			} else if(way <= 15) {  
 				pluckTime = RandomUtil.getRandom(3000, 5000);
-			} else if(way <= 25) { // 人少
+			} else if(way <= 25) { 
 				pluckTime = RandomUtil.getRandom(2000, 3000);
-			} else if(way <= 35) { // 一般，
+			} else if(way <= 35) { 
 				pluckTime = RandomUtil.getRandom(1000, 2000);
-			} else if(way <= 40) { // 人多，
+			} else if(way <= 40) { 
 				pluckTime = RandomUtil.getRandom(1000, 1500);
-			} else { // 人很多，
+			} else {  
 				pluckTime = RandomUtil.getRandom(500, 700);
 			}
 			String ip = RandomUtil.getUserIp(userId);
