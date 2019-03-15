@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 
-import com.lm.jbm.service.GraboxService;
 import com.lm.jbm.service.InitializingBiz;
+import com.lm.jbm.service.RedPackService;
 import com.lm.jbm.socket.MsgManager;
 import com.lm.jbm.utils.LogUtil;
 import com.lm.jbm.utils.RandomUtil;
@@ -14,29 +14,32 @@ import com.lm.jbm.utils.RandomUtil;
 
 
 
-public class GrapBoxThread implements Runnable {
+public class GrapRedThread implements Runnable {
 
-	private boolean isInRoom;
+	
 	private String roomId;
 	private String sessionId;
 	private String userId;
 	private String token;
 	private Socket socket;
+	private boolean isInRoom;
+	private String rebId;
 	
-	public GrapBoxThread() {
+	public GrapRedThread() {
 	}
 
 	public void run() {
 		OutputStream ops = null;
 		try {
+			
 			if(isInRoom) {
-				Thread.sleep(RandomUtil.getRandom(2000, 3000));
+				Thread.sleep(RandomUtil.getRandom(1000, 2000));
 				ops = socket.getOutputStream();
 				MsgManager.getInstance().inRoom(roomId, userId, token, ops);
 			}
-			GraboxService.grapBox(roomId, sessionId, userId);
+			RedPackService.grapReb(roomId, userId, sessionId, rebId);
 			
-			Thread.sleep(RandomUtil.getRandom(60*1000, 5*60*1000));
+			Thread.sleep(RandomUtil.getRandom(5*60*1000, 10*60*1000));
 		} catch (Exception e) {
 			LogUtil.log.error(e.getMessage(), e);
 		} finally {
@@ -48,13 +51,6 @@ public class GrapBoxThread implements Runnable {
 		}
 	}
 
-	public boolean isInRoom() {
-		return isInRoom;
-	}
-
-	public void setInRoom(boolean isInRoom) {
-		this.isInRoom = isInRoom;
-	}
 
 	public String getRoomId() {
 		return roomId;
@@ -94,6 +90,22 @@ public class GrapBoxThread implements Runnable {
 
 	public void setSocket(Socket socket) {
 		this.socket = socket;
+	}
+
+	public String getRebId() {
+		return rebId;
+	}
+
+	public void setRebId(String rebId) {
+		this.rebId = rebId;
+	}
+
+	public boolean isInRoom() {
+		return isInRoom;
+	}
+
+	public void setInRoom(boolean isInRoom) {
+		this.isInRoom = isInRoom;
 	}
 
 

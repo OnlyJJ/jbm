@@ -3,6 +3,8 @@ package com.lm.jbm.utils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -22,6 +24,42 @@ public class GZipUtil {
 	public static void setEncode(String encode) {
 		GZipUtil.encode = encode;
 	}
+	
+	/**
+     * @param data 需要压缩的内容
+     */
+    public static byte[] compressToBtyes(byte[] data) throws Exception {
+        ByteArrayInputStream bais = new ByteArrayInputStream(data);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        // 压缩
+        compress(bais, baos);
+
+        byte[] output = baos.toByteArray();
+
+        baos.flush();
+        baos.close();
+
+        bais.close();
+
+        return output;
+
+    }
+    
+    public static void compress(InputStream is, OutputStream os)
+            throws Exception {
+        // DeflaterOutputStream GZIPOutputStream
+        GZIPOutputStream gos = new GZIPOutputStream(os);
+
+        int count;
+        byte data[] = new byte[1024];
+        int num = 0;
+        while ((count = is.read(data, 0, data.length)) != -1) {
+            gos.write(data, 0, count);
+        }
+        gos.finish();
+        // gos.flush();//4.4.2会出错
+        gos.close();
+    }
 
 	public static byte[] compressToByte(String str) {
 		if (str == null || str.length() == 0) {

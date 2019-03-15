@@ -58,9 +58,10 @@ public class HttpUtils {
 	        try {
 	            // 创建Http Post请求
 	            HttpPost post = new HttpPost(url);
-	            HttpHost proxy = new HttpHost(HOST,PORT);
+	            // 代理ip
+//	            HttpHost proxy = new HttpHost(HOST,PORT);
 	            RequestConfig requestConfig = RequestConfig.custom()
-	                    .setProxy(proxy)
+//	                    .setProxy(proxy)
 	                    .setConnectTimeout(45000)
 	                    .setSocketTimeout(45000)
 	                    .setConnectionRequestTimeout(3000)
@@ -73,7 +74,7 @@ public class HttpUtils {
 	            post.addHeader(HTTP.CONTENT_TYPE, "application/json");
 	            post.addHeader("X-Real-IP", ip);
 	            post.addHeader("X-Forwarded-For", ip);
-	            post.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36");
+	            post.addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 8.0; CAM-L21 Build/HUAWEICAM-L21; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/62.0.3202.84 Mobile Safari/537.36");
 	            // 执行http请求
 	            response = httpClient.execute(post);
 	            HttpEntity entitys = response.getEntity();

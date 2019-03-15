@@ -9,6 +9,20 @@ import com.alibaba.fastjson.JSONObject;
 
 public class JsonUtil {
 	
+	public static JsonParseInterface parseJSonObjectNotShortName(Class<?> clz,
+			String jsonString) {
+		if (StringUtils.isEmpty(jsonString))
+			return null;
+		try {
+			JSONObject jo = strToJsonObject(jsonString);
+			JsonParseInterface jInterface = (JsonParseInterface) clz.newInstance();
+			jInterface.parseJson(jo);
+			return jInterface;
+		} catch (Exception e) {
+		}
+		return null;
+	}
+	
 	/**
 	 * json字符串转为json对象
 	 * @param jsonString
