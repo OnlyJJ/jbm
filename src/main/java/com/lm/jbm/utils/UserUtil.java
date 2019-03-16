@@ -44,7 +44,6 @@ public class UserUtil {
 		}else {
 			LOGINUSER_MAP.put(userId, now);
 		}
-		System.err.println("校验用户时段有效性：" + flag);
 		return flag;
 	}
 	

@@ -5,16 +5,24 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.alibaba.fastjson.JSONObject;
 import com.lm.jbm.contants.Contant;
+import com.lm.jbm.contants.MessageFunID;
+import com.lm.jbm.msg.MsgManager;
 import com.lm.jbm.socket.SocketHertThread;
 import com.lm.jbm.thread.ThreadManager;
+import com.lm.jbm.utils.JsonUtil;
 import com.lm.jbm.utils.LogUtil;
 
 public class SocketFactory {
 	/**
-	 * 用户sokcet维护map 
+	 * 用户sokcet信息 
 	 */
 	public static ConcurrentHashMap<String,Socket> SOCKET_MAP = new ConcurrentHashMap<String,Socket>();
+	/**
+	 * 用户socket的token信息
+	 */
+	public static ConcurrentHashMap<String,String> TOKEN_MAP = new ConcurrentHashMap<String, String>();
 	
 	/**
 	 * 获取用户socket，已连接则直接返回有效socket，否则重连，并发送心跳
@@ -33,10 +41,76 @@ public class SocketFactory {
 		if(StringUtils.isEmpty(server) || server.indexOf("9999") < 0) {
 			socket = init(userId);
 		}
-		System.err.println("获取socket服务端信息：" + server);
+		System.err.println("链接socket，userId= " + userId + ",获取socket服务端信息：" + server);
 		return socket;
 	}
 	
+	/**
+	 * 获取socket的token信息
+	 */
+	public static String getToken(String userId, String sessionId, Socket socket) {
+		String token = "";
+		try {
+			if(TOKEN_MAP.containsKey(userId)) {
+				token = TOKEN_MAP.get(userId);
+			} else {
+				// 推送用户验证，获取token
+				MsgManager.sendSocketMsg(socket.getOutputStream(), encaseVerificData(userId, "", sessionId));
+				String imAuthenticationResponseStr = MsgManager.recieve(socket);
+				JSONObject json = JsonUtil.strToJsonObject(imAuthenticationResponseStr);
+				JSONObject data = json.getJSONObject("data");
+				token = data.getString("token");
+				TOKEN_MAP.put(userId, token);
+			}
+		} catch(Exception e) {
+			//
+		}
+		System.err.println("获取token：：" + token + "，userId：" + userId);
+		return token;
+	}
+	
+	
+	/**
+	 * 销毁socket
+	 * @param socket
+	 * @param userId
+	 */
+	public static void destory(Socket socket, String userId) {
+		System.err.println("用户已过期，销毁socket！");
+		if(SOCKET_MAP.containsKey(userId)) {
+			SOCKET_MAP.remove(userId);
+		}
+		if(TOKEN_MAP.containsKey(userId)) {
+			TOKEN_MAP.remove(userId);
+		}
+		try {
+			if(socket != null) {
+				socket.close();
+			}
+		} catch(Exception e) {
+			
+		}
+	}
+	
+	private static String encaseVerificData(String uid, String token, String sessionid) {
+		 JSONObject postJsonObject = new JSONObject();
+
+	        try {
+	            JSONObject jsonObject = new JSONObject();
+	            jsonObject.put("token", token);
+	            jsonObject.put("uid", uid);
+	            jsonObject.put("sessionid", sessionid);
+
+	            postJsonObject.put("data", jsonObject);
+	            postJsonObject.put("funID", MessageFunID.FUNID_11000.getFunID());
+	            postJsonObject.put("seqID", MsgManager.getSeqID());
+	            return postJsonObject.toString();
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	        return null;
+	}
+
 	/**
 	 * 初始化socket
 	 * @param userId
@@ -46,34 +120,14 @@ public class SocketFactory {
 		Socket socket = null;
 		try {
 			socket = new Socket(Contant.IP, Contant.PORT);
-			 System.err.println("创建socket成功，服务端："+ socket.getRemoteSocketAddress().toString());
-			 LogUtil.log.info("创建socket成功，服务端："+ socket.getRemoteSocketAddress().toString());
+			SOCKET_MAP.put(userId, socket);
 			// 发送心跳
-			SocketHertThread hert = new SocketHertThread(socket);
+			SocketHertThread hert = new SocketHertThread(socket, userId);
 			ThreadManager.getInstance().execute(hert);
 			
-			SOCKET_MAP.put(userId, socket);
 		} catch(Exception e) {
-			 LogUtil.log.error(e.getMessage());
+			LogUtil.log.error(e.getMessage());
 		}
 		return socket;
-	}
-	
-	/**
-	 * 销毁socket
-	 * @param socket
-	 * @param userId
-	 */
-	public static void destory(Socket socket, String userId) {
-		if(SOCKET_MAP.containsKey(userId)) {
-			SOCKET_MAP.remove(userId);
-		}
-		try {
-			if(socket != null) {
-				socket.close();
-			}
-		} catch(Exception e) {
-			
-		}
 	}
 }

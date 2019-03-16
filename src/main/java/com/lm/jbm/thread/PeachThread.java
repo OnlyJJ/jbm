@@ -3,18 +3,16 @@ package com.lm.jbm.thread;
 
 import java.net.Socket;
 
-import com.lm.jbm.service.InitializingBiz;
+import com.lm.jbm.factory.RoomListenFactory;
 import com.lm.jbm.service.PeachService;
-import com.lm.jbm.socket.MsgManager;
 import com.lm.jbm.utils.RandomUtil;
 
 public class PeachThread implements Runnable {
 	private String roomId;
 	private String userId;
-	private Socket socket;
-	private String token;
 	private String sessionId;
 	private boolean isInRoom;
+	private Socket socket;
 	
 	public PeachThread() {
 	}
@@ -24,18 +22,12 @@ public class PeachThread implements Runnable {
 			if(isInRoom) {
 				int sleep = PeachService.getSleepTime(roomId);
 				Thread.sleep(sleep);
-				MsgManager.getInstance().inRoom(roomId, userId, token, socket.getOutputStream());
+				RoomListenFactory.listenRoom(userId, sessionId, roomId);
 			}
+			System.out.println("开始枪桃：thread: " + Thread.currentThread().getName() + " ,userId=" + userId + ", roomId = " + roomId);
 			PeachService.pluck(roomId, userId, sessionId);
-			
-			Thread.sleep(RandomUtil.getRandom(60*1000, 3*60*1000));
 		} catch (Exception e) {
-		} finally {
-			try {
-				MsgManager.getInstance().outRoom(roomId, userId, token, socket.getOutputStream());
-			} catch (Exception e1) {
-			}
-			InitializingBiz.changeRoom(userId, roomId);
+			
 		}
 	}
 
@@ -55,22 +47,6 @@ public class PeachThread implements Runnable {
 		this.userId = userId;
 	}
 
-	public Socket getSocket() {
-		return socket;
-	}
-
-	public void setSocket(Socket socket) {
-		this.socket = socket;
-	}
-
-	public String getToken() {
-		return token;
-	}
-
-	public void setToken(String token) {
-		this.token = token;
-	}
-
 	public String getSessionId() {
 		return sessionId;
 	}
@@ -85,6 +61,14 @@ public class PeachThread implements Runnable {
 
 	public void setInRoom(boolean isInRoom) {
 		this.isInRoom = isInRoom;
+	}
+
+	public Socket getSocket() {
+		return socket;
+	}
+
+	public void setSocket(Socket socket) {
+		this.socket = socket;
 	}
 	
 }

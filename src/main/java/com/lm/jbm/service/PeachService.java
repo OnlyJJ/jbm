@@ -60,27 +60,27 @@ public class PeachService extends CommonService {
 		try {
 			if(isPluck(userId)) {
 				String ip = UserIPUtil.getIP(userId);
-				JSONObject json = new JSONObject();
+				JSONObject json = new JSONObject(true);
 				JSONObject session = new JSONObject();
 				session.put("b", sessionId);
 				
-				JSONObject userbaseinfo = new JSONObject();
+				JSONObject userbaseinfo = new JSONObject(true);
 				userbaseinfo.put("a", userId);
 				userbaseinfo.put("m", "false");
 				
-				JSONObject peachvo = new JSONObject();
+				JSONObject peachvo = new JSONObject(true);
 				long time = DateUtil.getTime();
 				String realStr = Md5CommonUtils.getMD5String(Md5CommonUtils.getMD5String(userId + roomId) + time);
 				peachvo.put("b", roomId);
 				peachvo.put("s", realStr);
 				peachvo.put("t", time);
 				
-				json.put("session", session);
 				json.put("userbaseinfo", userbaseinfo);
+				json.put("session", session);
 				json.put("peachvo", peachvo);
 				json.put("deviceproperties", DevUtil.getDevInfo(userId));
 				String str = json.toString();
-				String res = HttpUtils.post3(U53, str, ip);
+				String res = HttpUtils.post3(userId, U53, str, ip);
 				if(StringUtils.isNotEmpty(res)) {
 					JSONObject data = JsonUtil.strToJsonObject(res);
 					if(data != null && data.containsKey("peachvo")) {

@@ -1,4 +1,4 @@
-package com.lm.jbm.socket;
+package com.lm.jbm.msg;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -19,30 +19,9 @@ import com.lm.jbm.utils.LogUtil;
 
 
 public class MsgManager {
-	
-	private static MsgManager instance;
     public static int seqID = 0;
     private static int SIZE = 1024;
-    
-    /** 加入房间*/
-	public final static int ID_SOCKET_JOIN_ROOM=11006;
-	/** 加入房间响应成功|失败*/
-	public final static int ID_SOCKET_JOIN_ROOM_RESULT=12006;
-
-	/**退出房间*/
-	public final static int ID_SOCKET_EXIT_ROOM=11007;
-	
-	public static MsgManager getInstance() {
-		if (instance == null) {
-            synchronized (MsgManager.class) {
-                if (instance == null) {
-                    instance = new MsgManager();
-                }
-            }
-        }
-       return instance;
-	}
-	
+   
 	public static void sendToImForHeartbeat(String msg, Socket socket)  throws Exception{
 		DataOutputStream os = null;
 		try {
@@ -66,11 +45,9 @@ public class MsgManager {
 		}
 	}
 	
-	
 	public static String recieve(Socket socket) throws Exception {
 		DataInputStream is = null;
 		try {
-			System.err.println("处理消息。。。。");
 			is = new DataInputStream(socket.getInputStream());
 			String msg = getDataBody(is); 
 			return msg;
@@ -78,7 +55,6 @@ public class MsgManager {
 			throw e;
 		}
 	}
-	
 
 	public static String getDataBody(InputStream is) throws IOException {
 		String dataBody = null;
@@ -108,50 +84,6 @@ public class MsgManager {
 			}
 		}
 		return baos.toByteArray();
-	}
-	
-	
-	public void inRoom(String roomId, String userId, String token, OutputStream ops) throws Exception {
-		try {
-			System.err.println("开始加入房间。。。");
-            JSONObject chatMSgObject = new JSONObject();
-            chatMSgObject.put("funID", ID_SOCKET_JOIN_ROOM);
-
-            JSONObject dataObject = new JSONObject();
-            dataObject.put("token", token);
-            dataObject.put("roomId", roomId);
-
-            chatMSgObject.put("seqID", getSeqID());
-            chatMSgObject.put("data", dataObject);
-
-           String data = chatMSgObject.toString();
-           sendSocketMsg(ops, data);
-        } catch (Exception e) {
-            LogUtil.log.error(e.getMessage());
-        }
-		LogUtil.log.info("加入房间成功：" + userId);
-		System.err.println("加入房间：" + userId);
-	}
-	
-	public void outRoom(String roomId, String userId, String token, OutputStream ops) throws Exception {
-		String content = "";
-	        try {
-	            JSONObject chatMSgObject = new JSONObject();
-	            chatMSgObject.put("funID", ID_SOCKET_EXIT_ROOM);
-
-	            JSONObject dataObject = new JSONObject();
-	            dataObject.put("token", token);
-	            dataObject.put("roomId", roomId);
-
-	            chatMSgObject.put("seqID", getSeqID());
-	            chatMSgObject.put("data", dataObject);
-
-	            content = chatMSgObject.toString();
-	            sendSocketMsg(ops, content);
-	        } catch (Exception e) {
-	        	LogUtil.log.error(e.getMessage());
-	        }
-		LogUtil.log.info("退出房间：" + userId);
 	}
 	
 	public static  void sendSocketMsg(OutputStream ops, String content) {
@@ -187,23 +119,4 @@ public class MsgManager {
         }
         return seqID;
     }
-    
-    public static String getToken(Socket socket) {
-    	String token = "";
-    	if(socket != null) {
-			try {
-				System.err.println("开始获取token。。。。");
-				String imAuthenticationResponseStr = recieve(socket);
-				JSONObject json = JsonUtil.strToJsonObject(imAuthenticationResponseStr);
-				JSONObject data = json.getJSONObject("data");
-				token = data.getString("token");
-			} catch (Exception e) {
-				LogUtil.log.error(e.getMessage());
-			}
-    	}
-    	System.err.println("获取到的token：" + token);
-    	return token;
-    }
-    
-    
 }

@@ -28,16 +28,16 @@ public class GraboxService extends CommonService {
 		JSONObject resp = new JSONObject();
 		try {
 			String ip = UserIPUtil.getIP(userId);
-			JSONObject json = new JSONObject();
+			JSONObject json = new JSONObject(true);
 			
 			JSONObject anchorinfo = new JSONObject();
 			anchorinfo.put("b", roomId);
 			
-			json.put("deviceproperties", DevUtil.getDevInfo(userId));
 			json.put("anchorinfo", anchorinfo);
+			json.put("deviceproperties", DevUtil.getDevInfo(userId));
 			
 			String str = json.toString();
-			String res = HttpUtils.post3(G47, str, ip);
+			String res = HttpUtils.post3(userId, G47, str, ip);
 			System.err.println("查询宝箱信息：" + res);
 			if(StringUtils.isNotEmpty(res)) {
 				JSONObject data = JsonUtil.strToJsonObject(res);
@@ -65,28 +65,28 @@ public class GraboxService extends CommonService {
 			long currenttime = boxInfo.getLongValue("currenttime");
 			
 			String ip = UserIPUtil.getIP(userId);
-			JSONObject json = new JSONObject();
+			JSONObject json = new JSONObject(true);
 			JSONObject session = new JSONObject();
 			session.put("b", sessionId);
 			
-			JSONObject userbaseinfo = new JSONObject();
+			JSONObject userbaseinfo = new JSONObject(true);
 			userbaseinfo.put("a", userId);
 			userbaseinfo.put("m", "false");
 			
 			JSONObject anchorinfo = new JSONObject();
 			anchorinfo.put("b", roomId);
 			
-			json.put("session", session);
 			json.put("userbaseinfo", userbaseinfo);
+			json.put("session", session);
 			json.put("anchorinfo", anchorinfo);
-			json.put("deviceproperties", DevUtil.getDevInfo(userId));
-			
 			JSONObject grabboxvo = new JSONObject();
 			String realStr = Md5CommonUtils.getMD5String(Md5CommonUtils.getMD5String(userId+boxId+currenttime) + boxId);
 			grabboxvo.put("b", realStr);
 			json.put("grabboxvo", grabboxvo);
+			json.put("deviceproperties", DevUtil.getDevInfo(userId));
+			
 			String str = json.toString();
-			String res = HttpUtils.post3(G48, str, ip);
+			String res = HttpUtils.post3(userId, G48, str, ip);
 			if(StringUtils.isNotEmpty(res)) {
 				JSONObject data = JsonUtil.strToJsonObject(res);
 				if(data != null && data.containsKey("grabboxvo")) {

@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.lm.jbm.utils.DevUtil;
 import com.lm.jbm.utils.HttpUtils;
 import com.lm.jbm.utils.JsonUtil;
 import com.lm.jbm.utils.LogUtil;
@@ -25,13 +26,31 @@ public class CommonService {
 	public static final String U48 = PropertiesUtil.getValue("U48");
 	public static final String U50 = PropertiesUtil.getValue("U50");
 	
-	public static List<String> qryHome(String pageNum) {
-		JSONObject json = new JSONObject();
-		JSONObject kind = new JSONObject();
+	public static List<String> getRoom(String userId, String pageNum) {
+		try {
+			List<String> rooms = CommonService.qryHome(userId, pageNum);
+			while(true) {
+				if(rooms != null && rooms.size() > 0) {
+					return rooms;
+				}
+				LogUtil.log.info("## 未获取到首页数据，睡眠2S，重新获取。。。");
+				Thread.sleep(2000);
+				String num = String.valueOf((Integer.parseInt(pageNum) + 1));
+				getRoom(userId, num);
+			}
+		} catch(Exception e) {
+			
+		}
+		return null;
+	}
+	
+	private static List<String> qryHome(String userId, String pageNum) {
+		JSONObject json = new JSONObject(true);
+		JSONObject kind = new JSONObject(true);
 		kind.put("a", 0);
 		kind.put("b", 1);
 		
-		JSONObject page = new JSONObject();
+		JSONObject page = new JSONObject(true);
 		page.put("b", pageNum);
 		page.put("c", "36");
 		
@@ -55,7 +74,7 @@ public class CommonService {
 		json.put("page", page);
 		json.put("deviceproperties", deviceproperties);
 		String str = json.toString();
-		String strRes = HttpUtils.post3(C1, str, "116.22.44.8");
+		String strRes = HttpUtils.post3(userId, C1, str, "116.22.44.8");
 		JSONObject res = JsonUtil.strToJsonObject(strRes);
 		
 		List<String> ret = new ArrayList<String>();
@@ -93,23 +112,22 @@ public class CommonService {
 	 */
 	public static String login(String userId) {
 		try {
-			System.err.println("开始登录，userId="+userId);
-			JSONObject json = new JSONObject();
-			JSONObject userbaseinfo = new JSONObject();
+			JSONObject json = new JSONObject(true);
+			JSONObject userbaseinfo = new JSONObject(true);
 			userbaseinfo.put("a", userId);
 			userbaseinfo.put("b", "123456");
 			userbaseinfo.put("m", "false");
 			json.put("userbaseinfo", userbaseinfo);
 			String str = json.toString();
 			String ip = UserIPUtil.getIP(userId);
-			String strRes = HttpUtils.post3(U1, str, ip);
+			String strRes = HttpUtils.post3(userId, U1, str, ip);
 			JSONObject res = JsonUtil.strToJsonObject(strRes);
 			while(true) {
 				if (res != null) {
 					JSONObject session = JsonUtil.strToJsonObject(res.getString("session"));
 					if (session != null && session.containsKey("b")) {
 						RELOGIN_MAP.put(userId, 0);
-						System.err.println("登录成功！");
+						System.err.println("登录成功！userId：" +userId);
 						return session.get("b").toString();
 					}
 				}
@@ -131,21 +149,22 @@ public class CommonService {
 	}
 	
 	public static void sign(String userId, String sessionId) {
-		 String ip = UserIPUtil.getIP(userId);
-		JSONObject json = new JSONObject();
+		String ip = UserIPUtil.getIP(userId);
+		JSONObject json = new JSONObject(true);
 		JSONObject session = new JSONObject();
 		session.put("b", sessionId);
 		
-		JSONObject userbaseinfo = new JSONObject();
+		JSONObject userbaseinfo = new JSONObject(true);
 		userbaseinfo.put("a", userId);
-		userbaseinfo.put("j", ip);
+		userbaseinfo.put("m", "false");
 		
-		json.put("session", session);
 		json.put("userbaseinfo", userbaseinfo);
+		json.put("session", session);
+		json.put("deviceproperties", DevUtil.getDevInfo(userId));
 		
 		// 是否签到
 		boolean flag = false;
-		String res = HttpUtils.post3(U50, json.toString(), ip);
+		String res = HttpUtils.post3(userId, U50, json.toString(), ip);
 		if(StringUtils.isNotEmpty(res)) {
 			JSONObject data = JsonUtil.strToJsonObject(res);
 			if(data != null && data.containsKey("signinfovo")) {
@@ -158,20 +177,27 @@ public class CommonService {
 		}
 		if(flag) {
 			System.err.println("签到：" + userId);
-			HttpUtils.post3(U48, json.toString(), ip);
+			HttpUtils.post3(userId, U48, json.toString(), ip);
+		} else {
+			System.err.println("已签到，不重复签到！");
 		}
 	}
 	
-	public static int findOnline(String roomId) {
+	/**
+	 * 查询当前房间真实用户数
+	 */
+	public static int findOnline(String userId, String roomId) {
 		try {
-			JSONObject json = new JSONObject();
-			JSONObject roomonlineinfo = new JSONObject();
+			JSONObject json = new JSONObject(true);
+			JSONObject roomonlineinfo = new JSONObject(true);
 			roomonlineinfo.put("b", roomId);
-			JSONObject page = new JSONObject();
+			JSONObject page = new JSONObject(true);
 			page.put("b", "1");
 			page.put("c", "50");
 			json.put("roomonlineinfo", roomonlineinfo);
 			json.put("page", page);
+			json.put("deviceproperties", DevUtil.getDevInfo(userId));
+			
 			String str = json.toString();
 			String res = HttpUtils.post(U15, str);
 			int real = 0;
@@ -190,8 +216,8 @@ public class CommonService {
 								int size = array.size();
 								for(int i=0; i<size; i++) {
 									JSONObject obj = array.getJSONObject(i);
-									String userId = obj.getString("a");
-									if(userId.indexOf("robot") != -1 || userId.indexOf("pesudo") != -1) {
+									String user = obj.getString("a");
+									if(user.indexOf("robot") != -1 || user.indexOf("pesudo") != -1) {
 										break;
 									}
 									real++;

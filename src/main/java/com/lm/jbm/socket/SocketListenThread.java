@@ -8,8 +8,9 @@ import java.net.Socket;
 import org.apache.commons.lang.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
-import com.lm.jbm.contants.MessageFunID;
+import com.lm.jbm.factory.RoomListenFactory;
 import com.lm.jbm.factory.SocketFactory;
+import com.lm.jbm.msg.MsgManager;
 import com.lm.jbm.service.InitializingBiz;
 import com.lm.jbm.thread.GrapBoxThread;
 import com.lm.jbm.thread.GrapRedThread;
@@ -17,6 +18,7 @@ import com.lm.jbm.thread.PeachThread;
 import com.lm.jbm.thread.ThreadManager;
 import com.lm.jbm.utils.JsonUtil;
 import com.lm.jbm.utils.LogUtil;
+import com.lm.jbm.utils.RandomUtil;
 import com.lm.jbm.utils.UserUtil;
 
 
@@ -26,32 +28,31 @@ public class SocketListenThread implements Runnable {
 	private String roomId;
 	private String sessionId;
 	private Socket socket;
-	
-	private static String token;
-	private static OutputStream ops = null;
-	
-	public SocketListenThread(String userId, String roomId, String sessionId, Socket socket) {
-		this.userId = userId;
-		this.roomId = roomId;
-		this.sessionId = sessionId;
-		this.socket = socket;
+	public SocketListenThread() {
 	}
 
 	public void run() {
+		OutputStream ops = null;
 		try {
-			// 推送用户验证，获取token
-			MsgManager.sendSocketMsg(socket.getOutputStream(), encaseVerificData(userId, "", sessionId));
-			token = MsgManager.getToken(socket);
-			
-			Thread.sleep(5000);
 			ops = socket.getOutputStream();
-			MsgManager.getInstance().inRoom(roomId, userId, token, ops);
 			while(true) {
 				try {
 					String msg = MsgManager.recieve(socket);
-					System.err.println("收到的消息：" + msg);
-					handleMsg(msg);
-					validUser(userId);
+					System.err.println("收到的消息thread：" + Thread.currentThread().getName() + ", roomId = " + roomId +  ", userId: " + userId + " , msg : " + msg);
+					if(UserUtil.checkValid(userId)) {
+						System.err.println("用户已过监听时段，销毁当前socket，userId= " +userId + ",roomId = " + roomId);
+						// 离开房间
+						RoomListenFactory.outRoom(userId, sessionId, roomId, socket);
+						// 销毁socket
+						SocketFactory.destory(socket, userId);
+						// 登录新用户
+						InitializingBiz.newUserListen();
+						break;
+					}
+					if(handleMsg(msg)) {
+						System.err.println("切换房间，取消当前监听线程：roomId = " +roomId + " , userId = " + userId);
+						break;
+					}
 				} catch (Exception e) {
 					throw e;
 				}
@@ -59,13 +60,6 @@ public class SocketListenThread implements Runnable {
 		} catch(Exception e) {
 			System.err.println("监听消息异常：" + e.getMessage());
 			LogUtil.log.error(e.getMessage(), e);
-			try {
-				if(socket != null) {
-					socket.close();
-				}
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
 			if(ops != null) {
 				try {
 					ops.close();
@@ -73,32 +67,15 @@ public class SocketListenThread implements Runnable {
 					LogUtil.log.error(e.getMessage(), e);
 				}
 			}
+			SocketFactory.destory(socket, userId);
 		}
 	}
 	
-	private String encaseVerificData(String uid, String token, String sessionid) {
-		 JSONObject postJsonObject = new JSONObject();
-
-	        try {
-	            JSONObject jsonObject = new JSONObject();
-	            jsonObject.put("token", token);
-	            jsonObject.put("uid", uid);
-	            jsonObject.put("sessionid", sessionid);
-
-	            postJsonObject.put("data", jsonObject);
-	            postJsonObject.put("funID", MessageFunID.FUNID_11000.getFunID());
-	            postJsonObject.put("seqID", MsgManager.getSeqID());
-	            return postJsonObject.toString();
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        }
-	        return null;
-	}
-
-	private void handleMsg(String msg) throws Exception {
+	private boolean handleMsg(String msg) throws Exception {
+		boolean isInterap = false;
 		try {
 			if(StringUtils.isEmpty(msg)) {
-				return;
+				return false;
 			}
 			JSONObject ret = JsonUtil.strToJsonObject(msg);
 			JSONObject data = JsonUtil.strToJsonObject(ret.getString("data"));
@@ -107,12 +84,11 @@ public class SocketListenThread implements Runnable {
 					if(data.getIntValue("status") == 5007) {
 						try {
 							SocketFactory.destory(socket, userId);
-							
 							Thread.sleep(30 * 1000);
-							
-							InitializingBiz.changeRoom(userId, roomId);
 						} catch(Exception e) {
-							//
+							throw e;
+						} finally {
+							RoomListenFactory.changeRoom(userId, roomId, false);
 						}
 					}
 				}
@@ -121,25 +97,30 @@ public class SocketListenThread implements Runnable {
 					JSONObject content = JsonUtil.strToJsonObject(data.get("content").toString());
 					switch(type) {
 					case 7: // 踢出房间
+						isInterap = true;
 						// 发送退出房间消息
-						MsgManager.getInstance().outRoom(msg, msg, token, ops);
+						RoomListenFactory.outRoom(userId, sessionId, roomId, socket);
 						// 重新进入其他房间
-						InitializingBiz.changeRoom(userId, roomId);
+						RoomListenFactory.changeRoom(userId, roomId, true);
 						break;
 					case 8: // 红包
 						if(content != null && content.containsKey("id")) {
 							String id = content.getString("id");
 							String redRoom = content.getString("roomId");
-							System.out.println("收到红包通知，房间：" + redRoom);
+							System.out.println("收到本房间红包通知，房间：" + redRoom);
 							GrapRedThread red = new GrapRedThread();
-							if(roomId.equals(redRoom)) {
-								red.setInRoom(false);
+							boolean isInRoom = false;
+							if(!roomId.equals(redRoom)) {
+								// 发送退出房间消息
+								isInRoom = true;
+								isInterap = true;
+								// 发送退出房间消息
+								RoomListenFactory.outRoom(userId, sessionId, roomId, socket);
 							}
+							red.setInRoom(isInRoom);
 							red.setRoomId(redRoom);
 							red.setUserId(userId);
-							red.setToken(token);
 							red.setSessionId(sessionId);
-							red.setSocket(socket);
 							red.setRebId(id);
 							ThreadManager.getInstance().execute(red);
 						}
@@ -148,49 +129,57 @@ public class SocketListenThread implements Runnable {
 					case 17: 
 						if(content != null && content.containsKey("roomId")) {
 							String peacRoom = content.getString("roomId");
-							boolean flag = false;
 							if(content.containsKey("peachRipeLevel")) {
 								int level = content.getIntValue("peachRipeLevel");
 								if(level == 5) {
-									flag = true;
+									System.out.println("收到成熟通知，开启抢桃，房间：" + peacRoom);
+									PeachThread peach = new PeachThread();
+									peach.setRoomId(peacRoom);
+									peach.setSessionId(sessionId);
+									peach.setUserId(userId);
+									boolean isInRoom = false;
+									if(!peacRoom.equals(roomId)) {
+										isInRoom = true;
+										isInterap = true;
+										// 发送退出房间消息
+										RoomListenFactory.outRoom(userId, sessionId, roomId, socket);
+									}
+									peach.setInRoom(isInRoom);
+									ThreadManager.getInstance().execute(peach);
 								}
-							}
-							if(flag) {
-								System.out.println("收到成熟通知，开启抢桃，房间：" + peacRoom);
-								PeachThread peach = new PeachThread();
-								peach.setRoomId(peacRoom);
-								peach.setSessionId(sessionId);
-								peach.setSocket(socket);
-								peach.setToken(token);
-								peach.setUserId(userId);
-								boolean isInRoom = false;
-								if(!peacRoom.equals(roomId)) {
-									isInRoom = true;
-								}
-								peach.setInRoom(isInRoom);
-								ThreadManager.getInstance().execute(peach);
 							}
 						}
 						break;
 					case 50: 
 						if(content != null && content.containsKey("roomId")) {
-							String boxRoom = content.getString("roomId");
+							String room = content.getString("roomId");
 							if(content.containsKey("uriMsg")) {
 								String uriMsg = content.getString("uriMsg");
 								if(uriMsg.indexOf("宝箱") > -1) {
-									System.out.println("收到宝箱通知，开启抢宝箱，房间：" + boxRoom);
+									System.out.println("收到宝箱通知，开启抢宝箱，房间：" + room);
 									GrapBoxThread box = new GrapBoxThread();
-									box.setRoomId(boxRoom);
+									box.setRoomId(room);
 									box.setUserId(userId);
-									box.setToken(token);
 									box.setSessionId(sessionId);
-									box.setSocket(socket);
 									boolean isInRoom = false;
-									if(!boxRoom.equals(roomId)) {
+									if(!room.equals(roomId)) {
 										isInRoom = true;
+										isInterap = true;
+										// 发送退出房间消息
+										RoomListenFactory.outRoom(userId, sessionId, roomId, socket);
 									}
 									box.setInRoom(isInRoom);
 									ThreadManager.getInstance().execute(box);
+								} else if(uriMsg.indexOf("红包") > -1) {
+									if(!roomId.equals(room)) {
+										// 发送退出房间消息
+										isInterap = true;
+										// 发送退出房间消息
+										RoomListenFactory.outRoom(userId, sessionId, roomId, socket);
+										// 进入待抢红包房
+										Thread.sleep(RandomUtil.getRandom(5000, 20000));
+										RoomListenFactory.listenRoom(userId, sessionId, room);
+									}
 								}
 							}
 						}
@@ -200,16 +189,41 @@ public class SocketListenThread implements Runnable {
 			}
 		} catch(Exception e) {
 			//
+			isInterap = true;
 		}
+		return isInterap;
 	}
-	
-	
-	private void validUser(String userId) {
-		if(UserUtil.checkValid(userId)) {
-			// 销毁socket
-			SocketFactory.destory(socket, userId);
-			// 登录新用户
-			InitializingBiz.newUserListen();
-		}
+
+	public String getUserId() {
+		return userId;
 	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public String getRoomId() {
+		return roomId;
+	}
+
+	public void setRoomId(String roomId) {
+		this.roomId = roomId;
+	}
+
+	public String getSessionId() {
+		return sessionId;
+	}
+
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
+	}
+
+	public Socket getSocket() {
+		return socket;
+	}
+
+	public void setSocket(Socket socket) {
+		this.socket = socket;
+	}
+
 }

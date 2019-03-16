@@ -22,15 +22,15 @@ public class RedPackService extends CommonService {
 	public static void grapReb(String roomId, String userId, String sessionId, String rebId) {
 		try {
 			String ip = UserIPUtil.getIP(userId);
-			JSONObject json = new JSONObject();
+			JSONObject json = new JSONObject(true);
 			JSONObject session = new JSONObject();
 			session.put("b", sessionId);
 			
-			JSONObject userbaseinfo = new JSONObject();
+			JSONObject userbaseinfo = new JSONObject(true);
 			userbaseinfo.put("a", userId);
 			userbaseinfo.put("m", "false");
 			
-			JSONObject redpacketsendvo = new JSONObject();
+			JSONObject redpacketsendvo = new JSONObject(true);
 			long time = DateUtil.getTime();
 			redpacketsendvo.put("a", rebId);
 			redpacketsendvo.put("m", 0);
@@ -38,13 +38,13 @@ public class RedPackService extends CommonService {
 			redpacketsendvo.put("q", roomId);
 			redpacketsendvo.put("r", time);
 			
-			json.put("session", session);
 			json.put("userbaseinfo", userbaseinfo);
+			json.put("session", session);
 			json.put("redpacketsendvo", redpacketsendvo);
 			json.put("deviceproperties", DevUtil.getDevInfo(userId));
 			
 			String str = json.toString();
-			String res = HttpUtils.post3(U32, str, ip);
+			String res = HttpUtils.post3(userId, U32, str, ip);
 			if(StringUtils.isNotEmpty(res)) {
 				JSONObject data = JsonUtil.strToJsonObject(res);
 				if(data != null && data.containsKey("redpacketreceivevo")) {

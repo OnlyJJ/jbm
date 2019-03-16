@@ -50,7 +50,7 @@ public class HttpUtils {
 	public static String HOST = PropertiesUtil.getValue("HOST");
 	public static int PORT = Integer.parseInt(PropertiesUtil.getValue("HOST_PORT"));
 	
-	 public static String post3(String url, String json, String ip) {
+	 public static String post3(String userId, String url, String json, String ip) {
 	        // 创建Httpclient对象
 	        CloseableHttpClient httpClient = HttpClients.createDefault();
 	        CloseableHttpResponse response = null;
@@ -59,9 +59,9 @@ public class HttpUtils {
 	            // 创建Http Post请求
 	            HttpPost post = new HttpPost(url);
 	            // 代理ip
-//	            HttpHost proxy = new HttpHost(HOST,PORT);
+	            HttpHost proxy = new HttpHost(HOST,PORT);
 	            RequestConfig requestConfig = RequestConfig.custom()
-//	                    .setProxy(proxy)
+	                    .setProxy(proxy)
 	                    .setConnectTimeout(45000)
 	                    .setSocketTimeout(45000)
 	                    .setConnectionRequestTimeout(3000)
@@ -74,7 +74,27 @@ public class HttpUtils {
 	            post.addHeader(HTTP.CONTENT_TYPE, "application/json");
 	            post.addHeader("X-Real-IP", ip);
 	            post.addHeader("X-Forwarded-For", ip);
-	            post.addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 8.0; CAM-L21 Build/HUAWEICAM-L21; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/62.0.3202.84 Mobile Safari/537.36");
+	            // userAgent:com.jj.shows/4.1.6 (linux; android 4.4.2; huawei build/honorchm-tl00),返回结果:2
+	            //							 mozilla/5.0 (linux; android 8.0; cam-l21 build/huaweicam-l21; wv) applewebkit/537.36 (khtml, like gecko) version/4.0 chrome/62.0.3202.84 mobile safari/537.36
+//	            post.addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 8.0; CAM-L21 Build/HUAWEICAM-L21; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/62.0.3202.84 Mobile Safari/537.36");
+	            StringBuilder agent = new StringBuilder();
+	            String version = "4.1.2";
+	            if(DevUtil.getPckInfo(userId, 2) != null) {
+	            	version = DevUtil.getPckInfo(userId, 2);
+	            }
+	            String mobileVserion = "8.0.0";
+	            if(DevUtil.getPckInfo(userId, 4) != null) {
+	            	mobileVserion = DevUtil.getPckInfo(userId, 4);
+	            }
+	            String channel = "yyb";
+	            if(DevUtil.getPckInfo(userId, 5) != null) {
+	            	channel = DevUtil.getPckInfo(userId, 5);
+	            }
+	            agent.append("com.jj.shows/")
+		            .append(version).append(" (linux; android ")
+		            .append(mobileVserion).append("; ").append(channel)
+		            .append(" build/honorchm-tl00)");
+	            post.addHeader("User-Agent",  agent.toString());
 	            // 执行http请求
 	            response = httpClient.execute(post);
 	            HttpEntity entitys = response.getEntity();
