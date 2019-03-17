@@ -30,7 +30,7 @@ public class SocketHertThread implements Runnable {
 					MsgManager.sendToImForHeartbeat(data.toString(), socket);
 				} catch(Exception e) {
 					if(count > 10) {
-						System.err.println("接收心跳异常，当前重试次数：" +count + "，销毁当前socket，重启新用户！");
+						LogUtil.log.info("接收心跳异常，当前重试次数：" +count + "，销毁当前socket，重启新用户！");
 						throw e;
 					}
 					count++;
@@ -43,7 +43,7 @@ public class SocketHertThread implements Runnable {
 			SocketFactory.destory(socket, userId);
 		} finally {
 			// 初始化新用户监听
-			System.err.println("销毁当前socket，重启新用户！");
+			LogUtil.log.info("销毁当前socket，重启新用户！");
 			InitializingBiz.newUserListen();
 			
 		}

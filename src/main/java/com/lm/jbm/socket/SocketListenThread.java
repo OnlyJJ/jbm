@@ -23,11 +23,12 @@ import com.lm.jbm.utils.UserUtil;
 
 
 public class SocketListenThread implements Runnable {
-
+	
 	private String userId;
 	private String roomId;
 	private String sessionId;
 	private Socket socket;
+	private String token;
 	public SocketListenThread() {
 	}
 
@@ -35,10 +36,19 @@ public class SocketListenThread implements Runnable {
 		OutputStream ops = null;
 		try {
 			ops = socket.getOutputStream();
+			int liveTime = RandomUtil.getRandom(10, 20);
+			int time = 1;
+			System.err.println("开始监听消息thread：" + Thread.currentThread().getName() + ", roomId = " + roomId +  ", userId: " + userId);
 			while(true) {
 				try {
+					if(time > liveTime) {
+						System.err.println("thread：" + Thread.currentThread().getName() + ",时长：" + liveTime + ",time = " + time + "，退出当前房间，roomId=" + roomId);
+						// 离开房间
+						RoomListenFactory.outRoom(userId, sessionId, roomId, socket);
+						RoomListenFactory.changeRoom(userId, roomId, false);
+						break;
+					}
 					String msg = MsgManager.recieve(socket);
-					System.err.println("收到的消息thread：" + Thread.currentThread().getName() + ", roomId = " + roomId +  ", userId: " + userId + " , msg : " + msg);
 					if(UserUtil.checkValid(userId)) {
 						System.err.println("用户已过监听时段，销毁当前socket，userId= " +userId + ",roomId = " + roomId);
 						// 离开房间
@@ -53,22 +63,15 @@ public class SocketListenThread implements Runnable {
 						System.err.println("切换房间，取消当前监听线程：roomId = " +roomId + " , userId = " + userId);
 						break;
 					}
+					time++;
 				} catch (Exception e) {
 					throw e;
 				}
 			}
 		} catch(Exception e) {
-			System.err.println("监听消息异常：" + e.getMessage());
+			System.err.println("监听消息异常：" + e.getMessage() + ",roomId = " + roomId + ",userId = " + userId + ",thread = " + Thread.currentThread().getName());
 			LogUtil.log.error(e.getMessage(), e);
-			if(ops != null) {
-				try {
-					ops.close();
-				} catch (IOException e1) {
-					LogUtil.log.error(e.getMessage(), e);
-				}
-			}
-			SocketFactory.destory(socket, userId);
-		}
+		} 
 	}
 	
 	private boolean handleMsg(String msg) throws Exception {
@@ -82,6 +85,9 @@ public class SocketListenThread implements Runnable {
 			if(data != null) {
 				if(data.containsKey("status")) {
 					if(data.getIntValue("status") == 5007) {
+						try {
+							RoomListenFactory.outRoom(msg, msg, msg, socket);
+						} catch(Exception e) {}
 						try {
 							SocketFactory.destory(socket, userId);
 							Thread.sleep(30 * 1000);
@@ -122,6 +128,8 @@ public class SocketListenThread implements Runnable {
 							red.setUserId(userId);
 							red.setSessionId(sessionId);
 							red.setRebId(id);
+							red.setSocket(socket);
+							red.setToken(token);
 							ThreadManager.getInstance().execute(red);
 						}
 						break;
@@ -177,7 +185,7 @@ public class SocketListenThread implements Runnable {
 										// 发送退出房间消息
 										RoomListenFactory.outRoom(userId, sessionId, roomId, socket);
 										// 进入待抢红包房
-										Thread.sleep(RandomUtil.getRandom(5000, 20000));
+										Thread.sleep(RandomUtil.getRandom(5000, 10000));
 										RoomListenFactory.listenRoom(userId, sessionId, room);
 									}
 								}
@@ -190,6 +198,7 @@ public class SocketListenThread implements Runnable {
 		} catch(Exception e) {
 			//
 			isInterap = true;
+			RoomListenFactory.outRoom(userId, sessionId, roomId, socket);
 		}
 		return isInterap;
 	}
@@ -224,6 +233,14 @@ public class SocketListenThread implements Runnable {
 
 	public void setSocket(Socket socket) {
 		this.socket = socket;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
 	}
 
 }

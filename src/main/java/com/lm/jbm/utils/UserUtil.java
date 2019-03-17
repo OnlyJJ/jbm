@@ -94,7 +94,7 @@ public class UserUtil {
 	 * @param num 个数
 	 * @return
 	 */
-	public static List<String> getUsers(int num) {
+	public static synchronized List<String> getUsers(int num) {
 		if(USERONLINE_MAP == null) {
 			init();
 		}
@@ -123,11 +123,11 @@ public class UserUtil {
 				}
 			}
 		}
-		System.err.println("取到的时间段监听用户：" + ret.toString());
+		LogUtil.log.info("取到的时间段监听用户：" + ret.toString());
 		return ret;
 	}
 	
-	private static synchronized void init() {
+	private static void init() {
 		USERONLINE_MAP = new HashMap<String, String>(256);
 		List<String> users = RandomUtil.getUserIds("listener");
 		Collections.shuffle(users);

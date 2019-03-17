@@ -14,6 +14,7 @@ import com.lm.jbm.utils.HttpUtils;
 import com.lm.jbm.utils.JsonUtil;
 import com.lm.jbm.utils.LogUtil;
 import com.lm.jbm.utils.PropertiesUtil;
+import com.lm.jbm.utils.QQInfoUtil;
 import com.lm.jbm.utils.UserIPUtil;
 
 public class CommonService {
@@ -23,6 +24,7 @@ public class CommonService {
 	public static final String C1 = PropertiesUtil.getValue("C1");
 	public static final String U1 = PropertiesUtil.getValue("U1");
 	public static final String U15 = PropertiesUtil.getValue("U15");
+	public static final String U29 = PropertiesUtil.getValue("U29");
 	public static final String U48 = PropertiesUtil.getValue("U48");
 	public static final String U50 = PropertiesUtil.getValue("U50");
 	
@@ -54,27 +56,11 @@ public class CommonService {
 		page.put("b", pageNum);
 		page.put("c", "36");
 		
-		JSONObject deviceproperties = new JSONObject();
-		deviceproperties.put("a", "V1818CT");
-		deviceproperties.put("b", "unKnow");
-		deviceproperties.put("c", "4F93017B-7314-4149-8293-4D477A819AF7");
-		deviceproperties.put("d", 320);
-		deviceproperties.put("e", 720);
-		deviceproperties.put("f", 1436);
-		deviceproperties.put("g", "vivo");
-		deviceproperties.put("h", "WIFI");
-		deviceproperties.put("i", "0");
-		deviceproperties.put("j", "8");
-		deviceproperties.put("k", "4.1.4");
-		deviceproperties.put("l", "9c:99:a0:ab:81:90");
-		deviceproperties.put("p", "com.jj.shows");
-		deviceproperties.put("q", "daae8c4df719dae63e93d9c71febaa62");
-		
 		json.put("kind", kind);
 		json.put("page", page);
-		json.put("deviceproperties", deviceproperties);
+		json.put("deviceproperties", DevUtil.getDevInfo(userId));
 		String str = json.toString();
-		String strRes = HttpUtils.post3(userId, C1, str, "116.22.44.8");
+		String strRes = HttpUtils.post3(userId, C1, str, UserIPUtil.getIP(userId));
 		JSONObject res = JsonUtil.strToJsonObject(strRes);
 		
 		List<String> ret = new ArrayList<String>();
@@ -106,11 +92,12 @@ public class CommonService {
 	}
 	
 	/**
-	 * 登录
+	 * 账号密码登录
 	 * @param userId
 	 * @return
 	 */
 	public static String login(String userId) {
+		String sessionId = "";
 		try {
 			JSONObject json = new JSONObject(true);
 			JSONObject userbaseinfo = new JSONObject(true);
@@ -122,13 +109,45 @@ public class CommonService {
 			String ip = UserIPUtil.getIP(userId);
 			String strRes = HttpUtils.post3(userId, U1, str, ip);
 			JSONObject res = JsonUtil.strToJsonObject(strRes);
+			if (res != null) {
+				JSONObject session = JsonUtil.strToJsonObject(res.getString("session"));
+				if (session != null && session.containsKey("b")) {
+					sessionId = session.get("b").toString();
+					serssionMap.put(userId, sessionId);
+					LogUtil.log.info("登录成功！userId：" +userId);
+					System.out.println("登录成功，userId = " + userId + ",sessionid = " + sessionId);
+				}
+			}
+		} catch (Exception e) {
+			LogUtil.log.error(e.getMessage(), e);
+		}
+		return sessionId;
+	}
+	
+	/**
+	 * qq登录
+	 */
+	public static String qqLogin(String userId) {
+		String sessionId = "";
+		try {
+			JSONObject json = new JSONObject(true);
+			JSONObject code = new JSONObject();
+			code.put("a", QQInfoUtil.getCode(userId));
+			json.put("code", code);
+			json.put("qqconnectuserinfovo", QQInfoUtil.getQQInfo(userId));
+			json.put("deviceproperties", DevUtil.getDevInfo(userId));
+			String str = json.toString();
+			String ip = UserIPUtil.getIP(userId);
+			String strRes = HttpUtils.post3(userId, U29, str, ip);
+			JSONObject res = JsonUtil.strToJsonObject(strRes);
 			while(true) {
 				if (res != null) {
 					JSONObject session = JsonUtil.strToJsonObject(res.getString("session"));
 					if (session != null && session.containsKey("b")) {
 						RELOGIN_MAP.put(userId, 0);
-						System.err.println("登录成功！userId：" +userId);
-						return session.get("b").toString();
+						sessionId = session.get("b").toString();
+						LogUtil.log.info("登录成功！userId：" +userId);
+						serssionMap.put(userId, sessionId);
 					}
 				}
 				Thread.sleep(10000);
@@ -137,15 +156,16 @@ public class CommonService {
 					recount = RELOGIN_MAP.get(userId);
 				} 
 				if(recount >10) {
+					LogUtil.log.info("qq登录失败，重试次数：" + recount + ",userId = " + userId + ",不再尝试登录！");
 					return null;
 				}
 				RELOGIN_MAP.put(userId, recount+1);
-				login(userId);
+				qqLogin(userId);
 			}
 		} catch (Exception e) {
 			LogUtil.log.error(e.getMessage(), e);
 		}
-		return null;
+		return sessionId;
 	}
 	
 	public static void sign(String userId, String sessionId) {
@@ -176,10 +196,10 @@ public class CommonService {
 			}
 		}
 		if(flag) {
-			System.err.println("签到：" + userId);
+			LogUtil.log.info("成功签到：" + userId);
 			HttpUtils.post3(userId, U48, json.toString(), ip);
 		} else {
-			System.err.println("已签到，不重复签到！");
+			LogUtil.log.info("已签到，不重复签到！");
 		}
 	}
 	

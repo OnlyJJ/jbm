@@ -38,7 +38,6 @@ public class GraboxService extends CommonService {
 			
 			String str = json.toString();
 			String res = HttpUtils.post3(userId, G47, str, ip);
-			System.err.println("查询宝箱信息：" + res);
 			if(StringUtils.isNotEmpty(res)) {
 				JSONObject data = JsonUtil.strToJsonObject(res);
 				if(data != null && data.containsKey("grabboxvo")) {
@@ -95,11 +94,11 @@ public class GraboxService extends CommonService {
 					String name = ret.getString("f");
 					StringBuilder msg = new StringBuilder();
 					msg.append(userId).append("抢宝箱，抢到：").append(name).append("X").append(num).append("个");
-					System.err.println(msg.toString());
+					LogUtil.log.info(msg.toString());
 				}
 			}
 		} catch(Exception e) {
-			System.err.println("抢宝箱异常！");
+			LogUtil.log.error("抢宝箱异常！");
 			LogUtil.log.error(e.getMessage(), e);
 		}
 	}

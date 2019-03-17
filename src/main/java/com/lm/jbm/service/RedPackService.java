@@ -2,6 +2,10 @@ package com.lm.jbm.service;
 
 
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.apache.commons.lang.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
@@ -15,11 +19,15 @@ import com.lm.jbm.utils.PropertiesUtil;
 import com.lm.jbm.utils.UserIPUtil;
 
 
-public class RedPackService extends CommonService {
-	
+public class RedPackService  {
+	/**
+	 * 在房间抢成功次数
+	 */
+	public static ConcurrentHashMap<String, Map<String, Integer>> GRAB = new ConcurrentHashMap<String, Map<String, Integer>>();
 	public static final String U32 = PropertiesUtil.getValue("U32");
 	
-	public static void grapReb(String roomId, String userId, String sessionId, String rebId) {
+	public static boolean grapReb(String roomId, String userId, String sessionId, String rebId) {
+		boolean isSuccess = false;
 		try {
 			String ip = UserIPUtil.getIP(userId);
 			JSONObject json = new JSONObject(true);
@@ -52,13 +60,31 @@ public class RedPackService extends CommonService {
 					int gold = peachvoJson.getIntValue("d");
 					StringBuilder msg = new StringBuilder();
 					msg.append(userId).append("抢红包，抢到：").append("X").append(gold).append("个金币");
-					System.err.println(msg.toString());
+					LogUtil.log.info(msg.toString());
+					Map<String, Integer> record = null;
+					int count = 1;
+					if(GRAB.containsKey(userId)) {
+						record = GRAB.get(userId);
+						if(record.containsKey(roomId)) {
+							count = record.get(roomId) + 1;
+						}
+						record.put(roomId, count);
+					} else {
+						record = new HashMap<String, Integer>();
+						record.put(roomId, 1);
+					}
+					if(count > 3) {
+						isSuccess = true;
+						record.put(roomId, 1);
+						LogUtil.log.info("##当前房间抢红包成功次数：" + count + "，发送聊天表情！");
+					}
+					GRAB.put(userId, record);
 				}
 			}
 		} catch(Exception e) {
-			System.err.println("抢红包异常！");
+			LogUtil.log.error("抢红包异常！");
 			LogUtil.log.error(e.getMessage(), e);
 		}
+		return isSuccess;
 	}
-	
 }

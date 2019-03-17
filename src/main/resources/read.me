@@ -1,0 +1,16 @@
+## 步骤：
+	1、app上登录qq用户，拉取授权，抓包获取到授权code，执行登录；
+	2、登录成功后，将上一步获取的code，保存至QQInfoUtil下面的CODE_MAP中，如有变动，则需更新这里；
+	3、代理ip问题，目前使用的是服务端对外的ip及端口，如果此地址不可用，则需要重新维护一个代理ip池，为每个用户创建一个可使用的代理ip，同步修改HttpUtils类的这行代码
+			 HttpHost proxy = new HttpHost(HOST,PORT);
+			 说明：
+			 	关于代理ip的获取：
+			 		1、网上免费提供的，此种ip可能不稳定，随时会挂掉
+			 		2、使用爬虫获取，此方式可以从github上下源码，未尝试，有需要时再试
+	4、关于新增账号（目前统一使用qq号登录）：
+		新申请的qq号，登录后，需要在如下地方新增对应的信息：
+			1、QQInfoUtil
+			2、UserIPUtil
+			3、DevUtil
+			4、config.properties
+	

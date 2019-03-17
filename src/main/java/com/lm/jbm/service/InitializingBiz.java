@@ -13,13 +13,16 @@ public class InitializingBiz {
 	 * 初始化服务，获取首页--获取当前时段登录用户--登录--创建socket--随机进入房间--监听消息
 	 */
 	public static void init() {
+		LogUtil.log.info("## 服务启动，开始初始化。。。");
 		try {
 			List<String> users = UserUtil.getUsers(5);
 			if(users != null && users.size() >0) {
 				for(String userId : users) {
 					List<String> rooms = CommonService.getRoom(userId, "1");
 					// 登录
+//					String sessionId = CommonService.qqLogin(userId);
 					String sessionId = CommonService.login(userId);
+					
 					// 签到
 					CommonService.sign(userId, sessionId);
 					Thread.sleep(3000);

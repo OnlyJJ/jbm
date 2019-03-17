@@ -36,6 +36,7 @@ public class RoomListenFactory {
 			t.setSessionId(sessionId);
 			t.setUserId(userId);;
 			t.setSocket(socket);
+			t.setToken(token);
 			ThreadManager.getInstance().execute(t);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -85,7 +86,7 @@ public class RoomListenFactory {
 		int size = rooms.size();
 		while(true) {
 			if(recount == size) {
-				LogUtil.log.error("### 没有可使用的房间。。。");
+				LogUtil.log.info("### 没有可使用的房间。。。");
 				break;
 			}
 			newRoom = rooms.get(RandomUtil.getRandom(0, size));
@@ -122,7 +123,6 @@ public class RoomListenFactory {
             throw e;
         }
 		LogUtil.log.info("加入房间：roomId = " + roomId + " , userId = " + userId);
-		System.err.println("加入房间：roomId = " + roomId + ", userId = " + userId);
 	}
 	
 	private static void outRoom(String roomId, String userId, String token, OutputStream ops) throws Exception {
@@ -143,7 +143,6 @@ public class RoomListenFactory {
         	LogUtil.log.error(e.getMessage());
         	throw e;
         }
-        System.out.println("退出房间：roomId = " + roomId + " ,userId = " + userId);
 		LogUtil.log.info("退出房间：roomId = " + roomId + " ,userId = " + userId);
 	}
 	

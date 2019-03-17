@@ -39,7 +39,7 @@ public class PeachService extends CommonService {
 			int timeinterval = 1000;
 			for(int i=0; i<5; i++) {
 				val.add(time);
-				if(i>=2) {
+				if(i>=1) {
 					timeinterval = 500;
 				}
 				time = time + timeinterval;
@@ -52,7 +52,7 @@ public class PeachService extends CommonService {
 			val.remove(0);
 			SLEEP_MAP.put(roomId, val);
 		}
-		System.err.println("当前取到的时间：" + time + "，剩余的：" + SLEEP_MAP.get(roomId).toString());
+		LogUtil.log.info("当前取到的时间：" + time + "，剩余的：" + SLEEP_MAP.get(roomId).toString());
 		return time;
 	}
 
@@ -89,7 +89,7 @@ public class PeachService extends CommonService {
 						String name = peachvoJson.getString("m");
 						StringBuilder msg = new StringBuilder();
 						msg.append(userId).append("摘到：").append(name).append("X").append(num).append("个");
-						System.err.println(msg.toString());
+						LogUtil.log.info(msg.toString());
 						int total = num;
 						int successCount = 1;
 						if(pluckMap.containsKey(roomId)) {
@@ -115,7 +115,6 @@ public class PeachService extends CommonService {
 				pluckRecordMap.put(userId, DateUtil.format2Str(DateUtil.addMinute(new Date(), 1), "yyyy-MM-dd HH:mm:ss"));
 			}
 		} catch(Exception e) {
-			System.err.println(e.getMessage());
 			LogUtil.log.error(e.getMessage(), e);
 		}
 		return "";

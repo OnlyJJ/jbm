@@ -12,9 +12,9 @@ import java.net.Socket;
 import org.apache.commons.lang.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
+import com.lm.jbm.contants.MessageFunID;
 import com.lm.jbm.utils.ByteUtil;
 import com.lm.jbm.utils.GZipUtil;
-import com.lm.jbm.utils.JsonUtil;
 import com.lm.jbm.utils.LogUtil;
 
 
@@ -119,4 +119,31 @@ public class MsgManager {
         }
         return seqID;
     }
+    
+    /**
+     * 发送聊天消息
+     */
+    public static void sendChatMsg(String roomId, String userId, String token, String msg, OutputStream ops) throws Exception {
+        try {
+            JSONObject chatMSgObject = new JSONObject(true);
+            chatMSgObject.put("funID", MessageFunID.FUNID_11001.getFunID());
+            chatMSgObject.put("seqID", MsgManager.getSeqID());
+
+            JSONObject dataObject = new JSONObject(true);
+            dataObject.put("msgtype", 2);
+            dataObject.put("targetid", roomId);
+            dataObject.put("type", 1);
+            dataObject.put("content", msg);
+            dataObject.put("token", token);
+
+            chatMSgObject.put("data", dataObject);
+            String content = chatMSgObject.toString();
+            MsgManager.sendSocketMsg(ops, content);
+        } catch (Exception e) {
+        	LogUtil.log.error(e.getMessage());
+        	throw e;
+        }
+		LogUtil.log.info("发送聊天消息：roomId = " + roomId + " ,userId = " + userId + ",msg = " + msg);
+	}
+	
 }
