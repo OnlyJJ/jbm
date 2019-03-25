@@ -13,9 +13,11 @@ import com.lm.jbm.utils.DevUtil;
 import com.lm.jbm.utils.HttpUtils;
 import com.lm.jbm.utils.JsonUtil;
 import com.lm.jbm.utils.LogUtil;
+import com.lm.jbm.utils.MobileUserUtil;
 import com.lm.jbm.utils.PropertiesUtil;
 import com.lm.jbm.utils.QQInfoUtil;
 import com.lm.jbm.utils.UserIPUtil;
+import com.lm.jbm.utils.UserTypeUtil;
 
 public class CommonService {
 	public static ConcurrentHashMap<String, String> serssionMap = new ConcurrentHashMap<String, String>(512);
@@ -92,11 +94,33 @@ public class CommonService {
 	}
 	
 	/**
-	 * 账号密码登录
+	 * 统一登录入口
 	 * @param userId
 	 * @return
 	 */
 	public static String login(String userId) {
+		String sessionId = "";
+		Integer type = UserTypeUtil.getUserType(userId);
+		if(type == null) {
+			return null;
+		}
+		switch(type) {
+		case 1:
+			sessionId = loginByQQ(userId);
+			break;
+		case 2:
+			sessionId = loginByMobile(userId);
+			break;
+		case 3:
+			sessionId = loginByAccount(userId);
+			break;
+		default:
+			LogUtil.log.info("## 没有此用户类型：type = " + type);
+		}
+		return sessionId;
+	}
+	
+	public static String loginByAccount(String userId) {
 		String sessionId = "";
 		try {
 			JSONObject json = new JSONObject(true);
@@ -125,9 +149,48 @@ public class CommonService {
 	}
 	
 	/**
+	 * 手机号登陆
+	 * @param userId
+	 * @return
+	 */
+	public static String loginByMobile(String userId) {
+		String sessionId = "";
+		try {
+			String mobile = MobileUserUtil.getMobile(userId);
+			if(StringUtils.isEmpty(mobile)) {
+				LogUtil.log.info("## 没有获取到用户手机，userId= " + userId);
+				return null;
+			}
+			JSONObject json = new JSONObject(true);
+			JSONObject userbaseinfo = new JSONObject(true);
+			userbaseinfo.put("b", "123456");
+			userbaseinfo.put("c", mobile);
+			userbaseinfo.put("m", "false");
+			json.put("userbaseinfo", userbaseinfo);
+			String str = json.toString();
+			String ip = UserIPUtil.getIP(userId);
+			String strRes = HttpUtils.post3(userId, U1, str, ip);
+			JSONObject res = JsonUtil.strToJsonObject(strRes);
+			if (res != null) {
+				JSONObject session = JsonUtil.strToJsonObject(res.getString("session"));
+				if (session != null && session.containsKey("b")) {
+					sessionId = session.get("b").toString();
+					serssionMap.put(userId, sessionId);
+					LogUtil.log.info("登录成功！userId：" +userId);
+					System.out.println("登录成功，userId = " + userId + ",sessionid = " + sessionId);
+				}
+			}
+		} catch (Exception e) {
+			LogUtil.log.error(e.getMessage(), e);
+		}
+		return sessionId;
+	}
+	
+	
+	/**
 	 * qq登录
 	 */
-	public static String qqLogin(String userId) {
+	public static String loginByQQ(String userId) {
 		String sessionId = "";
 		try {
 			JSONObject json = new JSONObject(true);
@@ -160,7 +223,7 @@ public class CommonService {
 					return null;
 				}
 				RELOGIN_MAP.put(userId, recount+1);
-				qqLogin(userId);
+				loginByQQ(userId);
 			}
 		} catch (Exception e) {
 			LogUtil.log.error(e.getMessage(), e);

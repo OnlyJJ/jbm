@@ -20,7 +20,6 @@ public class InitializingBiz {
 				for(String userId : users) {
 					List<String> rooms = CommonService.getRoom(userId, "1");
 					// 登录
-//					String sessionId = CommonService.qqLogin(userId);
 					String sessionId = CommonService.login(userId);
 					
 					// 签到
