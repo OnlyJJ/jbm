@@ -10,7 +10,7 @@ import com.lm.jbm.utils.JsonUtil;
 import com.lm.jbm.utils.LogUtil;
 import com.lm.jbm.utils.Md5CommonUtils;
 import com.lm.jbm.utils.PropertiesUtil;
-import com.lm.jbm.utils.UserIPUtil;
+import com.lm.jbm.utils.UserInfoUtil;
 
 
 public class GraboxService extends CommonService {
@@ -27,7 +27,7 @@ public class GraboxService extends CommonService {
 	public static JSONObject qyrBox(String roomId, String userId) {
 		JSONObject resp = new JSONObject();
 		try {
-			String ip = UserIPUtil.getIP(userId);
+			String ip = UserInfoUtil.getIp(userId);
 			JSONObject json = new JSONObject(true);
 			
 			JSONObject anchorinfo = new JSONObject();
@@ -63,7 +63,7 @@ public class GraboxService extends CommonService {
 			int boxId = boxInfo.getIntValue("boxId");
 			long currenttime = boxInfo.getLongValue("currenttime");
 			
-			String ip = UserIPUtil.getIP(userId);
+			String ip = UserInfoUtil.getIp(userId);
 			JSONObject json = new JSONObject(true);
 			JSONObject session = new JSONObject();
 			session.put("b", sessionId);

@@ -1,7 +1,6 @@
 package com.lm.jbm.utils;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,17 +10,12 @@ import java.net.URL;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.protocol.HTTP;
@@ -48,9 +42,10 @@ public class HttpUtils {
 	public static  int iosClienttypeInt = 3;
 	
 	public static String HOST = PropertiesUtil.getValue("HOST");
-	public static int PORT = Integer.parseInt(PropertiesUtil.getValue("HOST_PORT"));
+	public static String[] PORTS = PropertiesUtil.getValue("HOST_PORT").split(",");
 	
 	 public static String post3(String userId, String url, String json, String ip) {
+		 	int port = RandomUtil.getRandom(0, PORTS.length);
 	        // 创建Httpclient对象
 	        CloseableHttpClient httpClient = HttpClients.createDefault();
 	        CloseableHttpResponse response = null;
@@ -59,7 +54,8 @@ public class HttpUtils {
 	            // 创建Http Post请求
 	            HttpPost post = new HttpPost(url);
 	            // 代理ip
-	            HttpHost proxy = new HttpHost(HOST,PORT);
+	            // host是服务器的ip，端口只要是开放的，都可以完成代理。。
+	            HttpHost proxy = new HttpHost(HOST, port);
 	            RequestConfig requestConfig = RequestConfig.custom()
 	                    .setProxy(proxy)
 	                    .setConnectTimeout(45000)

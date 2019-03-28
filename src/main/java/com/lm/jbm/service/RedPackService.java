@@ -16,7 +16,7 @@ import com.lm.jbm.utils.JsonUtil;
 import com.lm.jbm.utils.LogUtil;
 import com.lm.jbm.utils.Md5CommonUtils;
 import com.lm.jbm.utils.PropertiesUtil;
-import com.lm.jbm.utils.UserIPUtil;
+import com.lm.jbm.utils.UserInfoUtil;
 
 
 public class RedPackService  {
@@ -29,7 +29,7 @@ public class RedPackService  {
 	public static boolean grapReb(String roomId, String userId, String sessionId, String rebId) {
 		boolean isSuccess = false;
 		try {
-			String ip = UserIPUtil.getIP(userId);
+			String ip = UserInfoUtil.getIp(userId);
 			JSONObject json = new JSONObject(true);
 			JSONObject session = new JSONObject();
 			session.put("b", sessionId);

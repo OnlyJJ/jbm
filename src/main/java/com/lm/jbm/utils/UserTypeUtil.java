@@ -21,7 +21,8 @@ public class UserTypeUtil {
 	
 	public static void init() {
 		USERTYPE_MAP = new ConcurrentHashMap<String, Integer>(256);
-		USERTYPE_MAP.put("1001", 1);
+		USERTYPE_MAP.put("153706", 3);
+		USERTYPE_MAP.put("276641", 3);
 			
 	}
 	

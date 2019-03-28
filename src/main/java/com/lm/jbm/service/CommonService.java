@@ -13,10 +13,9 @@ import com.lm.jbm.utils.DevUtil;
 import com.lm.jbm.utils.HttpUtils;
 import com.lm.jbm.utils.JsonUtil;
 import com.lm.jbm.utils.LogUtil;
-import com.lm.jbm.utils.MobileUserUtil;
+import com.lm.jbm.utils.UserInfoUtil;
 import com.lm.jbm.utils.PropertiesUtil;
 import com.lm.jbm.utils.QQInfoUtil;
-import com.lm.jbm.utils.UserIPUtil;
 import com.lm.jbm.utils.UserTypeUtil;
 
 public class CommonService {
@@ -62,7 +61,7 @@ public class CommonService {
 		json.put("page", page);
 		json.put("deviceproperties", DevUtil.getDevInfo(userId));
 		String str = json.toString();
-		String strRes = HttpUtils.post3(userId, C1, str, UserIPUtil.getIP(userId));
+		String strRes = HttpUtils.post3(userId, C1, str, UserInfoUtil.getIp(userId));
 		JSONObject res = JsonUtil.strToJsonObject(strRes);
 		
 		List<String> ret = new ArrayList<String>();
@@ -120,7 +119,12 @@ public class CommonService {
 		return sessionId;
 	}
 	
-	public static String loginByAccount(String userId) {
+	/**
+	 * 账号登录
+	 * @param userId
+	 * @return
+	 */
+	private static String loginByAccount(String userId) {
 		String sessionId = "";
 		try {
 			JSONObject json = new JSONObject(true);
@@ -130,7 +134,7 @@ public class CommonService {
 			userbaseinfo.put("m", "false");
 			json.put("userbaseinfo", userbaseinfo);
 			String str = json.toString();
-			String ip = UserIPUtil.getIP(userId);
+			String ip = UserInfoUtil.getIp(userId);
 			String strRes = HttpUtils.post3(userId, U1, str, ip);
 			JSONObject res = JsonUtil.strToJsonObject(strRes);
 			if (res != null) {
@@ -153,10 +157,10 @@ public class CommonService {
 	 * @param userId
 	 * @return
 	 */
-	public static String loginByMobile(String userId) {
+	private static String loginByMobile(String userId) {
 		String sessionId = "";
 		try {
-			String mobile = MobileUserUtil.getMobile(userId);
+			String mobile = UserInfoUtil.getMobile(userId);
 			if(StringUtils.isEmpty(mobile)) {
 				LogUtil.log.info("## 没有获取到用户手机，userId= " + userId);
 				return null;
@@ -168,7 +172,7 @@ public class CommonService {
 			userbaseinfo.put("m", "false");
 			json.put("userbaseinfo", userbaseinfo);
 			String str = json.toString();
-			String ip = UserIPUtil.getIP(userId);
+			String ip = UserInfoUtil.getIp(userId);
 			String strRes = HttpUtils.post3(userId, U1, str, ip);
 			JSONObject res = JsonUtil.strToJsonObject(strRes);
 			if (res != null) {
@@ -190,7 +194,7 @@ public class CommonService {
 	/**
 	 * qq登录
 	 */
-	public static String loginByQQ(String userId) {
+	private static String loginByQQ(String userId) {
 		String sessionId = "";
 		try {
 			JSONObject json = new JSONObject(true);
@@ -200,30 +204,17 @@ public class CommonService {
 			json.put("qqconnectuserinfovo", QQInfoUtil.getQQInfo(userId));
 			json.put("deviceproperties", DevUtil.getDevInfo(userId));
 			String str = json.toString();
-			String ip = UserIPUtil.getIP(userId);
+			String ip = UserInfoUtil.getIp(userId);
 			String strRes = HttpUtils.post3(userId, U29, str, ip);
 			JSONObject res = JsonUtil.strToJsonObject(strRes);
-			while(true) {
-				if (res != null) {
-					JSONObject session = JsonUtil.strToJsonObject(res.getString("session"));
-					if (session != null && session.containsKey("b")) {
-						RELOGIN_MAP.put(userId, 0);
-						sessionId = session.get("b").toString();
-						LogUtil.log.info("登录成功！userId：" +userId);
-						serssionMap.put(userId, sessionId);
-					}
+			if (res != null) {
+				JSONObject session = JsonUtil.strToJsonObject(res.getString("session"));
+				if (session != null && session.containsKey("b")) {
+					RELOGIN_MAP.put(userId, 0);
+					sessionId = session.get("b").toString();
+					LogUtil.log.info("登录成功！userId：" +userId);
+					serssionMap.put(userId, sessionId);
 				}
-				Thread.sleep(10000);
-				int recount = 0;
-				if(RELOGIN_MAP.containsKey(userId)) {
-					recount = RELOGIN_MAP.get(userId);
-				} 
-				if(recount >10) {
-					LogUtil.log.info("qq登录失败，重试次数：" + recount + ",userId = " + userId + ",不再尝试登录！");
-					return null;
-				}
-				RELOGIN_MAP.put(userId, recount+1);
-				loginByQQ(userId);
 			}
 		} catch (Exception e) {
 			LogUtil.log.error(e.getMessage(), e);
@@ -232,7 +223,7 @@ public class CommonService {
 	}
 	
 	public static void sign(String userId, String sessionId) {
-		String ip = UserIPUtil.getIP(userId);
+		String ip = UserInfoUtil.getIp(userId);
 		JSONObject json = new JSONObject(true);
 		JSONObject session = new JSONObject();
 		session.put("b", sessionId);
