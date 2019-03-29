@@ -74,9 +74,12 @@ public class HttpUtils {
 	            //							 mozilla/5.0 (linux; android 8.0; cam-l21 build/huaweicam-l21; wv) applewebkit/537.36 (khtml, like gecko) version/4.0 chrome/62.0.3202.84 mobile safari/537.36
 //	            post.addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 8.0; CAM-L21 Build/HUAWEICAM-L21; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/62.0.3202.84 Mobile Safari/537.36");
 	            StringBuilder agent = new StringBuilder();
-	            String version = "4.1.2";
+	            String version = "4.1.8";
 	            if(DevUtil.getPckInfo(userId, 2) != null) {
-	            	version = DevUtil.getPckInfo(userId, 2);
+	            	String setVersion = DevUtil.getPckInfo(userId, 2);
+	            	if(StrUtil.checkAppVersion("4.1.8", setVersion)) {
+	            		version = setVersion;
+	            	}
 	            }
 	            String mobileVserion = "8.0.0";
 	            if(DevUtil.getPckInfo(userId, 4) != null) {
